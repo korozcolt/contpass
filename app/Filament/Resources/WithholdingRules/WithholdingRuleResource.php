@@ -18,7 +18,15 @@ class WithholdingRuleResource extends Resource
 {
     protected static ?string $model = WithholdingRule::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::ReceiptPercent;
+
+    protected static ?string $navigationLabel = 'Retenciones';
+
+    protected static ?string $modelLabel = 'regla de retención';
+
+    protected static ?string $pluralModelLabel = 'reglas de retención';
+
+    protected static string|\UnitEnum|null $navigationGroup = 'Catálogos';
 
     public static function form(Schema $schema): Schema
     {

@@ -18,7 +18,15 @@ class ChartAccountResource extends Resource
 {
     protected static ?string $model = ChartAccount::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::BookOpen;
+
+    protected static ?string $navigationLabel = 'Plan de cuentas';
+
+    protected static ?string $modelLabel = 'cuenta PUC';
+
+    protected static ?string $pluralModelLabel = 'cuentas PUC';
+
+    protected static string|\UnitEnum|null $navigationGroup = 'Catálogos';
 
     public static function form(Schema $schema): Schema
     {

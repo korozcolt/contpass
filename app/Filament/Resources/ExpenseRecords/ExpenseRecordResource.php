@@ -17,7 +17,15 @@ class ExpenseRecordResource extends Resource
 {
     protected static ?string $model = ExpenseRecord::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::ArrowTrendingDown;
+
+    protected static ?string $navigationLabel = 'Egresos';
+
+    protected static ?string $modelLabel = 'egreso';
+
+    protected static ?string $pluralModelLabel = 'egresos';
+
+    protected static string|\UnitEnum|null $navigationGroup = 'Operación';
 
     public static function form(Schema $schema): Schema
     {

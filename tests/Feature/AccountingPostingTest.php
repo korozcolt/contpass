@@ -161,22 +161,10 @@ it('creates adjustment vouchers for approved vouchers', function () {
         ->and($income->refresh()->status->value)->toBe('adjusted');
 });
 
-it('creates third parties through the web with DIAN verification digit validation', function () {
-    $this->actingAs(User::factory()->create());
-
-    $this->post(route('third-parties.store'), [
-        'type' => 'legal_entity',
-        'name' => 'Proveedor SAS',
-        'tax_id' => '900373913',
-        'verification_digit' => 4,
-    ])->assertRedirect(route('third-parties.index'));
-
-    $this->post(route('third-parties.store'), [
-        'type' => 'legal_entity',
-        'name' => 'Proveedor Dos SAS',
-        'tax_id' => '800197268',
-        'verification_digit' => 1,
-    ])->assertSessionHasErrors('verification_digit');
+it('blocks accounting csv exports for guests', function () {
+    $this->get(route('accounting-reports.ledger', ['export' => 1]))->assertForbidden();
+    $this->get(route('accounting-reports.third-party-movements', ['export' => 1]))->assertForbidden();
+    $this->get(route('accounting-reports.trial-balance', ['export' => 1]))->assertForbidden();
 });
 
 it('exports ledger and trial balance as csv', function () {
@@ -193,5 +181,6 @@ it('exports ledger and trial balance as csv', function () {
     ]);
 
     $this->get(route('accounting-reports.ledger', ['export' => 1]))->assertSuccessful()->assertHeader('content-type', 'text/csv; charset=UTF-8');
+    $this->get(route('accounting-reports.third-party-movements', ['export' => 1]))->assertSuccessful()->assertHeader('content-type', 'text/csv; charset=UTF-8');
     $this->get(route('accounting-reports.trial-balance', ['export' => 1]))->assertSuccessful()->assertHeader('content-type', 'text/csv; charset=UTF-8');
 });

@@ -1,0 +1,17 @@
+[variables]
+NIXPACKS_NODE_VERSION = '22'
+NIXPACKS_PHP_ROOT_DIR = '/app/public'
+
+[phases.install]
+cmds = [
+    'composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction',
+    'npm ci',
+]
+
+[phases.build]
+cmds = [
+    'npm run build',
+]
+
+[start]
+cmd = 'php artisan config:clear && php artisan route:clear && php artisan view:clear && php artisan migrate --force && php artisan view:cache && node /assets/scripts/prestart.mjs /assets/nginx.template.conf /nginx.conf && (php-fpm -y /assets/php-fpm.conf & nginx -c /nginx.conf)'

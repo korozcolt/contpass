@@ -2,8 +2,22 @@
 
 use App\Models\User;
 
-test('guests are redirected to login', function () {
-    $this->get('/')->assertRedirect('/login');
+test('guests are sent to the Filament panel entrypoint', function () {
+    $this->get('/')->assertRedirect('/admin');
+});
+
+test('legacy Blade entrypoints are deprecated', function () {
+    foreach ([
+        '/login',
+        '/third-parties',
+        '/chart-accounts',
+        '/cash-accounts',
+        '/income-records/create',
+        '/expense-records/create',
+        '/payments/create',
+    ] as $path) {
+        $this->get($path)->assertNotFound();
+    }
 });
 
 test('authenticated users are sent to the Filament panel', function () {

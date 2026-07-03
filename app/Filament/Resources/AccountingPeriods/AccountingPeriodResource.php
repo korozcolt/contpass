@@ -18,7 +18,15 @@ class AccountingPeriodResource extends Resource
 {
     protected static ?string $model = AccountingPeriod::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::CalendarDays;
+
+    protected static ?string $navigationLabel = 'Periodos contables';
+
+    protected static ?string $modelLabel = 'periodo contable';
+
+    protected static ?string $pluralModelLabel = 'periodos contables';
+
+    protected static string|\UnitEnum|null $navigationGroup = 'Control';
 
     public static function form(Schema $schema): Schema
     {

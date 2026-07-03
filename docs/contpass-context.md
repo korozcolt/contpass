@@ -17,7 +17,7 @@ El sistema no reemplaza la facturación electrónica ni pretende liquidar todo e
 - Notas de ajuste para corregir comprobantes aprobados.
 - Periodos contables con cierre operativo.
 - Reportes CSV: libro auxiliar, movimientos por tercero y balance de comprobación.
-- Panel administrativo Filament v5 en `/admin`.
+- Panel administrativo Filament v5 en `/admin`; las vistas Blade operativas quedan deprecadas.
 
 ## Referente Normativo
 
@@ -25,7 +25,7 @@ El diseño funcional se apoya en la Ley 1314 de 2009, el Decreto 2420 de 2015 y 
 
 ## Arquitectura
 
-ContPass usa Laravel 13, PHP 8.4, SQLite en desarrollo y Filament 5.6 como interfaz administrativa. La capa Filament captura la intención del usuario, pero la lógica contable vive en servicios de dominio:
+ContPass usa Laravel 13, PHP 8.4 y Filament 5.6 como interfaz administrativa. La base de datos principal objetivo es PostgreSQL y la aplicación queda preparada para usar Redis como cache, sesiones y colas mediante variables de entorno. La capa Filament captura la intención del usuario, pero la lógica contable vive en servicios de dominio:
 
 - `ValidateColombianTaxId`
 - `PostIncomeVoucher`
@@ -99,6 +99,20 @@ Cuando un comprobante aprobado necesita corrección, se crea una nota de ajuste 
 - Terceros se muestran como `identificación · nombre`.
 - Booleanos usan toggles.
 - Medios de pago usan select; efectivo genera alerta de no bancarización.
+- Cada opción principal del menú usa icono propio y grupo funcional: `Catálogos`, `Operación`, `Control`, `Reportes` o `Seguridad`.
+- El idioma operativo por defecto es español colombiano mediante `APP_LOCALE=es`, `APP_FALLBACK_LOCALE=es`, `APP_FAKER_LOCALE=es_CO` y `APP_TIMEZONE=America/Bogota`.
+
+## Migración A Filament
+
+La interfaz principal es `/admin`. La ruta pública `/` redirige a `/admin`, donde Filament gestiona la autenticación interna con su pantalla `/admin/login`.
+
+La ruta heredada `/login` y los CRUD Blade antiguos quedan deprecados y no deben usarse para operar el sistema. Las rutas web que se conservan fuera de Filament son únicamente las descargas CSV de reportes, protegidas por sesión autenticada:
+
+- `accounting-reports/ledger`
+- `accounting-reports/third-party-movements`
+- `accounting-reports/trial-balance`
+
+Los formularios Filament de ingresos, egresos, pagos y ajustes deben invocar servicios de dominio, no persistir asientos directamente con `Model::create`.
 
 ## Acceso
 
@@ -129,6 +143,38 @@ En Laravel Herd, la URL esperada es:
 
 ```text
 http://contpass.test/admin
+```
+
+## Variables De Entorno Recomendadas
+
+Instalación objetivo con PostgreSQL y Redis:
+
+```dotenv
+APP_NAME=ContPass
+APP_TIMEZONE=America/Bogota
+APP_LOCALE=es
+APP_FALLBACK_LOCALE=es
+APP_FAKER_LOCALE=es_CO
+
+DB_CONNECTION=pgsql
+DB_HOST=127.0.0.1
+DB_PORT=5432
+DB_DATABASE=contpass
+DB_USERNAME=contpass
+DB_PASSWORD=
+DB_SSLMODE=prefer
+
+CACHE_STORE=redis
+SESSION_DRIVER=redis
+SESSION_CONNECTION=default
+QUEUE_CONNECTION=redis
+
+REDIS_CLIENT=predis
+REDIS_HOST=127.0.0.1
+REDIS_PASSWORD=null
+REDIS_PORT=6379
+REDIS_DB=0
+REDIS_CACHE_DB=1
 ```
 
 ## Estado Y Pendientes Naturales

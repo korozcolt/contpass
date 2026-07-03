@@ -18,7 +18,15 @@ class CashAccountResource extends Resource
 {
     protected static ?string $model = CashAccount::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::Banknotes;
+
+    protected static ?string $navigationLabel = 'Caja y bancos';
+
+    protected static ?string $modelLabel = 'cuenta de caja o banco';
+
+    protected static ?string $pluralModelLabel = 'cuentas de caja y bancos';
+
+    protected static string|\UnitEnum|null $navigationGroup = 'Catálogos';
 
     public static function form(Schema $schema): Schema
     {

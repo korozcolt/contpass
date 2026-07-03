@@ -1,58 +1,156 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# ContPass
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+ContPass es una aplicación interna de control contable para empresas en Colombia. Nace de una necesidad práctica: registrar ingresos, egresos, pagos, terceros, retenciones, bancarización y soportes con trazabilidad suficiente para que el contador pueda revisar, conciliar y exportar información confiable.
 
-## About Laravel
+El sistema no reemplaza la facturación electrónica ni automatiza el cierre fiscal completo. Su objetivo es sostener el registro operativo de causación, caja/bancos y auxiliares contables bajo una estructura clara, auditable y preparada para reglas colombianas vigentes a 2026.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Alcance Funcional
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- Gestión de terceros con NIT/Cédula y DV validado con algoritmo DIAN.
+- Plan Único de Cuentas configurable por empresa.
+- Cuentas de caja y bancos asociadas a cuentas PUC clase 11.
+- Reglas de retención versionadas por vigencia, base mínima, tarifa, cuenta contable y concepto.
+- Causación de ingresos con cuenta por cobrar e ingreso.
+- Causación de egresos con gasto/costo, cuenta por pagar, soporte idóneo, deducibilidad y retenciones.
+- Registro de pagos con medio de pago y control de bancarización.
+- Comprobantes contables con encabezado y detalle bajo partida doble.
+- Periodos contables abiertos o cerrados.
+- Notas de ajuste para corregir comprobantes aprobados sin romper trazabilidad.
+- Reportes CSV: libro auxiliar, movimientos por tercero y balance de comprobación.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Principios Del Sistema
 
-## Learning Laravel
+ContPass está diseñado alrededor de causación, trazabilidad e inmutabilidad.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Cada movimiento relevante se transforma en un comprobante contable. El comprobante contiene una fecha, tercero, tipo, estado, descripción y líneas contables. La suma de débitos y créditos debe balancear siempre.
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Una vez aprobado un comprobante, no se corrige editándolo directamente. Cualquier corrección debe realizarse mediante una nota de ajuste que deje evidencia del cambio y conserve el historial del registro original.
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+Las reglas tributarias, como retenciones, no se guardan como constantes permanentes en código. Se administran como configuración versionada por fecha para responder a cambios normativos.
 
-## Agentic Development
+## Referente Normativo
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+El diseño toma como base la Ley 1314 de 2009, el Decreto 2420 de 2015 y sus actualizaciones vigentes a 2026. También contempla el control de medios de pago del Art. 771-5 del Estatuto Tributario para alertar sobre pagos en efectivo o no bancarizados que puedan afectar deducibilidad.
 
-```bash
-composer require laravel/boost --dev
+ContPass no emite facturación electrónica ni reporta directamente a la DIAN. Su papel es entregar información ordenada y exportable para revisión contable y conciliación.
 
-php artisan boost:install
-```
+## Flujos Operativos
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+### Terceros
 
-## Contributing
+1. Se registra el tipo de tercero: persona natural o persona jurídica.
+2. Se captura nombre, NIT/Cédula y DV separado.
+3. El sistema valida el DV para reducir errores de digitación.
+4. El tercero queda disponible para ingresos, egresos, pagos y reportes.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Ingresos
 
-## Code of Conduct
+1. Se selecciona el tercero.
+2. Se indica la fecha de causación.
+3. Se selecciona la cuenta de ingreso clase 4.
+4. Se selecciona la cuenta por cobrar clase 13.
+5. Se registra soporte, descripción y valor.
+6. El sistema genera un comprobante aprobado con débito a cuenta por cobrar y crédito a ingreso.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Egresos
 
-## Security Vulnerabilities
+1. Se selecciona el tercero proveedor.
+2. Se indica la fecha de causación.
+3. Se selecciona la cuenta de gasto clase 5 o costo clase 6.
+4. Se selecciona la cuenta por pagar clase 2.
+5. Se registra soporte, valor, deducibilidad y si el soporte es idóneo.
+6. El sistema evalúa reglas de retención vigentes.
+7. Se genera un comprobante aprobado con gasto/costo, retención y cuenta por pagar.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### Pagos
 
-## License
+1. Se selecciona el comprobante origen cuando aplica.
+2. Se selecciona caja o banco.
+3. Se define la contrapartida contable.
+4. Se selecciona el medio de pago: transferencia, cheque, tarjeta, depósito, efectivo u otro autorizado.
+5. Se registra fecha, referencia, descripción y valor.
+6. El sistema marca pagos en efectivo como no bancarizados para revisión tributaria.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Ajustes
+
+1. Se identifica el comprobante aprobado que requiere corrección.
+2. Se crea una nota de ajuste con sus propias líneas débito/crédito.
+3. La nota debe balancear por partida doble.
+4. El comprobante original queda marcado como ajustado.
+5. El historial conserva la relación entre comprobante original y ajuste.
+
+### Periodos Contables
+
+1. Se crea un periodo con fecha inicial y final.
+2. Mientras esté abierto, el sistema permite causaciones y pagos dentro del rango.
+3. Al cerrar el periodo, se bloquean causaciones directas sobre esas fechas.
+4. Las correcciones posteriores deben pasar por ajustes controlados.
+
+## Módulos Principales
+
+- `Catálogos`: terceros, plan de cuentas, caja/bancos y reglas de retención.
+- `Operación`: ingresos, egresos y pagos.
+- `Control`: comprobantes y periodos contables.
+- `Reportes`: libro auxiliar, movimientos por tercero y balance de comprobación.
+- `Seguridad`: usuarios y roles internos.
+
+## Estados Contables
+
+- `borrador`: registro en preparación.
+- `aprobado`: comprobante válido que impacta auxiliares.
+- `anulado`: comprobante invalidado sin eliminar historial.
+- `ajustado`: comprobante aprobado que tiene una nota de ajuste asociada.
+
+## Roles
+
+- `admin`: administración completa del sistema.
+- `accountant`: operación contable y revisión de información.
+- `viewer`: rol sin acceso al panel administrativo.
+
+## Convenciones De Interfaz
+
+La operación principal vive en Filament bajo el panel administrativo. Las vistas Blade operativas fueron deprecadas para concentrar la experiencia en una sola interfaz.
+
+Los formularios usan formatos visibles según el dato:
+
+- Valores monetarios con prefijo `COP $` e icono de moneda.
+- Porcentajes con sufijo `%`.
+- Fechas mediante selector visual.
+- NIT/Cédula y DV separados.
+- Cuentas PUC y terceros mediante selects buscables.
+- Booleanos mediante toggles visibles.
+- Medios de pago mediante select con advertencia para efectivo.
+
+## Reportes
+
+El libro auxiliar permite revisar movimientos por cuenta, tercero y fecha. Es la base para inspeccionar el detalle de débitos y créditos.
+
+El reporte de movimientos por tercero agrupa la actividad asociada a clientes, proveedores u otros terceros, útil para cruces contables y revisión documental.
+
+El balance de comprobación resume débitos, créditos y saldos por cuenta en un rango de fechas.
+
+Todos los reportes se exportan en CSV UTF-8 para facilitar revisión en hojas de cálculo y cruces externos.
+
+## Decisiones Importantes
+
+- La lógica contable vive en servicios de dominio, no en los formularios.
+- Los formularios operativos no crean asientos directamente.
+- Las cuentas PUC se validan por clase según el tipo de operación.
+- Los comprobantes aprobados son inmutables.
+- Las retenciones son configurables por vigencia.
+- PostgreSQL es la base de datos objetivo del sistema.
+- Redis queda previsto para cache, sesiones y colas.
+- El idioma operativo por defecto es español colombiano.
+
+## Estado Del MVP
+
+ContPass cubre el ciclo base de control interno: catálogos, causación, retención, pagos, bancarización, comprobantes, ajustes, periodos y reportes auxiliares.
+
+Pendientes naturales para fases posteriores:
+
+- Multiempresa real por usuario.
+- Políticas granulares por recurso.
+- Exportación Excel dedicada.
+- Conciliación bancaria asistida.
+- Importación masiva de extractos o soportes.
+- Parametrización tributaria ampliada por ciudad e ICA.

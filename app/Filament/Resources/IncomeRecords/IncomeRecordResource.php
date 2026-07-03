@@ -17,7 +17,15 @@ class IncomeRecordResource extends Resource
 {
     protected static ?string $model = IncomeRecord::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::ArrowTrendingUp;
+
+    protected static ?string $navigationLabel = 'Ingresos';
+
+    protected static ?string $modelLabel = 'ingreso';
+
+    protected static ?string $pluralModelLabel = 'ingresos';
+
+    protected static string|\UnitEnum|null $navigationGroup = 'Operación';
 
     public static function form(Schema $schema): Schema
     {

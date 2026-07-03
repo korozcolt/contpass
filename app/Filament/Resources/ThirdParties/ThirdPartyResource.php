@@ -18,7 +18,15 @@ class ThirdPartyResource extends Resource
 {
     protected static ?string $model = ThirdParty::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::Users;
+
+    protected static ?string $navigationLabel = 'Terceros';
+
+    protected static ?string $modelLabel = 'tercero';
+
+    protected static ?string $pluralModelLabel = 'terceros';
+
+    protected static string|\UnitEnum|null $navigationGroup = 'Catálogos';
 
     public static function form(Schema $schema): Schema
     {

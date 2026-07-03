@@ -14,4 +14,4 @@ cmds = [
 ]
 
 [start]
-cmd = 'php artisan config:clear && php artisan route:clear && php artisan view:clear && php artisan migrate --force && php artisan view:cache && node /assets/scripts/prestart.mjs /assets/nginx.template.conf /nginx.conf && (php-fpm -y /assets/php-fpm.conf & nginx -c /nginx.conf)'
+cmd = 'mkdir -p /var/log/nginx /var/lib/nginx /run/nginx && touch /var/log/nginx/error.log && php artisan config:clear && php artisan route:clear && php artisan view:clear && php artisan migrate --force && php artisan view:cache && node /assets/scripts/prestart.mjs /assets/nginx.template.conf /nginx.conf && (php-fpm -y /assets/php-fpm.conf & nginx -c /nginx.conf)'

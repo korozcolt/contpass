@@ -1,0 +1,41 @@
+<?php
+
+namespace App\Models;
+
+use Database\Factories\CompanyFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+class Company extends Model
+{
+    /** @use HasFactory<CompanyFactory> */
+    use HasFactory;
+
+    protected $fillable = [
+        'name',
+        'tax_id',
+        'verification_digit',
+        'currency',
+    ];
+
+    public function thirdParties(): HasMany
+    {
+        return $this->hasMany(ThirdParty::class);
+    }
+
+    public function chartAccounts(): HasMany
+    {
+        return $this->hasMany(ChartAccount::class);
+    }
+
+    public function cashAccounts(): HasMany
+    {
+        return $this->hasMany(CashAccount::class);
+    }
+
+    public function withholdingRules(): HasMany
+    {
+        return $this->hasMany(WithholdingRule::class);
+    }
+}

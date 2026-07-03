@@ -1,0 +1,128 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\AccountingEntry;
+use App\Models\ChartAccount;
+use App\Models\ThirdParty;
+use App\Services\Accounting\CurrentCompany;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+
+class AccountingReportController extends Controller
+{
+    public function __construct(private readonly CurrentCompany $currentCompany) {}
+
+    public function ledger(Request $request): View|StreamedResponse
+    {
+        $company = $this->currentCompany->get();
+        $entries = $this->ledgerQuery($request);
+
+        if ($request->boolean('export')) {
+            return $this->downloadCsv('libro-auxiliar.csv', ['Fecha', 'Comprobante', 'Cuenta', 'Tercero', 'Descripción', 'Débito', 'Crédito'], $entries->get()->map(fn (AccountingEntry $entry) => [
+                $entry->voucher->date->format('Y-m-d'),
+                $entry->voucher->number,
+                $entry->chartAccount->full_name,
+                $entry->thirdParty?->name,
+                $entry->description,
+                $entry->debit,
+                $entry->credit,
+            ])->all());
+        }
+
+        return view('accounting-reports.ledger', [
+            'entries' => $entries->paginate(50)->withQueryString(),
+            'chartAccounts' => ChartAccount::query()->whereBelongsTo($company)->orderBy('code')->get(),
+            'thirdParties' => ThirdParty::query()->whereBelongsTo($company)->orderBy('name')->get(),
+            'filters' => $request->only(['starts_on', 'ends_on', 'chart_account_id', 'third_party_id']),
+        ]);
+    }
+
+    public function trialBalance(Request $request): View|StreamedResponse
+    {
+        $company = $this->currentCompany->get();
+        $query = AccountingEntry::query()
+            ->select('chart_accounts.code', 'chart_accounts.name', DB::raw('sum(accounting_entries.debit) as debit_total'), DB::raw('sum(accounting_entries.credit) as credit_total'))
+            ->join('chart_accounts', 'chart_accounts.id', '=', 'accounting_entries.chart_account_id')
+            ->join('vouchers', 'vouchers.id', '=', 'accounting_entries.voucher_id')
+            ->where('vouchers.company_id', $company->id)
+            ->when($request->filled('starts_on'), fn ($query) => $query->whereDate('vouchers.date', '>=', $request->date('starts_on')))
+            ->when($request->filled('ends_on'), fn ($query) => $query->whereDate('vouchers.date', '<=', $request->date('ends_on')))
+            ->groupBy('chart_accounts.id', 'chart_accounts.code', 'chart_accounts.name')
+            ->orderBy('chart_accounts.code');
+
+        $rows = $query->get()->map(fn ($row) => [
+            'code' => $row->code,
+            'name' => $row->name,
+            'debit_total' => (float) $row->debit_total,
+            'credit_total' => (float) $row->credit_total,
+            'balance' => round((float) $row->debit_total - (float) $row->credit_total, 2),
+        ]);
+
+        if ($request->boolean('export')) {
+            return $this->downloadCsv('balance-comprobacion.csv', ['Cuenta', 'Nombre', 'Débito', 'Crédito', 'Saldo'], $rows->map(fn ($row) => array_values($row))->all());
+        }
+
+        return view('accounting-reports.trial-balance', [
+            'rows' => $rows,
+            'filters' => $request->only(['starts_on', 'ends_on']),
+        ]);
+    }
+
+    public function thirdPartyMovements(Request $request): View|StreamedResponse
+    {
+        $entries = $this->ledgerQuery($request)->whereNotNull('third_party_id');
+
+        if ($request->boolean('export')) {
+            return $this->downloadCsv('movimientos-por-tercero.csv', ['Fecha', 'Tercero', 'Comprobante', 'Cuenta', 'Descripción', 'Débito', 'Crédito'], $entries->get()->map(fn (AccountingEntry $entry) => [
+                $entry->voucher->date->format('Y-m-d'),
+                $entry->thirdParty?->name,
+                $entry->voucher->number,
+                $entry->chartAccount->full_name,
+                $entry->description,
+                $entry->debit,
+                $entry->credit,
+            ])->all());
+        }
+
+        return view('accounting-reports.third-party-movements', [
+            'entries' => $entries->paginate(50)->withQueryString(),
+            'thirdParties' => ThirdParty::query()->whereBelongsTo($this->currentCompany->get())->orderBy('name')->get(),
+            'filters' => $request->only(['starts_on', 'ends_on', 'third_party_id']),
+        ]);
+    }
+
+    private function ledgerQuery(Request $request)
+    {
+        $company = $this->currentCompany->get();
+
+        return AccountingEntry::query()
+            ->with(['voucher', 'chartAccount', 'thirdParty'])
+            ->whereHas('voucher', fn ($query) => $query->whereBelongsTo($company))
+            ->when($request->filled('starts_on'), fn ($query) => $query->whereHas('voucher', fn ($query) => $query->whereDate('date', '>=', $request->date('starts_on'))))
+            ->when($request->filled('ends_on'), fn ($query) => $query->whereHas('voucher', fn ($query) => $query->whereDate('date', '<=', $request->date('ends_on'))))
+            ->when($request->filled('chart_account_id'), fn ($query) => $query->where('chart_account_id', $request->integer('chart_account_id')))
+            ->when($request->filled('third_party_id'), fn ($query) => $query->where('third_party_id', $request->integer('third_party_id')))
+            ->latest();
+    }
+
+    /**
+     * @param  array<int, string>  $headers
+     * @param  array<int, array<int, mixed>>  $rows
+     */
+    private function downloadCsv(string $filename, array $headers, array $rows): StreamedResponse
+    {
+        return response()->streamDownload(function () use ($headers, $rows): void {
+            $handle = fopen('php://output', 'w');
+            fputcsv($handle, $headers);
+
+            foreach ($rows as $row) {
+                fputcsv($handle, $row);
+            }
+
+            fclose($handle);
+        }, $filename, ['Content-Type' => 'text/csv; charset=UTF-8']);
+    }
+}

@@ -4,6 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Mapa estructural de ContPass: módulos, arquitectura, servicios de dominio, flujos contables y decisiones técnicas del sistema.">
+    <link rel="icon" href="{{ asset('images/brand/contpass-icon-32.png') }}" sizes="32x32">
+    <link rel="apple-touch-icon" href="{{ asset('images/brand/contpass-icon-180.png') }}">
 
     <title>ContPass | Arquitectura del sistema</title>
 
@@ -14,11 +16,10 @@
     <header class="sticky top-0 z-20 border-b border-white/10 bg-zinc-950/95">
         <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4 lg:px-8">
             <a href="{{ route('welcome') }}" class="flex items-center gap-3" aria-label="ContPass arquitectura">
-                <span class="grid size-10 place-items-center rounded-md border border-amber-300 bg-amber-300 text-sm font-black text-zinc-950">CP</span>
-                <span>
-                    <span class="block text-lg font-black">ContPass</span>
-                    <span class="hidden text-xs font-semibold text-zinc-400 sm:block">Mapa estructural del software</span>
+                <span class="flex h-11 w-36 items-center rounded-md border border-white/15 bg-white px-3 shadow-sm sm:w-44">
+                    <img src="{{ asset('images/brand/contpass-logo-horizontal.png') }}" alt="ContPass" class="h-8 w-full object-contain">
                 </span>
+                <span class="hidden text-xs font-semibold text-zinc-400 md:block">Mapa estructural del software</span>
             </a>
 
             <nav class="hidden items-center gap-5 text-sm font-semibold text-zinc-300 lg:flex" aria-label="Navegación de arquitectura">
@@ -38,9 +39,10 @@
         <section class="border-b border-white/10">
             <div class="mx-auto grid min-h-[calc(100vh-150px)] max-w-7xl items-center gap-10 px-5 py-12 lg:grid-cols-[0.92fr_1.08fr] lg:px-8">
                 <div>
-                    <p class="inline-flex rounded-md border border-sky-300/40 bg-sky-300/10 px-3 py-1 text-sm font-bold text-sky-200">
-                        Blueprint interactivo
-                    </p>
+                    <div class="inline-flex items-center gap-3 rounded-md border border-sky-300/40 bg-sky-300/10 px-3 py-2">
+                        <img src="{{ asset('images/brand/contpass-logo-mark.png') }}" alt="" class="size-8 rounded-sm bg-white object-contain p-1">
+                        <span class="text-sm font-bold text-sky-200">Blueprint interactivo</span>
+                    </div>
                     <h1 class="mt-6 max-w-3xl text-5xl font-black leading-none text-white md:text-7xl">
                         Arquitectura contable antes que pantalla bonita.
                     </h1>

@@ -102,9 +102,11 @@ Cuando un comprobante aprobado necesita corrección, se crea una nota de ajuste 
 - Cada opción principal del menú usa icono propio y grupo funcional: `Catálogos`, `Operación`, `Control`, `Reportes` o `Seguridad`.
 - El idioma operativo por defecto es español colombiano mediante `APP_LOCALE=es`, `APP_FALLBACK_LOCALE=es`, `APP_FAKER_LOCALE=es_CO` y `APP_TIMEZONE=America/Bogota`.
 
-## Migración A Filament
+## Landing Pública Y Migración A Filament
 
-La interfaz principal es `/admin`. La ruta pública `/` redirige a `/admin`, donde Filament gestiona la autenticación interna con su pantalla `/admin/login`.
+La ruta pública `/` muestra una landing estructural del software. Su objetivo es explicar arquitectura, módulos, servicios de dominio, flujos críticos y garantías técnicas de ContPass sin exponer datos operativos, terceros, comprobantes, saldos, usuarios internos ni información sensible.
+
+La interfaz operativa principal es `/admin`, donde Filament gestiona la autenticación interna con su pantalla `/admin/login`.
 
 La ruta heredada `/login` y los CRUD Blade antiguos quedan deprecados y no deben usarse para operar el sistema. Las rutas web que se conservan fuera de Filament son únicamente las descargas CSV de reportes, protegidas por sesión autenticada:
 

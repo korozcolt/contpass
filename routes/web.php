@@ -4,7 +4,7 @@ use App\Http\Controllers\AccountingReportController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::redirect('/', '/admin')->name('dashboard');
+Route::view('/', 'welcome')->name('welcome');
 
 Route::get('accounting-reports/ledger', function (Request $request): mixed {
     abort_unless($request->user() !== null, 403);

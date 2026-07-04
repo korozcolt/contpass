@@ -2,8 +2,8 @@
 
 use App\Models\User;
 
-test('guests are sent to the Filament panel entrypoint', function () {
-    $this->get('/')->assertRedirect('/admin');
+test('guests can view the public welcome page', function () {
+    $this->get('/')->assertSuccessful()->assertSee('Mapa estructural del software');
 });
 
 test('legacy Blade entrypoints are deprecated', function () {
@@ -20,10 +20,10 @@ test('legacy Blade entrypoints are deprecated', function () {
     }
 });
 
-test('authenticated users are sent to the Filament panel', function () {
+test('authenticated users can still view the public welcome page', function () {
     $this->actingAs(User::factory()->create());
 
-    $this->get('/')->assertRedirect('/admin');
+    $this->get('/')->assertSuccessful()->assertSee('Abrir panel');
 });
 
 test('authorized users can view the Filament dashboard', function () {

@@ -31,7 +31,7 @@ class PaymentForm
                 AccountingFormFields::chartAccount('counterparty_account_id', 'Contrapartida contable'),
                 Select::make('method')
                     ->label('Medio de pago')
-                    ->options(collect(PaymentMethod::cases())->mapWithKeys(fn (PaymentMethod $method) => [$method->value => $method->label()])->all())
+                    ->options(PaymentMethod::class)
                     ->helperText('Si selecciona efectivo, el sistema marcará el pago como no bancarizado.')
                     ->required(),
                 TextInput::make('reference')->label('Referencia')->prefix('#')->maxLength(120),

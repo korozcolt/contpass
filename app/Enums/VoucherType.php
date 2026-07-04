@@ -2,12 +2,22 @@
 
 namespace App\Enums;
 
-enum VoucherType: string
+use Filament\Support\Contracts\HasColor;
+use Filament\Support\Contracts\HasIcon;
+use Filament\Support\Contracts\HasLabel;
+use Filament\Support\Icons\Heroicon;
+
+enum VoucherType: string implements HasColor, HasIcon, HasLabel
 {
     case Income = 'income';
     case Expense = 'expense';
     case Payment = 'payment';
     case Adjustment = 'adjustment';
+
+    public function getLabel(): string
+    {
+        return $this->label();
+    }
 
     public function label(): string
     {
@@ -16,6 +26,26 @@ enum VoucherType: string
             self::Expense => 'Egreso',
             self::Payment => 'Pago',
             self::Adjustment => 'Ajuste',
+        };
+    }
+
+    public function getColor(): string
+    {
+        return match ($this) {
+            self::Income => 'success',
+            self::Expense => 'danger',
+            self::Payment => 'primary',
+            self::Adjustment => 'warning',
+        };
+    }
+
+    public function getIcon(): Heroicon
+    {
+        return match ($this) {
+            self::Income => Heroicon::ArrowTrendingUp,
+            self::Expense => Heroicon::ArrowTrendingDown,
+            self::Payment => Heroicon::Banknotes,
+            self::Adjustment => Heroicon::AdjustmentsHorizontal,
         };
     }
 }

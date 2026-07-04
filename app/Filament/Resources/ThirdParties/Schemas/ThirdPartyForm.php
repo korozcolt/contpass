@@ -5,8 +5,8 @@ namespace App\Filament\Resources\ThirdParties\Schemas;
 use App\Enums\ThirdPartyType;
 use App\Filament\Support\AccountingFormFields;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -21,7 +21,7 @@ class ThirdPartyForm
                 Grid::make(3)->schema([
                     Select::make('type')
                         ->label('Tipo')
-                        ->options(collect(ThirdPartyType::cases())->mapWithKeys(fn (ThirdPartyType $type) => [$type->value => $type->label()])->all())
+                        ->options(ThirdPartyType::class)
                         ->required(),
                     TextInput::make('tax_id')
                         ->label('NIT/Cédula')

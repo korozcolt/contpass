@@ -20,7 +20,7 @@ class ChartAccountForm
                 TextInput::make('code')->label('Código PUC')->prefix('#')->required()->maxLength(20),
                 Select::make('nature')
                     ->label('Naturaleza')
-                    ->options(collect(AccountNature::cases())->mapWithKeys(fn (AccountNature $nature) => [$nature->value => $nature->label()])->all())
+                    ->options(AccountNature::class)
                     ->required(),
                 TextInput::make('name')->label('Nombre')->required()->maxLength(255),
                 Toggle::make('is_active')->label('Activa')->default(true),

@@ -18,7 +18,7 @@ class UserForm
                 TextInput::make('email')->label('Correo')->email()->required()->maxLength(255),
                 Select::make('role')
                     ->label('Rol')
-                    ->options(collect(UserRole::cases())->mapWithKeys(fn (UserRole $role) => [$role->value => $role->label()])->all())
+                    ->options(UserRole::class)
                     ->required(),
                 TextInput::make('password')
                     ->label('Contraseña')

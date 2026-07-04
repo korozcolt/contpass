@@ -20,7 +20,7 @@ class CashAccountForm
                 TextInput::make('name')->label('Nombre')->required()->maxLength(255),
                 Select::make('type')
                     ->label('Tipo')
-                    ->options(collect(CashAccountType::cases())->mapWithKeys(fn (CashAccountType $type) => [$type->value => $type->label()])->all())
+                    ->options(CashAccountType::class)
                     ->required(),
                 AccountingFormFields::chartAccount('chart_account_id', 'Cuenta PUC clase 11', '11'),
                 TextInput::make('bank_name')->label('Banco')->prefix('Banco'),

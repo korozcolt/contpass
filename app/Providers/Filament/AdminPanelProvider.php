@@ -28,6 +28,8 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->brandName('ContPass')
+            ->font('IBM Plex Sans')
+            ->monoFont('IBM Plex Mono')
             ->login()
             ->colors([
                 'primary' => Color::Amber,

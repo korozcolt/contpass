@@ -33,7 +33,8 @@ class LedgerReport extends Page
             ->when(request('chart_account_id'), fn ($query, $id) => $query->where('chart_account_id', $id))
             ->when(request('third_party_id'), fn ($query, $id) => $query->where('third_party_id', $id))
             ->latest()
-            ->paginate(50);
+            ->paginate(50)
+            ->withQueryString();
     }
 
     public function chartAccounts()

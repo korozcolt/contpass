@@ -32,7 +32,8 @@ class ThirdPartyMovementsReport extends Page
             ->when(request('ends_on'), fn ($query, $date) => $query->whereHas('voucher', fn ($query) => $query->whereDate('date', '<=', $date)))
             ->when(request('third_party_id'), fn ($query, $id) => $query->where('third_party_id', $id))
             ->latest()
-            ->paginate(50);
+            ->paginate(50)
+            ->withQueryString();
     }
 
     public function thirdParties()

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\CompanyType;
 use Database\Factories\CompanyFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -18,16 +19,24 @@ class Company extends Model
         'verification_digit',
         'currency',
         'has_budgetary_control',
+        'type',
+        'phone',
+        'email',
+        'address',
+        'city',
+        'legal_representative',
     ];
 
     protected $attributes = [
         'has_budgetary_control' => false,
+        'type' => 'private',
     ];
 
     protected function casts(): array
     {
         return [
             'has_budgetary_control' => 'boolean',
+            'type' => CompanyType::class,
         ];
     }
 

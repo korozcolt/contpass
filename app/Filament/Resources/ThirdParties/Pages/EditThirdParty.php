@@ -3,9 +3,9 @@
 namespace App\Filament\Resources\ThirdParties\Pages;
 
 use App\Filament\Resources\ThirdParties\ThirdPartyResource;
+use App\Services\Accounting\ValidateColombianTaxId;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
-use App\Services\Accounting\ValidateColombianTaxId;
 use Illuminate\Validation\ValidationException;
 
 class EditThirdParty extends EditRecord

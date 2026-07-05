@@ -7,6 +7,7 @@ use App\Filament\Resources\ExpenseRecords\Pages\ListExpenseRecords;
 use App\Filament\Resources\ExpenseRecords\Schemas\ExpenseRecordForm;
 use App\Filament\Resources\ExpenseRecords\Tables\ExpenseRecordsTable;
 use App\Models\ExpenseRecord;
+use App\Services\Accounting\CurrentCompany;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -26,6 +27,11 @@ class ExpenseRecordResource extends Resource
     protected static ?string $pluralModelLabel = 'egresos';
 
     protected static string|\UnitEnum|null $navigationGroup = 'Operación';
+
+    public static function canCreate(): bool
+    {
+        return ! app(CurrentCompany::class)->get()->has_budgetary_control;
+    }
 
     public static function form(Schema $schema): Schema
     {

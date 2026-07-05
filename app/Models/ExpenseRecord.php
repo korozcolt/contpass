@@ -14,6 +14,7 @@ class ExpenseRecord extends Model
 
     protected $fillable = [
         'voucher_id',
+        'budget_obligation_id',
         'expense_account_id',
         'payable_account_id',
         'support_type',
@@ -49,5 +50,10 @@ class ExpenseRecord extends Model
     public function payableAccount(): BelongsTo
     {
         return $this->belongsTo(ChartAccount::class, 'payable_account_id');
+    }
+
+    public function budgetObligation(): BelongsTo
+    {
+        return $this->belongsTo(BudgetObligation::class);
     }
 }

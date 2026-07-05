@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Vouchers\Tables;
 
+use App\Enums\VoucherType;
 use App\Filament\Support\AccountingFormFields;
 use App\Models\Voucher;
 use App\Services\Accounting\CreateAdjustmentVoucher;
@@ -12,6 +13,7 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
 class VouchersTable
@@ -28,6 +30,11 @@ class VouchersTable
                 TextColumn::make('thirdParty.name')->label('Tercero')->searchable()->placeholder('-'),
                 TextColumn::make('description')->label('Descripción')->searchable()->limit(60),
                 TextColumn::make('approved_at')->label('Aprobado')->dateTime()->toggleable(),
+            ])
+            ->filters([
+                SelectFilter::make('type')
+                    ->label('Tipo')
+                    ->options(VoucherType::class),
             ])
             ->recordActions([
                 ViewAction::make(),

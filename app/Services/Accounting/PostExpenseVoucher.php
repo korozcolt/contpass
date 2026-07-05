@@ -3,6 +3,7 @@
 namespace App\Services\Accounting;
 
 use App\Enums\VoucherType;
+use App\Models\BudgetObligation;
 use App\Models\Company;
 use App\Models\ExpenseRecord;
 use App\Models\ThirdParty;
@@ -19,9 +20,9 @@ class PostExpenseVoucher
     /**
      * @param  array{third_party_id: int, expense_account_id: int, payable_account_id: int, support_type: string, support_number: string, accrual_date: string, amount: numeric-string|float|int, has_valid_support?: bool, is_deductible?: bool, description?: string}  $data
      */
-    public function handle(Company $company, ThirdParty $thirdParty, array $data): Voucher
+    public function handle(Company $company, ThirdParty $thirdParty, array $data, ?BudgetObligation $obligation = null): Voucher
     {
-        return DB::transaction(function () use ($company, $thirdParty, $data): Voucher {
+        return DB::transaction(function () use ($company, $thirdParty, $data, $obligation): Voucher {
             $amount = round((float) $data['amount'], 2);
             $description = $data['description'] ?? "Egreso {$data['support_number']}";
             $withholdings = $this->applyWithholdingRules->handle($company, $amount, $data['accrual_date']);
@@ -57,6 +58,7 @@ class PostExpenseVoucher
 
             ExpenseRecord::query()->create([
                 'voucher_id' => $voucher->id,
+                'budget_obligation_id' => $obligation?->id,
                 'expense_account_id' => $data['expense_account_id'],
                 'payable_account_id' => $data['payable_account_id'],
                 'support_type' => $data['support_type'],

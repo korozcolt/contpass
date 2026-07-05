@@ -13,6 +13,7 @@ enum VoucherType: string implements HasColor, HasIcon, HasLabel
     case Expense = 'expense';
     case Payment = 'payment';
     case Adjustment = 'adjustment';
+    case Budget = 'budget';
 
     public function getLabel(): string
     {
@@ -26,6 +27,7 @@ enum VoucherType: string implements HasColor, HasIcon, HasLabel
             self::Expense => 'Egreso',
             self::Payment => 'Pago',
             self::Adjustment => 'Ajuste',
+            self::Budget => 'Presupuestal',
         };
     }
 
@@ -36,6 +38,7 @@ enum VoucherType: string implements HasColor, HasIcon, HasLabel
             self::Expense => 'danger',
             self::Payment => 'primary',
             self::Adjustment => 'warning',
+            self::Budget => 'info',
         };
     }
 
@@ -46,6 +49,7 @@ enum VoucherType: string implements HasColor, HasIcon, HasLabel
             self::Expense => Heroicon::ArrowTrendingDown,
             self::Payment => Heroicon::Banknotes,
             self::Adjustment => Heroicon::AdjustmentsHorizontal,
+            self::Budget => Heroicon::ChartBar,
         };
     }
 }

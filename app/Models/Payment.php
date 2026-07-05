@@ -16,6 +16,7 @@ class Payment extends Model
     protected $fillable = [
         'voucher_id',
         'source_voucher_id',
+        'payment_order_id',
         'cash_account_id',
         'method',
         'reference',
@@ -47,5 +48,10 @@ class Payment extends Model
     public function cashAccount(): BelongsTo
     {
         return $this->belongsTo(CashAccount::class);
+    }
+
+    public function paymentOrder(): BelongsTo
+    {
+        return $this->belongsTo(PaymentOrder::class);
     }
 }

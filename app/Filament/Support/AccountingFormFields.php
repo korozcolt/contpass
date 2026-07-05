@@ -2,6 +2,9 @@
 
 namespace App\Filament\Support;
 
+use App\Models\BudgetAppropriation;
+use App\Models\BudgetAvailabilityCertificate;
+use App\Models\BudgetRegistration;
 use App\Models\ChartAccount;
 use App\Models\ThirdParty;
 use App\Models\Voucher;
@@ -128,6 +131,59 @@ class AccountingFormFields
                 ->get()
                 ->mapWithKeys(fn (Voucher $voucher) => [
                     $voucher->id => "{$voucher->number} · {$voucher->thirdParty?->name} · {$voucher->description}",
+                ])
+                ->all())
+            ->searchable()
+            ->preload();
+    }
+
+    public static function budgetAppropriation(string $name = 'budget_appropriation_id'): Select
+    {
+        return Select::make($name)
+            ->label('Rubro presupuestal')
+            ->options(fn (): array => BudgetAppropriation::query()
+                ->whereBelongsTo(app(CurrentCompany::class)->get())
+                ->active()
+                ->orderBy('code')
+                ->get()
+                ->mapWithKeys(fn (BudgetAppropriation $rubro) => [
+                    $rubro->id => "{$rubro->code} · {$rubro->name} (Disp: \$".number_format($rubro->available_amount, 2).')',
+                ])
+                ->all())
+            ->searchable()
+            ->preload();
+    }
+
+    public static function budgetCertificate(string $name = 'budget_availability_certificate_id'): Select
+    {
+        return Select::make($name)
+            ->label('CDP')
+            ->options(fn (): array => BudgetAvailabilityCertificate::query()
+                ->whereBelongsTo(app(CurrentCompany::class)->get())
+                ->where('status', 'active')
+                ->with('budgetAppropriation')
+                ->orderBy('number')
+                ->get()
+                ->mapWithKeys(fn (BudgetAvailabilityCertificate $cdp) => [
+                    $cdp->id => "{$cdp->number} · {$cdp->budgetAppropriation->name} (Saldo: \$".number_format($cdp->available_for_registration, 2).')',
+                ])
+                ->all())
+            ->searchable()
+            ->preload();
+    }
+
+    public static function budgetRegistration(string $name = 'budget_registration_id'): Select
+    {
+        return Select::make($name)
+            ->label('Registro Presupuestal')
+            ->options(fn (): array => BudgetRegistration::query()
+                ->whereBelongsTo(app(CurrentCompany::class)->get())
+                ->where('status', 'active')
+                ->with(['thirdParty', 'budgetAvailabilityCertificate'])
+                ->orderBy('number')
+                ->get()
+                ->mapWithKeys(fn (BudgetRegistration $rp) => [
+                    $rp->id => "{$rp->number} · {$rp->thirdParty->name} (Saldo: \$".number_format($rp->available_for_obligation, 2).')',
                 ])
                 ->all())
             ->searchable()

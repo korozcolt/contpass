@@ -17,7 +17,19 @@ class Company extends Model
         'tax_id',
         'verification_digit',
         'currency',
+        'has_budgetary_control',
     ];
+
+    protected $attributes = [
+        'has_budgetary_control' => false,
+    ];
+
+    protected function casts(): array
+    {
+        return [
+            'has_budgetary_control' => 'boolean',
+        ];
+    }
 
     public function thirdParties(): HasMany
     {

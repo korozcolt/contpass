@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\VoucherStatus;
 use App\Enums\VoucherType;
+use App\Traits\Auditable;
 use Database\Factories\VoucherFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -16,7 +17,7 @@ use RuntimeException;
 class Voucher extends Model
 {
     /** @use HasFactory<VoucherFactory> */
-    use HasFactory;
+    use Auditable, HasFactory;
 
     protected $fillable = [
         'company_id',

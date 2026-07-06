@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\BudgetObligationStatus;
+use App\Traits\Auditable;
 use Database\Factories\BudgetObligationFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -12,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class BudgetObligation extends Model
 {
     /** @use HasFactory<BudgetObligationFactory> */
-    use HasFactory;
+    use Auditable, HasFactory;
 
     protected $fillable = [
         'company_id',

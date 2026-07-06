@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\BudgetCertificateStatus;
 use App\Enums\BudgetRegistrationStatus;
+use App\Traits\Auditable;
 use Database\Factories\BudgetAvailabilityCertificateFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -14,7 +15,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class BudgetAvailabilityCertificate extends Model
 {
     /** @use HasFactory<BudgetAvailabilityCertificateFactory> */
-    use HasFactory;
+    use Auditable, HasFactory;
 
     protected $fillable = [
         'company_id',

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\BudgetCertificateStatus;
+use App\Traits\Auditable;
 use Database\Factories\BudgetAppropriationFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -14,7 +15,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class BudgetAppropriation extends Model
 {
     /** @use HasFactory<BudgetAppropriationFactory> */
-    use HasFactory;
+    use Auditable, HasFactory;
 
     protected $fillable = [
         'company_id',

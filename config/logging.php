@@ -119,8 +119,17 @@ return [
         ],
 
         'null' => [
-            'driver' => 'monolog',
+            'driver' => 'null',
             'handler' => NullHandler::class,
+        ],
+
+        'audit' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/audit/contpass_audit.log'),
+            'level' => 'info',
+            'days' => 45,
+            'permission' => 0660,
+            'replace_placeholders' => true,
         ],
 
         'emergency' => [

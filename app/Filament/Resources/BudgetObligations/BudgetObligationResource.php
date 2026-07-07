@@ -27,7 +27,15 @@ class BudgetObligationResource extends Resource
 
     protected static ?string $pluralModelLabel = 'obligaciones';
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Presupuesto';
+    protected static string|\UnitEnum|null $navigationGroup = 'Presupuesto de Gastos';
+
+    /**
+     * Oculto del menú lateral: accesible vía RelationManager dentro del RP
+     * y localizable en el buscador global por número de Obligación.
+     */
+    protected static bool $shouldRegisterNavigation = false;
+
+    protected static ?string $globalSearchKeyAttribute = 'number';
 
     public static function canAccess(): bool
     {

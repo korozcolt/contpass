@@ -5,6 +5,7 @@ namespace App\Filament\Resources\BudgetCertificates;
 use App\Filament\Resources\BudgetCertificates\Pages\CreateBudgetCertificate;
 use App\Filament\Resources\BudgetCertificates\Pages\EditBudgetCertificate;
 use App\Filament\Resources\BudgetCertificates\Pages\ListBudgetCertificates;
+use App\Filament\Resources\BudgetCertificates\RelationManagers\BudgetRegistrationsRelationManager;
 use App\Filament\Resources\BudgetCertificates\Schemas\BudgetCertificateForm;
 use App\Filament\Resources\BudgetCertificates\Tables\BudgetCertificatesTable;
 use App\Models\BudgetAvailabilityCertificate;
@@ -27,7 +28,15 @@ class BudgetCertificateResource extends Resource
 
     protected static ?string $pluralModelLabel = 'CDPs';
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Presupuesto';
+    protected static string|\UnitEnum|null $navigationGroup = 'Presupuesto de Gastos';
+
+    /**
+     * Oculto del menú lateral: accesible vía RelationManager dentro de Apropiación
+     * y localizable en el buscador global por número de CDP.
+     */
+    protected static bool $shouldRegisterNavigation = false;
+
+    protected static ?string $globalSearchKeyAttribute = 'number';
 
     public static function canAccess(): bool
     {
@@ -47,7 +56,7 @@ class BudgetCertificateResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            BudgetRegistrationsRelationManager::class,
         ];
     }
 

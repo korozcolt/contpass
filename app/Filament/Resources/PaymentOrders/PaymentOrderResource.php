@@ -27,7 +27,7 @@ class PaymentOrderResource extends Resource
 
     protected static ?string $pluralModelLabel = 'órdenes de pago';
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Presupuesto';
+    protected static string|\UnitEnum|null $navigationGroup = 'Tesorería';
 
     public static function canAccess(): bool
     {

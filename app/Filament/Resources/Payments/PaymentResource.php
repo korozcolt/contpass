@@ -25,7 +25,7 @@ class PaymentResource extends Resource
 
     protected static ?string $pluralModelLabel = 'pagos';
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Operación';
+    protected static string|\UnitEnum|null $navigationGroup = 'Tesorería';
 
     public static function form(Schema $schema): Schema
     {

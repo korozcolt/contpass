@@ -5,6 +5,7 @@ namespace App\Filament\Resources\BudgetRegistrations;
 use App\Filament\Resources\BudgetRegistrations\Pages\CreateBudgetRegistration;
 use App\Filament\Resources\BudgetRegistrations\Pages\EditBudgetRegistration;
 use App\Filament\Resources\BudgetRegistrations\Pages\ListBudgetRegistrations;
+use App\Filament\Resources\BudgetRegistrations\RelationManagers\BudgetObligationsRelationManager;
 use App\Filament\Resources\BudgetRegistrations\Schemas\BudgetRegistrationForm;
 use App\Filament\Resources\BudgetRegistrations\Tables\BudgetRegistrationsTable;
 use App\Models\BudgetRegistration;
@@ -27,7 +28,15 @@ class BudgetRegistrationResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Registros Presupuestales';
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Presupuesto';
+    protected static string|\UnitEnum|null $navigationGroup = 'Presupuesto de Gastos';
+
+    /**
+     * Oculto del menú lateral: accesible vía RelationManager dentro del CDP
+     * y localizable en el buscador global por número de RP.
+     */
+    protected static bool $shouldRegisterNavigation = false;
+
+    protected static ?string $globalSearchKeyAttribute = 'number';
 
     public static function canAccess(): bool
     {
@@ -47,7 +56,7 @@ class BudgetRegistrationResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            BudgetObligationsRelationManager::class,
         ];
     }
 

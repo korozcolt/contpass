@@ -79,6 +79,11 @@ class BudgetAppropriation extends Model
         return $this->hasMany(BudgetAvailabilityCertificate::class);
     }
 
+    public function budgetModifications(): HasMany
+    {
+        return $this->hasMany(BudgetModification::class, 'destination_appropriation_id');
+    }
+
     public function chartMapping(): HasOne
     {
         return $this->hasOne(BudgetChartMapping::class);

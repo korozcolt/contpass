@@ -14,6 +14,7 @@ class IncomeRecord extends Model
 
     protected $fillable = [
         'voucher_id',
+        'budget_revenue_id',
         'revenue_account_id',
         'receivable_account_id',
         'support_number',
@@ -42,5 +43,10 @@ class IncomeRecord extends Model
     public function receivableAccount(): BelongsTo
     {
         return $this->belongsTo(ChartAccount::class, 'receivable_account_id');
+    }
+
+    public function budgetRevenue(): BelongsTo
+    {
+        return $this->belongsTo(BudgetRevenue::class);
     }
 }

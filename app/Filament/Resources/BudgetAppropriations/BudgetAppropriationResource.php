@@ -5,6 +5,8 @@ namespace App\Filament\Resources\BudgetAppropriations;
 use App\Filament\Resources\BudgetAppropriations\Pages\CreateBudgetAppropriation;
 use App\Filament\Resources\BudgetAppropriations\Pages\EditBudgetAppropriation;
 use App\Filament\Resources\BudgetAppropriations\Pages\ListBudgetAppropriations;
+use App\Filament\Resources\BudgetAppropriations\RelationManagers\BudgetCertificatesRelationManager;
+use App\Filament\Resources\BudgetAppropriations\RelationManagers\BudgetModificationsRelationManager;
 use App\Filament\Resources\BudgetAppropriations\Schemas\BudgetAppropriationForm;
 use App\Filament\Resources\BudgetAppropriations\Tables\BudgetAppropriationsTable;
 use App\Models\BudgetAppropriation;
@@ -27,7 +29,9 @@ class BudgetAppropriationResource extends Resource
 
     protected static ?string $pluralModelLabel = 'apropiaciones';
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Presupuesto';
+    protected static string|\UnitEnum|null $navigationGroup = 'Presupuesto de Gastos';
+
+    protected static ?int $navigationSort = 1;
 
     public static function canAccess(): bool
     {
@@ -47,7 +51,8 @@ class BudgetAppropriationResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            BudgetCertificatesRelationManager::class,
+            BudgetModificationsRelationManager::class,
         ];
     }
 

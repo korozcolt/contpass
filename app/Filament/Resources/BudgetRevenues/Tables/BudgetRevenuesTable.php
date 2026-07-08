@@ -6,7 +6,6 @@ use App\Models\BudgetRevenue;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Tables\Columns\ProgressColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -48,13 +47,27 @@ class BudgetRevenuesTable
                     ->label('Recaudado')
                     ->money('COP')
                     ->color(fn (BudgetRevenue $record): string => $record->executed_amount >= (float) $record->projected_amount ? 'success' : 'warning'),
-                ProgressColumn::make('execution_percentage')
+                TextColumn::make('execution_percentage')
                     ->label('% Ejecución')
-                    ->color(fn (BudgetRevenue $record): string => match (true) {
-                        $record->execution_percentage >= 90 => 'success',
-                        $record->execution_percentage >= 50 => 'warning',
-                        default => 'danger',
-                    }),
+                    ->html()
+                    ->formatStateUsing(function (float $state, BudgetRevenue $record): string {
+                        $percent = min(100, max(0, $state));
+                        $colorClass = match (true) {
+                            $state >= 90 => 'bg-emerald-500',
+                            $state >= 50 => 'bg-amber-500',
+                            default => 'bg-rose-500',
+                        };
+
+                        return "
+                            <div class='flex items-center gap-2' style='min-width: 120px;'>
+                                <div class='w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700'>
+                                    <div class='{$colorClass} h-2 rounded-full transition-all' style='width: {$percent}%'></div>
+                                </div>
+                                <span class='text-xs font-semibold shrink-0'>".number_format($state, 1).'%</span>
+                            </div>
+                        ';
+                    })
+                    ->sortable(),
                 TextColumn::make('fiscal_year')
                     ->label('Vigencia')
                     ->sortable(),

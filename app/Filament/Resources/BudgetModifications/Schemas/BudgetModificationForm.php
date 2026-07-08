@@ -10,7 +10,6 @@ use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Get;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Auth;
 
@@ -45,7 +44,7 @@ class BudgetModificationForm
                     ->searchable()
                     ->preload()
                     ->required()
-                    ->visible(fn (Get $get): bool => $get('type') === BudgetModificationType::Transfer->value)
+                    ->visible(fn ($get): bool => $get('type') === BudgetModificationType::Transfer->value)
                     ->helperText('Solo para traslados: el rubro que cede saldo.'),
                 Select::make('destination_appropriation_id')
                     ->label('Rubro destino (recibe recursos)')

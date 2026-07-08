@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Vouchers;
 
+use App\Filament\Resources\Vouchers\Pages\CreateVoucher;
+use App\Filament\Resources\Vouchers\Pages\EditVoucher;
 use App\Filament\Resources\Vouchers\Pages\ListVouchers;
 use App\Filament\Resources\Vouchers\Pages\ViewVoucher;
 use App\Filament\Resources\Vouchers\Schemas\VoucherForm;
@@ -54,7 +56,9 @@ class VoucherResource extends Resource
     {
         return [
             'index' => ListVouchers::route('/'),
+            'create' => CreateVoucher::route('/create'),
             'view' => ViewVoucher::route('/{record}'),
+            'edit' => EditVoucher::route('/{record}/edit'),
         ];
     }
 }

@@ -14,7 +14,6 @@ use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Get;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -57,7 +56,7 @@ class BudgetModificationsRelationManager extends RelationManager
                     ->searchable()
                     ->preload()
                     ->required()
-                    ->visible(fn (Get $get): bool => $get('type') === BudgetModificationType::Transfer->value)
+                    ->visible(fn ($get): bool => $get('type') === BudgetModificationType::Transfer->value)
                     ->helperText('Solo para traslados: el rubro que cede saldo.'),
                 TextInput::make('document_reference')
                     ->label('Referencia del acto administrativo')

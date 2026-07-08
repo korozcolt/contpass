@@ -29,7 +29,9 @@ class CompanySettings extends Page implements HasForms
 
     protected static ?string $title = 'Configuración de la Empresa';
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Control';
+    protected static string|\UnitEnum|null $navigationGroup = 'Configuración';
+
+    protected static ?int $navigationSort = 1;
 
     protected string $view = 'filament.pages.company-settings';
 

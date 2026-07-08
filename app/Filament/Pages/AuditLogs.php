@@ -30,7 +30,9 @@ class AuditLogs extends Page implements HasTable
 
     protected static ?string $title = 'Historial de Auditoría';
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Control';
+    protected static string|\UnitEnum|null $navigationGroup = 'Configuración';
+
+    protected static ?int $navigationSort = 3;
 
     protected string $view = 'filament.pages.audit-logs';
 

@@ -23,6 +23,8 @@ class BudgetObligationsRelationManager extends RelationManager
 {
     protected static string $relationship = 'budgetObligations';
 
+    protected static bool $shouldSkipAuthorization = true;
+
     protected static ?string $title = 'Obligaciones Presupuestales';
 
     public function form(Schema $schema): Schema

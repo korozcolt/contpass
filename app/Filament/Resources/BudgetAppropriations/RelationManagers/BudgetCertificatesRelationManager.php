@@ -22,6 +22,8 @@ class BudgetCertificatesRelationManager extends RelationManager
 {
     protected static string $relationship = 'budgetCertificates';
 
+    protected static bool $shouldSkipAuthorization = true;
+
     protected static ?string $title = 'Certificados de Disponibilidad Presupuestal (CDPs)';
 
     public function form(Schema $schema): Schema

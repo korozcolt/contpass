@@ -25,6 +25,8 @@ class BudgetRegistrationsRelationManager extends RelationManager
 {
     protected static string $relationship = 'budgetRegistrations';
 
+    protected static bool $shouldSkipAuthorization = true;
+
     protected static ?string $title = 'Registros Presupuestales (RPs)';
 
     public function form(Schema $schema): Schema

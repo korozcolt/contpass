@@ -47,6 +47,10 @@ class AdminPanelProvider extends PanelProvider
                 'Control',
                 'Catálogos',
                 'Reportes',
+                'Rendición',
+                'Cuentas x Cobrar',
+                'Almacén',
+                'Nómina',
                 'Configuración',
             ])
             ->pages([

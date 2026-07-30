@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\AccountingEntry;
 use App\Models\ChartAccount;
 use App\Models\ThirdParty;
+use App\Services\Accounting\AccountsReceivable;
 use App\Services\Accounting\CurrentCompany;
+use App\Services\Accounting\FinancialStatement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
@@ -92,6 +94,81 @@ class AccountingReportController extends Controller
             'thirdParties' => ThirdParty::query()->whereBelongsTo($this->currentCompany->get())->orderBy('name')->get(),
             'filters' => $request->only(['starts_on', 'ends_on', 'third_party_id']),
         ]);
+    }
+
+    public function journal(Request $request): StreamedResponse
+    {
+        $company = $this->currentCompany->get();
+
+        $entries = AccountingEntry::query()
+            ->with(['voucher', 'chartAccount', 'thirdParty'])
+            ->whereHas('voucher', fn ($query) => $query->whereBelongsTo($company))
+            ->join('vouchers', 'vouchers.id', '=', 'accounting_entries.voucher_id')
+            ->when($request->filled('starts_on'), fn ($query) => $query->whereDate('vouchers.date', '>=', $request->date('starts_on')))
+            ->when($request->filled('ends_on'), fn ($query) => $query->whereDate('vouchers.date', '<=', $request->date('ends_on')))
+            ->when($request->filled('type'), fn ($query) => $query->where('vouchers.type', $request->string('type')))
+            ->orderBy('vouchers.date')
+            ->orderBy('vouchers.number')
+            ->select('accounting_entries.*')
+            ->get();
+
+        return $this->downloadCsv('libro-diario.csv', ['Fecha', 'Comprobante', 'Tipo', 'Cuenta', 'Tercero', 'Descripción', 'Débito', 'Crédito'], $entries->map(fn (AccountingEntry $entry) => [
+            $entry->voucher->date->format('Y-m-d'),
+            $entry->voucher->number,
+            $entry->voucher->type->getLabel(),
+            $entry->chartAccount->full_name,
+            $entry->thirdParty?->name,
+            $entry->description,
+            $entry->debit,
+            $entry->credit,
+        ])->all());
+    }
+
+    public function financialStatements(Request $request): StreamedResponse
+    {
+        $company = $this->currentCompany->get();
+        $statement = app(FinancialStatement::class);
+
+        $balanceSheet = $statement->balanceSheet($company, $request->input('ends_on'));
+        $incomeStatement = $statement->incomeStatement($company, $request->input('starts_on'), $request->input('ends_on'));
+
+        $rows = [];
+        $rows[] = ['BALANCE GENERAL', '', ''];
+        foreach ($balanceSheet['classes'] as $class) {
+            foreach ($class['accounts'] as $account) {
+                $rows[] = [$account['code'], $account['name'], number_format($account['balance'], 2, '.', '')];
+            }
+            $rows[] = ["Total {$class['label']}", '', number_format($class['total'], 2, '.', '')];
+        }
+        $rows[] = ['Resultado del ejercicio', '', number_format($balanceSheet['net_income'], 2, '.', '')];
+        $rows[] = ['', '', ''];
+        $rows[] = ['ESTADO DE RESULTADOS', '', ''];
+        foreach ($incomeStatement['classes'] as $class) {
+            foreach ($class['accounts'] as $account) {
+                $rows[] = [$account['code'], $account['name'], number_format($account['balance'], 2, '.', '')];
+            }
+            $rows[] = ["Total {$class['label']}", '', number_format($class['total'], 2, '.', '')];
+        }
+        $rows[] = ['Resultado del ejercicio', '', number_format($incomeStatement['net_income'], 2, '.', '')];
+
+        return $this->downloadCsv('estados-financieros.csv', ['Cuenta', 'Nombre', 'Saldo'], $rows);
+    }
+
+    public function accountsReceivable(): StreamedResponse
+    {
+        $rows = app(AccountsReceivable::class)->openItems($this->currentCompany->get());
+
+        return $this->downloadCsv('cartera-clientes.csv', ['Tercero', 'Comprobante', 'Soporte', 'Fecha', 'Valor', 'Pagado', 'Saldo', 'Días', 'Edad'], $rows->map(fn (array $row) => [
+            $row['third_party'],
+            $row['voucher_number'],
+            $row['support_number'],
+            $row['accrual_date']->format('Y-m-d'),
+            $row['amount'],
+            $row['paid'],
+            $row['pending'],
+            $row['days_overdue'],
+            $row['bucket'],
+        ])->all());
     }
 
     private function ledgerQuery(Request $request)

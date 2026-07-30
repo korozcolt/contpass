@@ -47,7 +47,10 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 
 ## Documentation Files
 
-- You must only create documentation files if explicitly requested by the user.
+- Document everything persistently in the repo by default — do not wait for an explicit request. This covers roadmap/phase planning, non-obvious architectural decisions, and bugs. Never let multi-phase plans or feature-gap analyses live only in conversation.
+- Roadmap and phase planning — including the feature-gap comparison against the reference platform "Apolo" — lives in `docs/roadmap-apolo.md`. Read it at the start of roadmap work and update it as phases complete or scope changes.
+- Bugs are tracked as GitHub Issues in this repo, not ad hoc notes. File one when a bug is found, even if fixed in the same session, and link the fixing commit/PR.
+- This does not license throwaway docs for routine, single-purpose changes — it applies to roadmap/phase work, architectural decisions, and defects.
 
 ## Replies
 

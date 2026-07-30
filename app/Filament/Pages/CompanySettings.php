@@ -105,6 +105,14 @@ class CompanySettings extends Page implements HasForms
                                     ->label('Representante Legal')
                                     ->maxLength(150)
                                     ->columnSpanFull(),
+                                TextInput::make('dane_department_code')
+                                    ->label('Código DANE Departamento')
+                                    ->helperText('Solo aplica para entidades públicas.')
+                                    ->maxLength(2),
+                                TextInput::make('dane_municipality_code')
+                                    ->label('Código DANE Municipio')
+                                    ->helperText('Solo aplica para entidades públicas.')
+                                    ->maxLength(3),
                             ]),
                     ]),
 

@@ -25,6 +25,8 @@ class Company extends Model
         'address',
         'city',
         'legal_representative',
+        'dane_department_code',
+        'dane_municipality_code',
     ];
 
     protected $attributes = [
@@ -58,5 +60,10 @@ class Company extends Model
     public function withholdingRules(): HasMany
     {
         return $this->hasMany(WithholdingRule::class);
+    }
+
+    public function signatories(): HasMany
+    {
+        return $this->hasMany(CompanySignatory::class);
     }
 }

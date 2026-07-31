@@ -2,6 +2,7 @@
 
 use App\Enums\WarehouseItemType;
 use App\Enums\WarehouseMovementType;
+use App\Filament\Resources\WarehouseMovements\Pages\CreateWarehouseMovement;
 use App\Filament\Resources\WarehouseMovements\Pages\EditWarehouseMovement;
 use App\Filament\Resources\WarehouseMovements\RelationManagers\LinesRelationManager;
 use App\Models\Company;
@@ -123,4 +124,19 @@ it('rejects an exit line quantity greater than the available stock', function ()
             'quantity' => 999,
         ])
         ->assertHasFormErrors(['quantity' => 'max']);
+});
+
+it('shows the type-specific fields on the movement form based on the selected type', function () {
+    $this->actingAs(User::factory()->create());
+
+    Livewire::test(CreateWarehouseMovement::class)
+        ->assertFormFieldHidden('destination_warehouse_id')
+        ->assertFormFieldHidden('dependency_id')
+        ->assertFormFieldHidden('third_party_id')
+        ->fillForm(['type' => WarehouseMovementType::Transfer->value])
+        ->assertFormFieldVisible('destination_warehouse_id')
+        ->fillForm(['type' => WarehouseMovementType::Exit->value])
+        ->assertFormFieldVisible('dependency_id')
+        ->fillForm(['type' => WarehouseMovementType::Entry->value])
+        ->assertFormFieldVisible('third_party_id');
 });

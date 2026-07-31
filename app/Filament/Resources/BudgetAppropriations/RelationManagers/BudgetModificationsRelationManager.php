@@ -58,7 +58,7 @@ class BudgetModificationsRelationManager extends RelationManager
                     ->searchable()
                     ->preload()
                     ->required()
-                    ->visible(fn ($get): bool => $get('type') === BudgetModificationType::Transfer->value)
+                    ->visible(fn ($get): bool => $get('type') === BudgetModificationType::Transfer)
                     ->helperText('Solo para traslados: el rubro que cede saldo.'),
                 TextInput::make('document_reference')
                     ->label('Referencia del acto administrativo')

@@ -2,12 +2,15 @@
 
 use App\Enums\BudgetModificationType;
 use App\Enums\UserRole;
+use App\Filament\Resources\BudgetModifications\Pages\CreateBudgetModification;
 use App\Models\BudgetAppropriation;
 use App\Models\BudgetModification;
 use App\Models\Company;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Livewire\Livewire;
 
-uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(function () {
     $this->admin = User::factory()->create(['role' => UserRole::Admin]);
@@ -18,20 +21,20 @@ beforeEach(function () {
 it('creates a budget modification of type addition and increments the appropriation additions field', function () {
     $appropriation = BudgetAppropriation::factory()->for($this->company)->create([
         'initial_amount' => 10_000_000,
-        'additions'      => 0,
+        'additions' => 0,
     ]);
 
     $originalAdditions = (float) $appropriation->additions;
 
     BudgetModification::create([
-        'company_id'                   => $this->company->id,
-        'type'                         => BudgetModificationType::Addition,
-        'document_reference'           => 'Decreto 001 de 2026',
-        'source_appropriation_id'      => null,
+        'company_id' => $this->company->id,
+        'type' => BudgetModificationType::Addition,
+        'document_reference' => 'Decreto 001 de 2026',
+        'source_appropriation_id' => null,
         'destination_appropriation_id' => $appropriation->id,
-        'amount'                       => 2_000_000,
-        'effective_date'               => today(),
-        'user_id'                      => $this->admin->id,
+        'amount' => 2_000_000,
+        'effective_date' => today(),
+        'user_id' => $this->admin->id,
     ]);
 
     $appropriation->refresh();
@@ -43,18 +46,18 @@ it('creates a budget modification of type addition and increments the appropriat
 it('creates a budget modification of type reduction and increments the appropriation reductions field', function () {
     $appropriation = BudgetAppropriation::factory()->for($this->company)->create([
         'initial_amount' => 10_000_000,
-        'reductions'     => 0,
+        'reductions' => 0,
     ]);
 
     BudgetModification::create([
-        'company_id'                   => $this->company->id,
-        'type'                         => BudgetModificationType::Reduction,
-        'document_reference'           => 'Acta de Junta 12',
-        'source_appropriation_id'      => null,
+        'company_id' => $this->company->id,
+        'type' => BudgetModificationType::Reduction,
+        'document_reference' => 'Acta de Junta 12',
+        'source_appropriation_id' => null,
         'destination_appropriation_id' => $appropriation->id,
-        'amount'                       => 1_500_000,
-        'effective_date'               => today(),
-        'user_id'                      => $this->admin->id,
+        'amount' => 1_500_000,
+        'effective_date' => today(),
+        'user_id' => $this->admin->id,
     ]);
 
     $appropriation->refresh();
@@ -66,25 +69,25 @@ it('creates a budget modification of type reduction and increments the appropria
 it('creates a budget modification of type transfer and updates both source and destination appropriations', function () {
     $source = BudgetAppropriation::factory()->for($this->company)->create([
         'initial_amount' => 20_000_000,
-        'additions'      => 0,
-        'reductions'     => 0,
+        'additions' => 0,
+        'reductions' => 0,
     ]);
 
     $destination = BudgetAppropriation::factory()->for($this->company)->create([
         'initial_amount' => 5_000_000,
-        'additions'      => 0,
-        'reductions'     => 0,
+        'additions' => 0,
+        'reductions' => 0,
     ]);
 
     BudgetModification::create([
-        'company_id'                   => $this->company->id,
-        'type'                         => BudgetModificationType::Transfer,
-        'document_reference'           => 'Decreto Traslado 022',
-        'source_appropriation_id'      => $source->id,
+        'company_id' => $this->company->id,
+        'type' => BudgetModificationType::Transfer,
+        'document_reference' => 'Decreto Traslado 022',
+        'source_appropriation_id' => $source->id,
         'destination_appropriation_id' => $destination->id,
-        'amount'                       => 3_000_000,
-        'effective_date'               => today(),
-        'user_id'                      => $this->admin->id,
+        'amount' => 3_000_000,
+        'effective_date' => today(),
+        'user_id' => $this->admin->id,
     ]);
 
     $source->refresh();
@@ -99,36 +102,43 @@ it('creates a budget modification of type transfer and updates both source and d
 it('prevents a transfer when the source appropriation has insufficient balance', function () {
     $source = BudgetAppropriation::factory()->for($this->company)->create([
         'initial_amount' => 1_000_000,
-        'additions'      => 0,
-        'reductions'     => 0,
+        'additions' => 0,
+        'reductions' => 0,
     ]);
 
     $destination = BudgetAppropriation::factory()->for($this->company)->create();
 
     expect(fn () => BudgetModification::create([
-        'company_id'                   => $this->company->id,
-        'type'                         => BudgetModificationType::Transfer,
-        'document_reference'           => 'Decreto Inválido',
-        'source_appropriation_id'      => $source->id,
+        'company_id' => $this->company->id,
+        'type' => BudgetModificationType::Transfer,
+        'document_reference' => 'Decreto Inválido',
+        'source_appropriation_id' => $source->id,
         'destination_appropriation_id' => $destination->id,
-        'amount'                       => 5_000_000,
-        'effective_date'               => today(),
-        'user_id'                      => $this->admin->id,
-    ]))->toThrow(\RuntimeException::class);
+        'amount' => 5_000_000,
+        'effective_date' => today(),
+        'user_id' => $this->admin->id,
+    ]))->toThrow(RuntimeException::class);
+});
+
+it('shows the source appropriation field on the form only for transfer modifications', function () {
+    Livewire::test(CreateBudgetModification::class)
+        ->assertFormFieldHidden('source_appropriation_id')
+        ->fillForm(['type' => BudgetModificationType::Transfer->value])
+        ->assertFormFieldVisible('source_appropriation_id');
 });
 
 it('records the user who registered the budget modification', function () {
     $appropriation = BudgetAppropriation::factory()->for($this->company)->create();
 
     $modification = BudgetModification::create([
-        'company_id'                   => $this->company->id,
-        'type'                         => BudgetModificationType::Addition,
-        'document_reference'           => 'Acuerdo Municipal 5',
-        'source_appropriation_id'      => null,
+        'company_id' => $this->company->id,
+        'type' => BudgetModificationType::Addition,
+        'document_reference' => 'Acuerdo Municipal 5',
+        'source_appropriation_id' => null,
         'destination_appropriation_id' => $appropriation->id,
-        'amount'                       => 500_000,
-        'effective_date'               => today(),
-        'user_id'                      => $this->admin->id,
+        'amount' => 500_000,
+        'effective_date' => today(),
+        'user_id' => $this->admin->id,
     ]);
 
     expect($modification->user_id)->toBe($this->admin->id)

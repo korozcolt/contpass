@@ -44,7 +44,7 @@ class BudgetModificationForm
                     ->searchable()
                     ->preload()
                     ->required()
-                    ->visible(fn ($get): bool => $get('type') === BudgetModificationType::Transfer->value)
+                    ->visible(fn ($get): bool => $get('type') === BudgetModificationType::Transfer)
                     ->helperText('Solo para traslados: el rubro que cede saldo.'),
                 Select::make('destination_appropriation_id')
                     ->label('Rubro destino (recibe recursos)')

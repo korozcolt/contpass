@@ -29,8 +29,8 @@ class WarehouseMovementForm
                     ->native(false),
                 self::warehouseSelect('warehouse_id', 'Almacén'),
                 self::warehouseSelect('destination_warehouse_id', 'Almacén destino')
-                    ->visible(fn (Get $get): bool => $get('type') === WarehouseMovementType::Transfer->value)
-                    ->required(fn (Get $get): bool => $get('type') === WarehouseMovementType::Transfer->value),
+                    ->visible(fn (Get $get): bool => $get('type') === WarehouseMovementType::Transfer)
+                    ->required(fn (Get $get): bool => $get('type') === WarehouseMovementType::Transfer),
                 Select::make('dependency_id')
                     ->label('Dependencia destino')
                     ->options(fn (): array => Dependency::query()
@@ -40,11 +40,11 @@ class WarehouseMovementForm
                         ->all())
                     ->searchable()
                     ->preload()
-                    ->visible(fn (Get $get): bool => $get('type') === WarehouseMovementType::Exit->value),
+                    ->visible(fn (Get $get): bool => $get('type') === WarehouseMovementType::Exit),
                 AccountingFormFields::thirdParty('third_party_id')
                     ->label('Proveedor')
                     ->required(false)
-                    ->visible(fn (Get $get): bool => $get('type') === WarehouseMovementType::Entry->value),
+                    ->visible(fn (Get $get): bool => $get('type') === WarehouseMovementType::Entry),
                 DatePicker::make('date')
                     ->label('Fecha')
                     ->required()

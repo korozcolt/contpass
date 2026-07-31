@@ -6,6 +6,7 @@ use App\Models\AccountingEntry;
 use App\Models\CashAccount;
 use App\Models\ChartAccount;
 use App\Models\ThirdParty;
+use App\Services\Accounting\AccountsPayable;
 use App\Services\Accounting\AccountsReceivable;
 use App\Services\Accounting\BankReconciliation;
 use App\Services\Accounting\CurrentCompany;
@@ -203,6 +204,23 @@ class AccountingReportController extends Controller
         return $this->downloadCsv('cartera-clientes.csv', ['Tercero', 'Comprobante', 'Soporte', 'Fecha', 'Valor', 'Pagado', 'Saldo', 'Días', 'Edad'], $rows->map(fn (array $row) => [
             $row['third_party'],
             $row['voucher_number'],
+            $row['support_number'],
+            $row['accrual_date']->format('Y-m-d'),
+            $row['amount'],
+            $row['paid'],
+            $row['pending'],
+            $row['days_overdue'],
+            $row['bucket'],
+        ])->all());
+    }
+
+    public function accountsPayable(): StreamedResponse
+    {
+        $rows = app(AccountsPayable::class)->openItems($this->currentCompany->get());
+
+        return $this->downloadCsv('cuentas-por-pagar.csv', ['Tercero', 'Obligación', 'Soporte', 'Fecha', 'Valor', 'Pagado', 'Saldo', 'Días', 'Edad'], $rows->map(fn (array $row) => [
+            $row['third_party'],
+            $row['number'],
             $row['support_number'],
             $row['accrual_date']->format('Y-m-d'),
             $row['amount'],

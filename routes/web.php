@@ -42,6 +42,12 @@ Route::get('accounting-reports/accounts-receivable', function (Request $request)
     return app(AccountingReportController::class)->accountsReceivable();
 })->name('accounting-reports.accounts-receivable');
 
+Route::get('accounting-reports/accounts-payable', function (Request $request): mixed {
+    abort_unless($request->user() !== null, 403);
+
+    return app(AccountingReportController::class)->accountsPayable();
+})->name('accounting-reports.accounts-payable');
+
 Route::get('accounting-reports/general-ledger', function (Request $request): mixed {
     abort_unless($request->user() !== null, 403);
 

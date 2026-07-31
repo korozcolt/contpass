@@ -5,6 +5,7 @@ namespace App\Filament\Support;
 use App\Models\BudgetAppropriation;
 use App\Models\BudgetAvailabilityCertificate;
 use App\Models\BudgetRegistration;
+use App\Models\BudgetRevenue;
 use App\Models\ChartAccount;
 use App\Models\ThirdParty;
 use App\Models\Voucher;
@@ -148,6 +149,23 @@ class AccountingFormFields
                 ->get()
                 ->mapWithKeys(fn (BudgetAppropriation $rubro) => [
                     $rubro->id => "{$rubro->code} · {$rubro->name} (Disp: \$".number_format($rubro->available_amount, 2).')',
+                ])
+                ->all())
+            ->searchable()
+            ->preload();
+    }
+
+    public static function budgetRevenue(string $name = 'budget_revenue_id'): Select
+    {
+        return Select::make($name)
+            ->label('Rubro de ingresos')
+            ->options(fn (): array => BudgetRevenue::query()
+                ->whereBelongsTo(app(CurrentCompany::class)->get())
+                ->active()
+                ->orderBy('code')
+                ->get()
+                ->mapWithKeys(fn (BudgetRevenue $rubro) => [
+                    $rubro->id => "{$rubro->code} · {$rubro->name}",
                 ])
                 ->all())
             ->searchable()

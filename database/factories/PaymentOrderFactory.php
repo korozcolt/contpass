@@ -26,7 +26,7 @@ class PaymentOrderFactory extends Factory
             'number' => 'OP-'.now()->year.'-'.str_pad($this->faker->unique()->randomNumber(5), 6, '0', STR_PAD_LEFT),
             'status' => PaymentOrderStatus::Pending,
             'amount' => $obligation->amount,
-            'method' => PaymentMethod::Transfer,
+            'method' => PaymentMethod::BankTransfer,
             'reference' => $this->faker->bothify('TRF-####'),
             'issued_on' => now()->toDateString(),
             'paid_on' => null,

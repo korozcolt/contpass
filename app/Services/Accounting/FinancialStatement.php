@@ -4,6 +4,7 @@ namespace App\Services\Accounting;
 
 use App\Enums\VoucherStatus;
 use App\Models\Company;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -67,6 +68,54 @@ class FinancialStatement
     }
 
     /**
+     * Per-account opening/period/closing balances across all PUC classes (1-7) — the "Libro Mayor" shape.
+     *
+     * @return Collection<int, array<string, mixed>>
+     */
+    public function generalLedger(Company $company, ?string $starts = null, ?string $ends = null): Collection
+    {
+        $opening = $starts
+            ? $this->accountTotals($company, null, Carbon::parse($starts)->subDay()->toDateString())->keyBy('code')
+            : collect();
+        $period = $this->accountTotals($company, $starts, $ends)->keyBy('code');
+
+        return $opening->keys()
+            ->merge($period->keys())
+            ->unique()
+            ->sort()
+            ->values()
+            ->map(function (string $code) use ($opening, $period): ?array {
+                $meta = self::CLASSES[substr($code, 0, 1)] ?? null;
+
+                if ($meta === null) {
+                    return null;
+                }
+
+                $openingRow = $opening->get($code);
+                $periodRow = $period->get($code);
+
+                $openingBalance = $this->signedBalance(
+                    $meta['nature'],
+                    (float) ($openingRow->debit_total ?? 0),
+                    (float) ($openingRow->credit_total ?? 0),
+                );
+                $debit = (float) ($periodRow->debit_total ?? 0);
+                $credit = (float) ($periodRow->credit_total ?? 0);
+
+                return [
+                    'code' => $code,
+                    'name' => $periodRow->name ?? $openingRow->name,
+                    'opening_balance' => round($openingBalance, 2),
+                    'debit' => round($debit, 2),
+                    'credit' => round($credit, 2),
+                    'closing_balance' => round($openingBalance + $this->signedBalance($meta['nature'], $debit, $credit), 2),
+                ];
+            })
+            ->filter()
+            ->values();
+    }
+
+    /**
      * Flat, table-ready rows (one per account) for the balance sheet classes (Activo/Pasivo/Patrimonio).
      *
      * @return Collection<int, array<string, mixed>>
@@ -114,22 +163,7 @@ class FinancialStatement
      */
     private function classifiedBalances(Company $company, array $classDigits, ?string $starts, ?string $ends): Collection
     {
-        $accounts = DB::table('accounting_entries')
-            ->select(
-                'chart_accounts.code',
-                'chart_accounts.name',
-                DB::raw('sum(accounting_entries.debit) as debit_total'),
-                DB::raw('sum(accounting_entries.credit) as credit_total'),
-            )
-            ->join('chart_accounts', 'chart_accounts.id', '=', 'accounting_entries.chart_account_id')
-            ->join('vouchers', 'vouchers.id', '=', 'accounting_entries.voucher_id')
-            ->where('vouchers.company_id', $company->id)
-            ->where('vouchers.status', '!=', VoucherStatus::Void->value)
-            ->when($starts, fn ($query, $date) => $query->whereDate('vouchers.date', '>=', $date))
-            ->when($ends, fn ($query, $date) => $query->whereDate('vouchers.date', '<=', $date))
-            ->groupBy('chart_accounts.id', 'chart_accounts.code', 'chart_accounts.name')
-            ->orderBy('chart_accounts.code')
-            ->get()
+        $accounts = $this->accountTotals($company, $starts, $ends)
             ->filter(fn (object $row): bool => in_array(substr((string) $row->code, 0, 1), $classDigits, true));
 
         return collect($classDigits)->map(function (string $digit) use ($accounts): array {
@@ -156,5 +190,28 @@ class FinancialStatement
     private function signedBalance(string $nature, float $debit, float $credit): float
     {
         return round($nature === 'debit' ? $debit - $credit : $credit - $debit, 2);
+    }
+
+    /**
+     * @return Collection<int, object{code: string, name: string, debit_total: float, credit_total: float}>
+     */
+    private function accountTotals(Company $company, ?string $starts, ?string $ends): Collection
+    {
+        return DB::table('accounting_entries')
+            ->select(
+                'chart_accounts.code',
+                'chart_accounts.name',
+                DB::raw('sum(accounting_entries.debit) as debit_total'),
+                DB::raw('sum(accounting_entries.credit) as credit_total'),
+            )
+            ->join('chart_accounts', 'chart_accounts.id', '=', 'accounting_entries.chart_account_id')
+            ->join('vouchers', 'vouchers.id', '=', 'accounting_entries.voucher_id')
+            ->where('vouchers.company_id', $company->id)
+            ->where('vouchers.status', '!=', VoucherStatus::Void->value)
+            ->when($starts, fn ($query, $date) => $query->whereDate('vouchers.date', '>=', $date))
+            ->when($ends, fn ($query, $date) => $query->whereDate('vouchers.date', '<=', $date))
+            ->groupBy('chart_accounts.id', 'chart_accounts.code', 'chart_accounts.name')
+            ->orderBy('chart_accounts.code')
+            ->get();
     }
 }

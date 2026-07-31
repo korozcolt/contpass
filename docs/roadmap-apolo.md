@@ -44,7 +44,7 @@ Relevamiento completo del menú de Apolo Ultra (11 categorías, 150 funciones de
 ### Orden sugerido (ponderado por riesgo legal + reuso de patrones existentes)
 
 1. ~~Tipo de Entidad~~ — completado 2026-07-30 (ver "Estado de fases").
-2. Libro Mayor + Conciliación Bancaria — mismo patrón de reportería ya probado.
+2. ~~Libro Mayor + Conciliación Bancaria~~ — completado 2026-07-30 (ver "Estado de fases").
 3. Programación Anual de Caja (P.A.C.) — obligación de control fiscal frecuente.
 4. Caja Menor — flujo acotado, uso operativo diario.
 5. Cuentas por edades para Obligaciones — reutiliza el servicio de cartera ya construido.
@@ -65,6 +65,7 @@ Relevamiento completo del menú de Apolo Ultra (11 categorías, 150 funciones de
 - **Firmantes y Dependencias (reconstruida)** — `CompanySignatory`, `Dependency`, códigos DANE en `Company`.
 - **Fase 3b: Nómina (solo maestro)** — completada 2026-07-30. Catálogos `Employee`, `PayrollFund`, `PayrollConcept` (sin motor de cálculo). Ver detalle abajo.
 - **Tipo de Entidad Pública** — completada 2026-07-30. Enum `PublicEntityType` (Municipio/Establecimiento Público/ESE/ESP/IPS), campo `public_entity_type` en `Company`, visible en Configuración solo cuando la Naturaleza es Pública. `AccountabilityCenter` (Rendición) muestra el contexto de la entidad actual. Sin gating automático de qué obligaciones de Rendición aplica cada tipo — pendiente confirmar esa regla.
+- **Libro Mayor + Conciliación Bancaria (ligera)** — completada 2026-07-30. `FinancialStatement::generalLedger()` (saldo inicial/movimiento/saldo final por cuenta, todas las clases 1-7) + página "Libro mayor". `Payment.reconciled_at` con accessor virtual `is_reconciled` y `ToggleColumn` en Pagos; servicio `BankReconciliation` (saldo en libros/conciliado/pendiente) + página "Conciliación bancaria" listando partidas pendientes por cuenta de caja/banco. Sin importación de extractos bancarios — alcance ligero acordado con el usuario.
 
 ### Pendiente / explícitamente fuera de alcance
 

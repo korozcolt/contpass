@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\AccountingEntry;
+use App\Models\CashAccount;
 use App\Models\ChartAccount;
 use App\Models\ThirdParty;
 use App\Services\Accounting\AccountsReceivable;
+use App\Services\Accounting\BankReconciliation;
 use App\Services\Accounting\CurrentCompany;
 use App\Services\Accounting\FinancialStatement;
 use Illuminate\Http\Request;
@@ -152,6 +154,46 @@ class AccountingReportController extends Controller
         $rows[] = ['Resultado del ejercicio', '', number_format($incomeStatement['net_income'], 2, '.', '')];
 
         return $this->downloadCsv('estados-financieros.csv', ['Cuenta', 'Nombre', 'Saldo'], $rows);
+    }
+
+    public function generalLedger(Request $request): StreamedResponse
+    {
+        $rows = app(FinancialStatement::class)->generalLedger(
+            $this->currentCompany->get(),
+            $request->input('starts_on'),
+            $request->input('ends_on'),
+        );
+
+        return $this->downloadCsv('libro-mayor.csv', ['Cuenta', 'Nombre', 'Saldo Inicial', 'Débito', 'Crédito', 'Saldo Final'], $rows->map(fn (array $row) => [
+            $row['code'],
+            $row['name'],
+            $row['opening_balance'],
+            $row['debit'],
+            $row['credit'],
+            $row['closing_balance'],
+        ])->all());
+    }
+
+    public function bankReconciliation(Request $request): StreamedResponse
+    {
+        $company = $this->currentCompany->get();
+
+        $cashAccount = CashAccount::query()
+            ->whereBelongsTo($company)
+            ->when($request->filled('cash_account_id'), fn ($query) => $query->where('id', $request->integer('cash_account_id')))
+            ->orderBy('name')
+            ->firstOrFail();
+
+        $rows = app(BankReconciliation::class)->pendingItems($company, $cashAccount, $request->input('cutoff'));
+
+        return $this->downloadCsv('conciliacion-bancaria.csv', ['Fecha', 'Comprobante', 'Tercero', 'Referencia', 'Monto', 'Conciliado'], $rows->map(fn (array $row) => [
+            $row['date']->format('Y-m-d'),
+            $row['voucher_number'],
+            $row['third_party'],
+            $row['reference'],
+            $row['signed_amount'],
+            $row['reconciled'] ? 'Sí' : 'No',
+        ])->all());
     }
 
     public function accountsReceivable(): StreamedResponse

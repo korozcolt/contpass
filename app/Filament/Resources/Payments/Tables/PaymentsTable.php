@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Payments\Tables;
 
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
 
 class PaymentsTable
@@ -20,6 +21,7 @@ class PaymentsTable
                 TextColumn::make('method')->label('Medio')->badge(),
                 TextColumn::make('amount')->label('Valor')->money('COP')->sortable(),
                 IconColumn::make('is_bancarized')->label('Bancarizado')->boolean(),
+                ToggleColumn::make('is_reconciled')->label('Conciliado'),
             ]);
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\CompanyType;
+use App\Enums\PublicEntityType;
 use Database\Factories\CompanyFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -20,6 +21,7 @@ class Company extends Model
         'currency',
         'has_budgetary_control',
         'type',
+        'public_entity_type',
         'phone',
         'email',
         'address',
@@ -39,6 +41,7 @@ class Company extends Model
         return [
             'has_budgetary_control' => 'boolean',
             'type' => CompanyType::class,
+            'public_entity_type' => PublicEntityType::class,
         ];
     }
 

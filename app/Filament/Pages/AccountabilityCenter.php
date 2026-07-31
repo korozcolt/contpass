@@ -2,6 +2,8 @@
 
 namespace App\Filament\Pages;
 
+use App\Models\Company;
+use App\Services\Accounting\CurrentCompany;
 use BackedEnum;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Section;
@@ -67,8 +69,13 @@ class AccountabilityCenter extends Page
 
     public function content(Schema $schema): Schema
     {
+        $company = app(CurrentCompany::class)->get();
+
         return $schema->components([
-            Text::make('Este módulo documenta las obligaciones de reporte a entes de control identificadas frente a Apolo. Todavía no genera los formatos oficiales: eso requiere validar cada especificación exacta contra la entidad de control correspondiente. Por ahora, deja explícito el alcance legal pendiente para que no se pierda de vista.')
+            Text::make($this->entityContextLabel($company))
+                ->color('gray')
+                ->weight('bold'),
+            Text::make('Este módulo documenta las obligaciones de reporte a entes de control identificadas frente a Apolo. Todavía no genera los formatos oficiales: eso requiere validar cada especificación exacta contra la entidad de control correspondiente. Cuáles obligaciones aplican exactamente según el tipo de entidad tampoco está automatizado todavía — es un paso futuro una vez se confirme esa regla. Por ahora, deja explícito el alcance legal pendiente para que no se pierda de vista.')
                 ->color('gray'),
             ...collect($this->obligations())->map(fn (array $obligation): Section => Section::make($obligation['title'])
                 ->description($obligation['description'])
@@ -80,5 +87,16 @@ class AccountabilityCenter extends Page
                     UnorderedList::make($obligation['items']),
                 ]))->all(),
         ]);
+    }
+
+    private function entityContextLabel(Company $company): string
+    {
+        $naturaleza = $company->type->getLabel();
+
+        if ($company->public_entity_type === null) {
+            return "{$company->name} · {$naturaleza}";
+        }
+
+        return "{$company->name} · {$naturaleza} · {$company->public_entity_type->getLabel()}";
     }
 }

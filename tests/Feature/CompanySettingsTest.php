@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\CompanyType;
+use App\Enums\PublicEntityType;
 use App\Filament\Pages\CompanySettings;
 use App\Models\Company;
 use App\Models\User;
@@ -28,6 +29,23 @@ it('can store company profile fields and casts enum', function () {
         ->and($fresh->address)->toBe('Calle 10 # 5-20')
         ->and($fresh->city)->toBe('Sincelejo')
         ->and($fresh->legal_representative)->toBe('Juan Perez');
+});
+
+it('stores and casts the public entity type when the company is public', function () {
+    $company = Company::factory()->create(['type' => CompanyType::Private]);
+
+    $company->update([
+        'type' => CompanyType::Public,
+        'public_entity_type' => PublicEntityType::Esp,
+    ]);
+
+    expect($company->fresh()->public_entity_type)->toBe(PublicEntityType::Esp);
+});
+
+it('allows a null public entity type for private companies', function () {
+    $company = Company::factory()->create(['type' => CompanyType::Private]);
+
+    expect($company->public_entity_type)->toBeNull();
 });
 
 it('defaults to private type when newly created', function () {
@@ -58,9 +76,14 @@ it('renders and saves company settings via livewire page', function () {
             'name' => 'Empresa Principal',
             'tax_id' => '900000000',
         ])
+        ->assertFormFieldHidden('public_entity_type')
         ->fillForm([
             'name' => 'Empresa Modificada',
             'type' => CompanyType::Public->value,
+        ])
+        ->assertFormFieldVisible('public_entity_type')
+        ->fillForm([
+            'public_entity_type' => PublicEntityType::Municipality->value,
             'phone' => '555-9999',
             'email' => 'admin@empresa.com',
             'has_budgetary_control' => true,
@@ -72,6 +95,7 @@ it('renders and saves company settings via livewire page', function () {
 
     expect($company->name)->toBe('Empresa Modificada')
         ->and($company->type)->toBe(CompanyType::Public)
+        ->and($company->public_entity_type)->toBe(PublicEntityType::Municipality)
         ->and($company->phone)->toBe('555-9999')
         ->and($company->email)->toBe('admin@empresa.com')
         ->and($company->has_budgetary_control)->toBeTrue();

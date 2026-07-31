@@ -43,7 +43,7 @@ Relevamiento completo del menú de Apolo Ultra (11 categorías, 150 funciones de
 
 ### Orden sugerido (ponderado por riesgo legal + reuso de patrones existentes)
 
-1. Tipo de Entidad — bajo esfuerzo, desbloquea saber qué Rendición aplica.
+1. ~~Tipo de Entidad~~ — completado 2026-07-30 (ver "Estado de fases").
 2. Libro Mayor + Conciliación Bancaria — mismo patrón de reportería ya probado.
 3. Programación Anual de Caja (P.A.C.) — obligación de control fiscal frecuente.
 4. Caja Menor — flujo acotado, uso operativo diario.
@@ -64,6 +64,7 @@ Relevamiento completo del menú de Apolo Ultra (11 categorías, 150 funciones de
 - **Reportes contables adicionales (reconstruida)** — Balance general, estado de resultados, libro diario, centro de rendición de cuentas (`FinancialStatement` service + páginas Filament).
 - **Firmantes y Dependencias (reconstruida)** — `CompanySignatory`, `Dependency`, códigos DANE en `Company`.
 - **Fase 3b: Nómina (solo maestro)** — completada 2026-07-30. Catálogos `Employee`, `PayrollFund`, `PayrollConcept` (sin motor de cálculo). Ver detalle abajo.
+- **Tipo de Entidad Pública** — completada 2026-07-30. Enum `PublicEntityType` (Municipio/Establecimiento Público/ESE/ESP/IPS), campo `public_entity_type` en `Company`, visible en Configuración solo cuando la Naturaleza es Pública. `AccountabilityCenter` (Rendición) muestra el contexto de la entidad actual. Sin gating automático de qué obligaciones de Rendición aplica cada tipo — pendiente confirmar esa regla.
 
 ### Pendiente / explícitamente fuera de alcance
 
@@ -89,3 +90,5 @@ Relevamiento completo del menú de Apolo Ultra (11 categorías, 150 funciones de
 ## Registro de bugs
 
 Los bugs se registran como GitHub Issues en `korozcolt/contpass`, no en este archivo. Este documento solo referencia el roadmap de fases/features.
+
+**Bug de clase encontrado 2026-07-30** ([issue #1](https://github.com/korozcolt/contpass/issues/1)): en Filament v5, cuando un `Select` usa `->options(EnumClass::class)`, `$get()` dentro de un closure `visible()`/`required()` devuelve la instancia del enum, no su `->value`. Comparar contra `->value` (`$get('type') === Enum::Case->value`) es siempre `false`. Afectaba 3 formularios — `WarehouseMovementForm` (3 campos: almacén destino, dependencia destino, proveedor), `BudgetModificationForm` y `BudgetModificationsRelationManager` (rubro origen en traslados) — donde el campo condicional nunca se mostraba en el navegador aunque los tests a nivel de modelo pasaran. Corregido comparando contra el caso del enum directamente (`=== Enum::Case`). Ver commit del fix.

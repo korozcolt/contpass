@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Enums\CompanyType;
+use App\Enums\PublicEntityType;
 use App\Models\Company;
 use App\Services\Accounting\CurrentCompany;
 use BackedEnum;
@@ -16,6 +17,7 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 
@@ -57,10 +59,16 @@ class CompanySettings extends Page implements HasForms
                         Grid::make(3)
                             ->schema([
                                 Select::make('type')
-                                    ->label('Tipo de Entidad')
+                                    ->label('Naturaleza')
                                     ->options(CompanyType::class)
                                     ->required()
+                                    ->live()
                                     ->native(false),
+                                Select::make('public_entity_type')
+                                    ->label('Tipo de Entidad')
+                                    ->options(PublicEntityType::class)
+                                    ->native(false)
+                                    ->visible(fn (Get $get): bool => $get('type') === CompanyType::Public),
                                 TextInput::make('name')
                                     ->label('Nombre / Razón Social')
                                     ->required()

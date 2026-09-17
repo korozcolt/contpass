@@ -1,10 +1,11 @@
 ---
 phase: 1
 slug: 01-cotizaci-n-electr-nica-fase-a
-status: draft
+status: approved
 shadcn_initialized: false
 preset: none
 created: 2026-09-16
+reviewed_at: 2026-09-16
 ---
 
 # Phase 1 — UI Design Contract

@@ -46,10 +46,10 @@ Plans:
   3. El municipio usado para seleccionar la regla de ICA aplicable toma por defecto el domicilio registrado de la `Company`, con opción de edición manual
   4. Con dos reglas de ICA activas para distintos municipios, solo se aplica la regla que coincide con el municipio de la operación — nunca se acumulan retenciones de más de un municipio en la misma transacción
   5. Las retenciones nacionales existentes (ReteFuente, ReteIVA) siguen aplicándose sin verse afectadas por la nueva dimensión de municipio
-**Plans**: 1/3 plans complete
+**Plans**: 2/3 plans complete
 Plans:
 - [x] 02-01-PLAN.md — Catálogo DIVIPOLA (departments/municipalities) + enum WithholdingType
-- [ ] 02-02-PLAN.md — WithholdingRule: type/municipio + validación de solapamiento ICA (D-08) + UI
+- [x] 02-02-PLAN.md — WithholdingRule: type/municipio + validación de solapamiento ICA (D-08) + UI
 - [ ] 02-03-PLAN.md — Filtro de municipio en ApplyWithholdingRules + municipio de la operación en ExpenseRecord
 **UI hint**: yes
 
@@ -96,7 +96,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 (A → C → B → E 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Cotización electrónica (Fase A) | 4/4 | Complete   | 2026-09-16 |
-| 2. ReteICA por municipio (Fase C) | 1/3 | In progress | - |
+| 2. ReteICA por municipio (Fase C) | 2/3 | In progress | - |
 | 3. Conciliación bancaria CSV (Fase B) | 0/TBD | Not started | - |
 | 4. Hook de facturación externa (Fase E) | 0/TBD | Not started | - |
 | 5. Exportación Excel (Fase D) | 0/TBD | Not started | - |

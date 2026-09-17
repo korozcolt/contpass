@@ -28,7 +28,12 @@ Cinco features aditivas al monolito Laravel 13 + Filament v5 existente, dirigida
   3. Usuario puede transicionar la cotización Borrador → Enviada → Aceptada/Rechazada; el estado Vencida se calcula automáticamente por fecha de validez, nunca es una transición manual
   4. Usuario puede generar un PDF de la cotización con datos de la empresa, líneas, subtotal/total y fecha de validez
   5. Convertir una cotización Aceptada a `IncomeRecord` reusa `PostIncomeVoucher` en una sola acción; convertir la misma cotización dos veces nunca crea un segundo comprobante (idempotente en la misma transacción), y la cotización convertida queda de solo lectura con enlace a su comprobante
-**Plans**: TBD
+**Plans**: 4 plans
+Plans:
+- [ ] 01-01-PLAN.md — Fundamento de dominio: migraciones, enum QuotationStatus, modelos Quotation/QuotationLine
+- [ ] 01-02-PLAN.md — Servicios: BuildQuotationNumber (numeración segura) + ConvertQuotationToIncome (conversión idempotente)
+- [ ] 01-03-PLAN.md — Recurso Filament QuotationResource: formulario, ciclo de vida, conversión
+- [ ] 01-04-PLAN.md — PDF de cotización (barryvdh/laravel-dompdf)
 **UI hint**: yes
 
 ### Phase 2: ReteICA por municipio (Fase C)
@@ -86,7 +91,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 (A → C → B → E 
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Cotización electrónica (Fase A) | 0/TBD | Not started | - |
+| 1. Cotización electrónica (Fase A) | 0/4 | Planned | - |
 | 2. ReteICA por municipio (Fase C) | 0/TBD | Not started | - |
 | 3. Conciliación bancaria CSV (Fase B) | 0/TBD | Not started | - |
 | 4. Hook de facturación externa (Fase E) | 0/TBD | Not started | - |

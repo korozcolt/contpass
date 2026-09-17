@@ -8,12 +8,12 @@
 ### Cotizaciones (QUOT) — Fase A
 
 - [x] **QUOT-01**: Usuario puede crear una cotización para un tercero con una o más líneas (descripción, cantidad, valor unitario)
-- [ ] **QUOT-02**: La numeración de cotizaciones es consecutiva por empresa y segura bajo creación concurrente (sin duplicados entre solicitudes simultáneas)
+- [x] **QUOT-02**: La numeración de cotizaciones es consecutiva por empresa y segura bajo creación concurrente (sin duplicados entre solicitudes simultáneas)
 - [x] **QUOT-03**: Usuario puede transicionar una cotización por los estados Borrador → Enviada → Aceptada/Rechazada; el estado Vencida se calcula automáticamente por fecha de validez, no es una transición manual
 - [ ] **QUOT-04**: Usuario puede generar un PDF de la cotización con datos de la empresa, líneas, subtotal/total y fecha de validez
-- [ ] **QUOT-05**: Usuario puede convertir una cotización Aceptada en un `IncomeRecord` con una sola acción, reusando el servicio `PostIncomeVoucher` existente
-- [ ] **QUOT-06**: Convertir la misma cotización dos veces nunca crea un segundo comprobante de ingreso (conversión idempotente, garantizada en la misma transacción que el cambio de estado)
-- [ ] **QUOT-07**: Una cotización convertida queda de solo lectura y muestra un enlace a su comprobante de ingreso resultante
+- [x] **QUOT-05**: Usuario puede convertir una cotización Aceptada en un `IncomeRecord` con una sola acción, reusando el servicio `PostIncomeVoucher` existente
+- [x] **QUOT-06**: Convertir la misma cotización dos veces nunca crea un segundo comprobante de ingreso (conversión idempotente, garantizada en la misma transacción que el cambio de estado)
+- [x] **QUOT-07**: Una cotización convertida queda de solo lectura y muestra un enlace a su comprobante de ingreso resultante
 
 ### ReteICA por Municipio (RETICA) — Fase C
 
@@ -86,12 +86,12 @@ Excluidos explícitamente de este milestone. Ver `docs/roadmap-apolo.md` y `.pla
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | QUOT-01 | Phase 1 (Fase A) | Complete |
-| QUOT-02 | Phase 1 (Fase A) | Pending |
+| QUOT-02 | Phase 1 (Fase A) | Complete |
 | QUOT-03 | Phase 1 (Fase A) | Complete |
 | QUOT-04 | Phase 1 (Fase A) | Pending |
-| QUOT-05 | Phase 1 (Fase A) | Pending |
-| QUOT-06 | Phase 1 (Fase A) | Pending |
-| QUOT-07 | Phase 1 (Fase A) | Pending |
+| QUOT-05 | Phase 1 (Fase A) | Complete |
+| QUOT-06 | Phase 1 (Fase A) | Complete |
+| QUOT-07 | Phase 1 (Fase A) | Complete |
 | RETICA-01 | Phase 2 (Fase C) | Pending |
 | RETICA-02 | Phase 2 (Fase C) | Pending |
 | RETICA-03 | Phase 2 (Fase C) | Pending |

@@ -21,12 +21,12 @@ Cada movimiento relevante produce un comprobante contable auditable e inmutable 
 - ✓ Nómina: catálogo maestro (Employee/PayrollFund/PayrollConcept), sin motor de cálculo — existente
 - ✓ Clasificación de entidad pública (`PublicEntityType`), firmantes y dependencias con códigos DANE, cuentas por edades (cartera y obligaciones) — existente
 - ✓ 158 tests Pest pasando, 560 assertions, `vendor/bin/pint --dirty` limpio — verificado 2026-09-16
+- ✓ Fase A — Cotización electrónica: modelo `Quotation`/`QuotationLine`, numeración segura company-scoped, ciclo de vida Borrador→Enviada→Aceptada/Rechazada/Vencida (calculada), PDF (`barryvdh/laravel-dompdf`), conversión idempotente a `IncomeRecord` reusando `PostIncomeVoucher` sin modificarlo — validado en Phase 1 (2026-09-17), 176 tests Pest pasando, QUOT-01 a QUOT-07 completos
 
 ### Active
 
 **Milestone: Mejoras Comerciales para Mercado Privado** (roadmap detallado y research de mercado en `docs/roadmap-apolo.md`):
 
-- [ ] Fase A — Cotización electrónica: modelo `Quotation`/`QuotationLine`, PDF, conversión a `IncomeRecord`
 - [ ] Fase C — ReteICA parametrizable por municipio (domicilio de `Company`, con opción de edición manual)
 - [ ] Fase B — Conciliación bancaria por importación de extracto CSV, cruce automático contra `Payment`
 - [ ] Fase E — Hook de datos para integración futura con facturador electrónico de terceros
@@ -71,7 +71,8 @@ Cada movimiento relevante produce un comprobante contable auditable e inmutable 
 | Excel (Fase D): elegir librería por eficiencia y calidad, no por familiaridad previa | Usuario delegó el criterio técnico explícitamente; requiere aprobación de dependencia antes de instalar | — Pending |
 | Orden de ejecución de fases: A → C → B → E → D | Priorizado por esfuerzo vs. valor comercial percibido (ver `docs/roadmap-apolo.md`) | — Pending |
 | Estrategia de precios: ContPass privado post-mejoras ~$1.5M–$2.2M COP/año | Basado en research de mercado real (SECOP + SaaS privado); posiciona justo debajo de Alegra/Siigo/World Office compensado por rigor de auditoría | — Pending |
-| Fase A (QUOT-04): aprobada dependencia nueva `barryvdh/laravel-dompdf` (~^3.1) | Genera el PDF de cotización desde vista Blade; confirmada no instalada por research (2026-09-16); usuario aprobó explícitamente durante `/gsd:plan-phase 1` (2026-09-16) | — Approved, pendiente `composer require` en fase de ejecución |
+| Fase A (QUOT-04): aprobada dependencia nueva `barryvdh/laravel-dompdf` (~^3.1) | Genera el PDF de cotización desde vista Blade; confirmada no instalada por research (2026-09-16); usuario aprobó explícitamente durante `/gsd:plan-phase 1` (2026-09-16) | ✓ Instalada y validada, Phase 1 (2026-09-17), v3.1.2 |
+| Fase A: índice único de `quotations.number` debe ser compuesto (`company_id`, `number`), no global | El plan-checker detectó que un índice global rompería la numeración "consecutiva por empresa" (QUOT-02) en cuanto dos compañías compartieran número en el mismo año; corregido antes de ejecutar | ✓ Aplicado, Phase 1 (2026-09-17) |
 
 ## Evolution
 
@@ -91,4 +92,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-09-16 after initialization*
+*Last updated: 2026-09-17 after Phase 1 (Cotización electrónica — Fase A) completion*

@@ -71,6 +71,7 @@ Cada movimiento relevante produce un comprobante contable auditable e inmutable 
 | Excel (Fase D): elegir librería por eficiencia y calidad, no por familiaridad previa | Usuario delegó el criterio técnico explícitamente; requiere aprobación de dependencia antes de instalar | — Pending |
 | Orden de ejecución de fases: A → C → B → E → D | Priorizado por esfuerzo vs. valor comercial percibido (ver `docs/roadmap-apolo.md`) | — Pending |
 | Estrategia de precios: ContPass privado post-mejoras ~$1.5M–$2.2M COP/año | Basado en research de mercado real (SECOP + SaaS privado); posiciona justo debajo de Alegra/Siigo/World Office compensado por rigor de auditoría | — Pending |
+| Fase A (QUOT-04): aprobada dependencia nueva `barryvdh/laravel-dompdf` (~^3.1) | Genera el PDF de cotización desde vista Blade; confirmada no instalada por research (2026-09-16); usuario aprobó explícitamente durante `/gsd:plan-phase 1` (2026-09-16) | — Approved, pendiente `composer require` en fase de ejecución |
 
 ## Evolution
 

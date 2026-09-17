@@ -18,7 +18,7 @@ class ApplyWithholdingRules
             ->whereBelongsTo($company)
             ->where('is_active', true)
             ->effectiveOn($date)
-            ->orderBy('concept')
+            ->orderBy('type')
             ->get()
             ->filter(fn (WithholdingRule $rule) => $amount >= (float) $rule->minimum_base)
             ->map(fn (WithholdingRule $rule) => [

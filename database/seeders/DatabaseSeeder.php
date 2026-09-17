@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Enums\AccountNature;
 use App\Enums\CashAccountType;
 use App\Enums\UserRole;
+use App\Enums\WithholdingType;
 use App\Models\CashAccount;
 use App\Models\ChartAccount;
 use App\Models\Company;
@@ -58,7 +59,7 @@ class DatabaseSeeder extends Seeder
         );
 
         WithholdingRule::query()->firstOrCreate(
-            ['company_id' => $company->id, 'concept' => 'Servicios 2026'],
+            ['company_id' => $company->id, 'type' => WithholdingType::ReteFuente, 'description' => 'Servicios 2026'],
             [
                 'chart_account_id' => ChartAccount::query()->whereBelongsTo($company)->where('code', '236540')->value('id'),
                 'minimum_base' => 100000,

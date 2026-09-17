@@ -39,9 +39,11 @@ class PostExpenseVoucher
             ];
 
             foreach ($withholdings as $withholding) {
+                $ruleLabel = $withholding['rule']->description ?? $withholding['rule']->type->getLabel();
+
                 $entries[] = [
                     'chart_account_id' => $withholding['rule']->chart_account_id,
-                    'description' => "Retención {$withholding['rule']->concept}",
+                    'description' => "Retención {$ruleLabel}",
                     'debit' => 0,
                     'credit' => $withholding['amount'],
                 ];

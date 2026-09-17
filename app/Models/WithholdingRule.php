@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\WithholdingType;
 use Database\Factories\WithholdingRuleFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -16,7 +17,9 @@ class WithholdingRule extends Model
     protected $fillable = [
         'company_id',
         'chart_account_id',
-        'concept',
+        'type',
+        'description',
+        'municipality_id',
         'minimum_base',
         'rate',
         'starts_on',
@@ -27,6 +30,7 @@ class WithholdingRule extends Model
     protected function casts(): array
     {
         return [
+            'type' => WithholdingType::class,
             'minimum_base' => 'decimal:2',
             'rate' => 'decimal:4',
             'starts_on' => 'date',
@@ -43,6 +47,11 @@ class WithholdingRule extends Model
     public function chartAccount(): BelongsTo
     {
         return $this->belongsTo(ChartAccount::class);
+    }
+
+    public function municipality(): BelongsTo
+    {
+        return $this->belongsTo(Municipality::class);
     }
 
     public function scopeEffectiveOn(Builder $query, string $date): Builder

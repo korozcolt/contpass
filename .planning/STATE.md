@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to plan
-stopped_at: Phase 3 UI-SPEC approved
-last_updated: "2026-09-17T13:55:30.284Z"
+status: Executing Phase 03
+stopped_at: Phase 3 Plan 1 of 4 complete
+last_updated: "2026-09-17T15:59:51Z"
 progress:
   total_phases: 5
   completed_phases: 2
-  total_plans: 7
-  completed_plans: 7
+  total_plans: 11
+  completed_plans: 8
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-09-16)
 
 **Core value:** Cada movimiento relevante produce un comprobante contable auditable e inmutable por partida doble — trazabilidad e inmutabilidad sobre conveniencia.
-**Current focus:** Phase 02 — reteica-por-municipio-fase-c (COMPLETE) — next: Phase 3 (Conciliación bancaria CSV, Fase B)
+**Current focus:** Phase 03 — conciliaci-n-bancaria-csv-fase-b (EXECUTING, Plan 1/4 complete)
 
 ## Current Position
 
-Phase: 3
-Plan: Not started
+Phase: 03 (conciliaci-n-bancaria-csv-fase-b) — EXECUTING
+Plan: 2 of 4 (Plan 1 complete: enums/migraciones/modelos de conciliación bancaria)
 
 ## Performance Metrics
 
@@ -53,6 +53,7 @@ Plan: Not started
 | Phase 02 P01 | ~30min | 3 tasks | 11 files |
 | Phase 02 P02 | ~45min | 3 tasks | 12 files |
 | Phase 02 P03 | ~25min | 3 tasks | 8 files |
+| Phase 03 P01 | ~40min | 3 tasks | 15 files |
 
 ## Accumulated Context
 
@@ -80,6 +81,10 @@ Recent decisions affecting current work:
 - [Phase 02 P02]: RETICA-04 se marca "Partial" en REQUIREMENTS.md, no "Complete", pese a estar en el `requirements:` frontmatter de `02-02-PLAN.md` — el propio objective del plan reconoce que solo la mitad de la garantía (bloqueo de configuración conflictiva en origen) se implementa aquí; la otra mitad (filtro en tiempo de causación) es 02-03. Decisión: reflejar el estado real en vez de marcar el checkbox ciegamente desde el frontmatter
 - [Phase 02 P03]: el filtro de municipio en `ApplyWithholdingRules` se implementó como un único `where()` closure aditivo (`type != Ica OR (type == Ica AND municipality_id = X)`) en vez de construir la query condicionalmente — garantiza RETICA-05 (ReteFuente/ReteIVA intactas) por construcción, no solo por cobertura de tests; cuando `$municipalityId` es `null`, `where('municipality_id', null)` nunca matchea ninguna fila en SQL, así que las reglas ICA fallan cerrado (fail-closed) por defecto sin necesidad de un caso especial
 - [Phase 02 P03]: RETICA-03/04/05 quedan "Complete" en REQUIREMENTS.md — este plan cierra la mitad pendiente de RETICA-04 identificada en 02-02 (filtro en tiempo de causación) y prueba RETICA-05 por regresión (el test `AccountingPostingTest` existente pasa sin modificar)
+- [Phase 03 P01]: BANKREC-01 se marca "Partial" en REQUIREMENTS.md (no "Complete"), pese a estar en el `requirements:` frontmatter de `03-01-PLAN.md` — este plan solo construye el esquema/modelos que soportan el import (incluyendo `cash_account_id`), no la capacidad real de "subir un archivo CSV" (eso es 03-04, UI de upload). Mismo criterio aplicado a RETICA-04 en 02-02: reflejar el estado real, no marcar el checkbox ciegamente desde el frontmatter
+- [Phase 03 P01]: `BankProfile::columnAliases()`/`dateFormats()` son provisionales (sin muestra real de extracto Bancolombia/Davivienda, 03-RESEARCH.md Open Question #1) — documentado en el PHPDoc de la clase para que 03-02 los ajuste sin tocar el motor de encoding/delimitador de `ImportBankStatement`
+- [Phase 03 P01]: el pivot `bank_statement_match_payment` (belongsToMany sin tabla intermedia con nombre de modelo) soporta el caso 1:1 (D-06) y el caso de lote 2-5 Payments (D-07) bajo el mismo modelo `BankStatementMatch` + confirmación, sin lógica duplicada entre ambos casos
+- [Phase 03 P01]: en tests Pest, `Factory::has($relatedFactory)` adivina el nombre del método de relación a partir del modelo relacionado (ej. `bankStatementLine()`), no del nombre real del método (`lines()`/`matches()`) — cuando el nombre de la relación no sigue la convención por defecto, se debe pasar explícito: `->has($relatedFactory, 'lines')`
 
 ### Pending Todos
 
@@ -97,9 +102,10 @@ Recent decisions affecting current work:
 - Phase 02 (Plan 2/3, esta ejecución): al iniciar esta ejecución, el worktree NO estaba recién creado desde `main` como afirmaba el prompt de ejecución — su rama (`worktree-agent-a956e036779bb34f9`) apuntaba a un commit ("Libro Mayor / bank reconciliation") de una sesión anterior no relacionada, sin `.planning/` local. Se verificó vía `git merge-base` que ese commit era un ancestro estricto de `main` (sin trabajo sin commitear en riesgo) y se corrigió con `git merge --ff-only main` (operación no destructiva, solo fast-forward). Dado este patrón ya se ha repetido en Phase 01 y Phase 02 P01 (bug de `gsd-tools.cjs` sobreescribiendo el `.planning/` del checkout principal), y ahora se suma un problema distinto (worktree no sincronizado con `main` al spawnear), se recomienda que el orquestador verifique `git merge-base HEAD main` == `HEAD` (o cree el worktree explícitamente desde `main`) antes de invocar al ejecutor, en vez de asumir que el worktree ya está actualizado.
 - Dado el bug de tooling arriba, esta ejecución (Plan 2/3) NO invocó `gsd-tools.cjs state advance-plan` / `roadmap update-plan-progress` / `requirements mark-complete` en absoluto — todas las actualizaciones de `STATE.md`, `ROADMAP.md` y `REQUIREMENTS.md` se hicieron a mano directamente en este worktree, evitando corromper el checkout principal compartido de nuevo.
 - Phase 02 (Plan 3/3, esta ejecución): al iniciar, el worktree de nuevo NO estaba sincronizado con `main` — su rama apuntaba a un commit ("Libro Mayor / bank reconciliation") 54 commits detrás de `main`, sin `.planning/` local en absoluto (ni siquiera Phase 1). Mismo patrón documentado en Plan 2/3 de esta fase. Verificado vía `git merge-base --is-ancestor HEAD main` (true, ancestro estricto, sin commits únicos locales) y corregido con `git merge main --ff-only` (no destructivo). También requirió bootstrap completo del entorno no hecho aún en esta instancia del worktree: `composer install`, `cp .env.example .env && php artisan key:generate`, `npm install && npm run build` (ninguno de estos existía: sin `vendor/`, sin `.env`, sin `node_modules`, sin `public/build/`). Esta ejecución (Plan 3/3) tampoco invocó `gsd-tools.cjs state advance-plan` / `roadmap update-plan-progress` / `requirements mark-complete` — todas las actualizaciones de `STATE.md`, `ROADMAP.md` y `REQUIREMENTS.md` se hicieron a mano directamente en este worktree. Con Phase 2 ahora completa (3/3), el patrón de worktree-desactualizado se ha repetido en las 3 ejecuciones de esta fase; se reitera la recomendación al orquestador de verificar `git merge-base HEAD main == HEAD` (o crear el worktree explícitamente desde `main`) antes de invocar al ejecutor.
+- Phase 03 (Plan 1/4, esta ejecución): el patrón se repitió una cuarta vez, ahora peor — el worktree no tenía absolutamente ningún `.planning/` (ni siquiera commiteado; `git ls-files | grep .planning` devolvía 0), y tampoco `vendor/`, `.env`, `node_modules/` ni `public/build/`. Verificado vía `git merge-base --is-ancestor HEAD main` (true) y corregido con `git merge main --ff-only`, seguido del bootstrap completo habitual. Adicionalmente, el Postgres local compartido en esta máquina (contenedor Docker `postgres:16`, puerto 5432, usado por varios proyectos no relacionados) no tenía el rol/base de datos `contpass` que asume `.env.example` (`DB_USERNAME=contpass`, `DB_PASSWORD=` vacío) — se creó el rol/base manualmente (`docker exec postgres psql -U root -c "CREATE ROLE contpass..."`) y se ajustó `DB_PASSWORD` en el `.env` local (gitignored) de este worktree; ver `03-01-SUMMARY.md` para el detalle. Esta ejecución tampoco invocó ningún comando `gsd-tools.cjs` de estado — todas las actualizaciones de `STATE.md`, `ROADMAP.md` y `REQUIREMENTS.md` se hicieron a mano directamente en este worktree, que es la fuente de verdad correcta.
 
 ## Session Continuity
 
-Last session: 2026-09-17T13:55:30.275Z
-Stopped at: Phase 3 UI-SPEC approved
-Resume file: .planning/phases/03-conciliaci-n-bancaria-csv-fase-b/03-UI-SPEC.md
+Last session: 2026-09-17T15:59:51Z
+Stopped at: Phase 3 Plan 1 of 4 complete (fundamento de dominio de conciliación bancaria)
+Resume file: .planning/phases/03-conciliaci-n-bancaria-csv-fase-b/03-02-PLAN.md

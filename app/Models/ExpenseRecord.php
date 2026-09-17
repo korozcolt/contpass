@@ -17,6 +17,7 @@ class ExpenseRecord extends Model
         'budget_obligation_id',
         'expense_account_id',
         'payable_account_id',
+        'municipality_id',
         'support_type',
         'support_number',
         'accrual_date',
@@ -55,5 +56,10 @@ class ExpenseRecord extends Model
     public function budgetObligation(): BelongsTo
     {
         return $this->belongsTo(BudgetObligation::class);
+    }
+
+    public function municipality(): BelongsTo
+    {
+        return $this->belongsTo(Municipality::class);
     }
 }

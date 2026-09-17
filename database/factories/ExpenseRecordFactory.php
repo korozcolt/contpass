@@ -18,6 +18,7 @@ class ExpenseRecordFactory extends Factory
             'voucher_id' => Voucher::factory(),
             'expense_account_id' => ChartAccount::factory(),
             'payable_account_id' => ChartAccount::factory()->credit(),
+            'municipality_id' => null,
             'support_type' => 'Cuenta de cobro',
             'support_number' => fake()->bothify('EGR-####'),
             'accrual_date' => '2026-07-01',

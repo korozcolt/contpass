@@ -18,14 +18,15 @@ class PostExpenseVoucher
     ) {}
 
     /**
-     * @param  array{third_party_id: int, expense_account_id: int, payable_account_id: int, support_type: string, support_number: string, accrual_date: string, amount: numeric-string|float|int, has_valid_support?: bool, is_deductible?: bool, description?: string}  $data
+     * @param  array{third_party_id: int, expense_account_id: int, payable_account_id: int, support_type: string, support_number: string, accrual_date: string, amount: numeric-string|float|int, has_valid_support?: bool, is_deductible?: bool, description?: string, municipality_id?: int|string|null}  $data
      */
     public function handle(Company $company, ThirdParty $thirdParty, array $data, ?BudgetObligation $obligation = null): Voucher
     {
         return DB::transaction(function () use ($company, $thirdParty, $data, $obligation): Voucher {
             $amount = round((float) $data['amount'], 2);
             $description = $data['description'] ?? "Egreso {$data['support_number']}";
-            $withholdings = $this->applyWithholdingRules->handle($company, $amount, $data['accrual_date']);
+            $municipalityId = isset($data['municipality_id']) && $data['municipality_id'] !== '' ? (int) $data['municipality_id'] : null;
+            $withholdings = $this->applyWithholdingRules->handle($company, $amount, $data['accrual_date'], $municipalityId);
             $withholdingAmount = round($withholdings->sum('amount'), 2);
             $payableAmount = round($amount - $withholdingAmount, 2);
 
@@ -63,6 +64,7 @@ class PostExpenseVoucher
                 'budget_obligation_id' => $obligation?->id,
                 'expense_account_id' => $data['expense_account_id'],
                 'payable_account_id' => $data['payable_account_id'],
+                'municipality_id' => $municipalityId,
                 'support_type' => $data['support_type'],
                 'support_number' => $data['support_number'],
                 'accrual_date' => $data['accrual_date'],

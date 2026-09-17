@@ -50,7 +50,7 @@ it('fixes the migration columns for the bank reconciliation schema', function ()
 });
 
 it('relates a bank statement import to its lines', function () {
-    $import = BankStatementImport::factory()->has(BankStatementLine::factory()->count(2))->create();
+    $import = BankStatementImport::factory()->has(BankStatementLine::factory()->count(2), 'lines')->create();
 
     expect($import->lines)->toHaveCount(2)
         ->and($import->lines->first())->toBeInstanceOf(BankStatementLine::class);
@@ -61,7 +61,7 @@ it('relates a bank statement import to its lines', function () {
 });
 
 it('relates a bank statement line to its matches', function () {
-    $line = BankStatementLine::factory()->has(BankStatementMatch::factory())->create();
+    $line = BankStatementLine::factory()->has(BankStatementMatch::factory(), 'matches')->create();
 
     expect($line->matches->first())->toBeInstanceOf(BankStatementMatch::class);
 

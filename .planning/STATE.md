@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Executing Phase 03
-stopped_at: Phase 3 Plan 1 of 4 complete
-last_updated: "2026-09-17T15:59:51Z"
+stopped_at: Phase 3 Plan 3 of 4 complete
+last_updated: "2026-09-17T16:40:00Z"
 progress:
   total_phases: 5
   completed_phases: 2
   total_plans: 11
-  completed_plans: 8
+  completed_plans: 9
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-09-16)
 
 **Core value:** Cada movimiento relevante produce un comprobante contable auditable e inmutable por partida doble — trazabilidad e inmutabilidad sobre conveniencia.
-**Current focus:** Phase 03 — conciliaci-n-bancaria-csv-fase-b (EXECUTING, Plan 1/4 complete)
+**Current focus:** Phase 03 — conciliaci-n-bancaria-csv-fase-b (EXECUTING, Plan 3/4 complete in this worktree; Plan 2/4 executed in parallel in a separate worktree, reconciles at merge)
 
 ## Current Position
 
 Phase: 03 (conciliaci-n-bancaria-csv-fase-b) — EXECUTING
-Plan: 2 of 4 (Plan 1 complete: enums/migraciones/modelos de conciliación bancaria)
+Plan: 3 of 4 complete in this worktree (motor de cruce: ProposeBankStatementMatches + ConfirmBankStatementMatch). Plan 2/4 (ImportBankStatement) executed concurrently in a separate worktree — not reflected here until merge.
 
 ## Performance Metrics
 
@@ -54,6 +54,7 @@ Plan: 2 of 4 (Plan 1 complete: enums/migraciones/modelos de conciliación bancar
 | Phase 02 P02 | ~45min | 3 tasks | 12 files |
 | Phase 02 P03 | ~25min | 3 tasks | 8 files |
 | Phase 03 P01 | ~40min | 3 tasks | 15 files |
+| Phase 03 P03 | ~35min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -85,6 +86,9 @@ Recent decisions affecting current work:
 - [Phase 03 P01]: `BankProfile::columnAliases()`/`dateFormats()` son provisionales (sin muestra real de extracto Bancolombia/Davivienda, 03-RESEARCH.md Open Question #1) — documentado en el PHPDoc de la clase para que 03-02 los ajuste sin tocar el motor de encoding/delimitador de `ImportBankStatement`
 - [Phase 03 P01]: el pivot `bank_statement_match_payment` (belongsToMany sin tabla intermedia con nombre de modelo) soporta el caso 1:1 (D-06) y el caso de lote 2-5 Payments (D-07) bajo el mismo modelo `BankStatementMatch` + confirmación, sin lógica duplicada entre ambos casos
 - [Phase 03 P01]: en tests Pest, `Factory::has($relatedFactory)` adivina el nombre del método de relación a partir del modelo relacionado (ej. `bankStatementLine()`), no del nombre real del método (`lines()`/`matches()`) — cuando el nombre de la relación no sigue la convención por defecto, se debe pasar explícito: `->has($relatedFactory, 'lines')`
+- [Phase 03 P03]: el propio plan traía un bug en su código de ejemplo — `Payment::query()->where('is_reconciled', false)` compara contra una columna que no existe (`is_reconciled` es un accessor/mutator virtual sobre `reconciled_at`, `app/Models/Payment.php:42-47`). Corregido a `whereNull('reconciled_at')` (condición equivalente), documentado inline con un comentario que preserva la palabra literal `is_reconciled` para no romper el criterio de aceptación basado en `grep`
+- [Phase 03 P03]: el motor de cruce por lote (`ProposeBankStatementMatches::combinationsOfSize()`) acota el pool de candidatos a `match_pool_limit` (10 por defecto) ANTES de generar combinaciones de tamaño 2-5 — si el pool excede ese límite, la línea solo recibe sugerencias 1:1, nunca de lote (Open Question #3 de 03-RESEARCH.md resuelta)
+- [Phase 03 P03]: la limitación de convenio de signo (Open Question #2 de 03-RESEARCH.md — el motor compara montos en magnitud, sin distinguir débito/crédito) queda documentada explícitamente en el servicio y mitigada por la confirmación manual obligatoria (BANKREC-05); no se resuelve en esta fase por falta de muestra real de extracto
 
 ### Pending Todos
 
@@ -103,9 +107,10 @@ Recent decisions affecting current work:
 - Dado el bug de tooling arriba, esta ejecución (Plan 2/3) NO invocó `gsd-tools.cjs state advance-plan` / `roadmap update-plan-progress` / `requirements mark-complete` en absoluto — todas las actualizaciones de `STATE.md`, `ROADMAP.md` y `REQUIREMENTS.md` se hicieron a mano directamente en este worktree, evitando corromper el checkout principal compartido de nuevo.
 - Phase 02 (Plan 3/3, esta ejecución): al iniciar, el worktree de nuevo NO estaba sincronizado con `main` — su rama apuntaba a un commit ("Libro Mayor / bank reconciliation") 54 commits detrás de `main`, sin `.planning/` local en absoluto (ni siquiera Phase 1). Mismo patrón documentado en Plan 2/3 de esta fase. Verificado vía `git merge-base --is-ancestor HEAD main` (true, ancestro estricto, sin commits únicos locales) y corregido con `git merge main --ff-only` (no destructivo). También requirió bootstrap completo del entorno no hecho aún en esta instancia del worktree: `composer install`, `cp .env.example .env && php artisan key:generate`, `npm install && npm run build` (ninguno de estos existía: sin `vendor/`, sin `.env`, sin `node_modules`, sin `public/build/`). Esta ejecución (Plan 3/3) tampoco invocó `gsd-tools.cjs state advance-plan` / `roadmap update-plan-progress` / `requirements mark-complete` — todas las actualizaciones de `STATE.md`, `ROADMAP.md` y `REQUIREMENTS.md` se hicieron a mano directamente en este worktree. Con Phase 2 ahora completa (3/3), el patrón de worktree-desactualizado se ha repetido en las 3 ejecuciones de esta fase; se reitera la recomendación al orquestador de verificar `git merge-base HEAD main == HEAD` (o crear el worktree explícitamente desde `main`) antes de invocar al ejecutor.
 - Phase 03 (Plan 1/4, esta ejecución): el patrón se repitió una cuarta vez, ahora peor — el worktree no tenía absolutamente ningún `.planning/` (ni siquiera commiteado; `git ls-files | grep .planning` devolvía 0), y tampoco `vendor/`, `.env`, `node_modules/` ni `public/build/`. Verificado vía `git merge-base --is-ancestor HEAD main` (true) y corregido con `git merge main --ff-only`, seguido del bootstrap completo habitual. Adicionalmente, el Postgres local compartido en esta máquina (contenedor Docker `postgres:16`, puerto 5432, usado por varios proyectos no relacionados) no tenía el rol/base de datos `contpass` que asume `.env.example` (`DB_USERNAME=contpass`, `DB_PASSWORD=` vacío) — se creó el rol/base manualmente (`docker exec postgres psql -U root -c "CREATE ROLE contpass..."`) y se ajustó `DB_PASSWORD` en el `.env` local (gitignored) de este worktree; ver `03-01-SUMMARY.md` para el detalle. Esta ejecución tampoco invocó ningún comando `gsd-tools.cjs` de estado — todas las actualizaciones de `STATE.md`, `ROADMAP.md` y `REQUIREMENTS.md` se hicieron a mano directamente en este worktree, que es la fuente de verdad correcta.
+- Phase 03 (Plan 3/4, esta ejecución, en un worktree nuevo `agent-a945621aaa0ba851b` corriendo en paralelo con el ejecutor de Plan 2/4 en otro worktree): mismo patrón otra vez — worktree sin `.planning/`, `vendor/`, `.env`, `node_modules/` ni `public/build/`. Corregido con `git merge main --ff-only` (verificado ancestro estricto) + bootstrap completo. El rol/base de datos `contpass` en el Postgres compartido ya existía (persistente desde Plan 03-01) y todas las migraciones (incluidas las de 03-01) ya estaban `Ran` contra esa base compartida — no se requirió `migrate`. Dado el bug conocido de `gsd-tools.cjs` `findProjectRoot()`, esta ejecución tampoco invocó ningún comando de estado — `STATE.md`, `ROADMAP.md` y `REQUIREMENTS.md` se editaron a mano directamente en este worktree. Nota de reconciliación: como Plan 2/4 se ejecuta en paralelo en otro worktree no fusionado aún, este worktree's `ROADMAP.md`/`REQUIREMENTS.md` no reflejan el estado de 03-02 — eso se resolverá naturalmente al mergear ambas ramas de vuelta a `main`.
 
 ## Session Continuity
 
-Last session: 2026-09-17T15:59:51Z
-Stopped at: Phase 3 Plan 1 of 4 complete (fundamento de dominio de conciliación bancaria)
-Resume file: .planning/phases/03-conciliaci-n-bancaria-csv-fase-b/03-02-PLAN.md
+Last session: 2026-09-17T16:40:00Z
+Stopped at: Phase 3 Plan 3 of 4 complete (motor de cruce: ProposeBankStatementMatches + ConfirmBankStatementMatch)
+Resume file: .planning/phases/03-conciliaci-n-bancaria-csv-fase-b/03-04-PLAN.md (depends on 03-02 and 03-03 both merged into main)

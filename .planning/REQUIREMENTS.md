@@ -25,7 +25,7 @@
 
 ### Conciliación Bancaria por Extracto (BANKREC) — Fase B
 
-- [ ] **BANKREC-01**: Usuario puede subir un archivo de extracto bancario en CSV asociado a una `CashAccount` específica
+- [x] **BANKREC-01**: Usuario puede subir un archivo de extracto bancario en CSV asociado a una `CashAccount` específica
 - [x] **BANKREC-02**: El importador normaliza codificación de caracteres (Windows-1252/UTF-8) y reconoce formatos de fecha comunes en extractos colombianos antes de parsear
 - [x] **BANKREC-03**: Reimportar un periodo de extracto ya importado se detecta y se rechaza/marca explícitamente, no se duplica en silencio
 - [x] **BANKREC-04**: El sistema propone cruces entre líneas del extracto importado y `Payment` existentes usando monto, ventana de fecha y referencia, incluyendo el caso donde una línea del extracto corresponde a la suma de varios `Payment` (transferencias por lote)
@@ -97,7 +97,7 @@ Excluidos explícitamente de este milestone. Ver `docs/roadmap-apolo.md` y `.pla
 | RETICA-03 | Phase 2 (Fase C) | Complete |
 | RETICA-04 | Phase 2 (Fase C) | Complete |
 | RETICA-05 | Phase 2 (Fase C) | Complete |
-| BANKREC-01 | Phase 3 (Fase B) | Partial (schema/modelos listos, Plan 1/4; importador Plan 2/4 y motor de cruce Plan 3/4 completos; falta upload UI en Plan 4) |
+| BANKREC-01 | Phase 3 (Fase B) | Complete |
 | BANKREC-02 | Phase 3 (Fase B) | Complete |
 | BANKREC-03 | Phase 3 (Fase B) | Complete |
 | BANKREC-04 | Phase 3 (Fase B) | Complete |
@@ -117,4 +117,4 @@ Excluidos explícitamente de este milestone. Ver `docs/roadmap-apolo.md` y `.pla
 
 ---
 *Requirements defined: 2026-09-16*
-*Last updated: 2026-09-17 after Phase 3 Plans 2 y 3 (ImportBankStatement + motor de cruce) — BANKREC-02/03/04/05/06 completos, BANKREC-01 sigue parcial (falta UI de upload en Plan 4)*
+*Last updated: 2026-09-17 after Phase 3 Plan 4 (UploadBankStatement + BankStatementReview UI) — BANKREC-01 a BANKREC-06 completos; Phase 3 (Fase B) cerrada*

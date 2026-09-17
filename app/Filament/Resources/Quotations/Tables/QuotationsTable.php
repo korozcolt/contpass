@@ -36,6 +36,11 @@ class QuotationsTable
             ->emptyStateDescription("Crea una cotización para un tercero desde el botón 'Nueva cotización'.")
             ->recordActions([
                 EditAction::make(),
+                Action::make('pdf')
+                    ->label('Descargar PDF')
+                    ->icon(Heroicon::DocumentArrowDown)
+                    ->url(fn (Quotation $record): string => route('quotations.pdf', $record))
+                    ->openUrlInNewTab(),
                 Action::make('send')
                     ->label('Enviar')
                     ->icon(Heroicon::PaperAirplane)

@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\AccountingReportController;
+use App\Http\Controllers\QuotationPdfController;
+use App\Models\Quotation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -59,3 +61,9 @@ Route::get('accounting-reports/bank-reconciliation', function (Request $request)
 
     return app(AccountingReportController::class)->bankReconciliation($request);
 })->name('accounting-reports.bank-reconciliation');
+
+Route::get('quotations/{quotation}/pdf', function (Request $request, Quotation $quotation): mixed {
+    abort_unless($request->user() !== null, 403);
+
+    return app(QuotationPdfController::class)->show($quotation);
+})->name('quotations.pdf');

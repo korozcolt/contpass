@@ -63,11 +63,11 @@ Plans:
   3. Reimportar un periodo de extracto ya importado se detecta y se rechaza/marca explícitamente, nunca se duplica en silencio
   4. El sistema propone cruces entre líneas del extracto y `Payment` existentes usando monto, ventana de fecha y referencia, incluyendo el caso donde una línea del extracto corresponde a la suma de varios `Payment` (transferencias por lote)
   5. Usuario debe confirmar explícitamente cada cruce propuesto antes de que un `Payment` se marque como conciliado — ningún cruce se confirma automáticamente
-**Plans**: 2/4 plans complete
+**Plans**: 3/4 plans complete
 Plans:
 - [x] 03-01-PLAN.md — Fundamento: enums (BankProfile/estados), migraciones y modelos (BankStatementImport/Line/Match)
 - [x] 03-02-PLAN.md — ImportBankStatement: encoding/delimitador, encabezados, período solapado, rechazo fila-por-fila (TDD)
-- [ ] 03-03-PLAN.md — ProposeBankStatementMatches (1:1 + lote acotado) y ConfirmBankStatementMatch (TDD)
+- [x] 03-03-PLAN.md — ProposeBankStatementMatches (1:1 + lote acotado) y ConfirmBankStatementMatch (TDD)
 - [ ] 03-04-PLAN.md — Páginas Filament UploadBankStatement + BankStatementReview (D-09)
 **UI hint**: yes
 

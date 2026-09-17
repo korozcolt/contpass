@@ -85,30 +85,30 @@ Excluidos explícitamente de este milestone. Ver `docs/roadmap-apolo.md` y `.pla
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| QUOT-01 | Fase A | Pending |
-| QUOT-02 | Fase A | Pending |
-| QUOT-03 | Fase A | Pending |
-| QUOT-04 | Fase A | Pending |
-| QUOT-05 | Fase A | Pending |
-| QUOT-06 | Fase A | Pending |
-| QUOT-07 | Fase A | Pending |
-| RETICA-01 | Fase C | Pending |
-| RETICA-02 | Fase C | Pending |
-| RETICA-03 | Fase C | Pending |
-| RETICA-04 | Fase C | Pending |
-| RETICA-05 | Fase C | Pending |
-| BANKREC-01 | Fase B | Pending |
-| BANKREC-02 | Fase B | Pending |
-| BANKREC-03 | Fase B | Pending |
-| BANKREC-04 | Fase B | Pending |
-| BANKREC-05 | Fase B | Pending |
-| BANKREC-06 | Fase B | Pending |
-| INVHOOK-01 | Fase E | Pending |
-| INVHOOK-02 | Fase E | Pending |
-| INVHOOK-03 | Fase E | Pending |
-| XLSEXPORT-01 | Fase D | Pending |
-| XLSEXPORT-02 | Fase D | Pending |
-| XLSEXPORT-03 | Fase D | Pending |
+| QUOT-01 | Phase 1 (Fase A) | Pending |
+| QUOT-02 | Phase 1 (Fase A) | Pending |
+| QUOT-03 | Phase 1 (Fase A) | Pending |
+| QUOT-04 | Phase 1 (Fase A) | Pending |
+| QUOT-05 | Phase 1 (Fase A) | Pending |
+| QUOT-06 | Phase 1 (Fase A) | Pending |
+| QUOT-07 | Phase 1 (Fase A) | Pending |
+| RETICA-01 | Phase 2 (Fase C) | Pending |
+| RETICA-02 | Phase 2 (Fase C) | Pending |
+| RETICA-03 | Phase 2 (Fase C) | Pending |
+| RETICA-04 | Phase 2 (Fase C) | Pending |
+| RETICA-05 | Phase 2 (Fase C) | Pending |
+| BANKREC-01 | Phase 3 (Fase B) | Pending |
+| BANKREC-02 | Phase 3 (Fase B) | Pending |
+| BANKREC-03 | Phase 3 (Fase B) | Pending |
+| BANKREC-04 | Phase 3 (Fase B) | Pending |
+| BANKREC-05 | Phase 3 (Fase B) | Pending |
+| BANKREC-06 | Phase 3 (Fase B) | Pending |
+| INVHOOK-01 | Phase 4 (Fase E) | Pending |
+| INVHOOK-02 | Phase 4 (Fase E) | Pending |
+| INVHOOK-03 | Phase 4 (Fase E) | Pending |
+| XLSEXPORT-01 | Phase 5 (Fase D) | Pending |
+| XLSEXPORT-02 | Phase 5 (Fase D) | Pending |
+| XLSEXPORT-03 | Phase 5 (Fase D) | Pending |
 
 **Coverage:**
 - v1 requirements: 24 total

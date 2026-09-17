@@ -39,6 +39,7 @@ Cada movimiento relevante produce un comprobante contable auditable e inmutable 
 - Punto de venta (POS) — no encaja con la identidad de control/trazabilidad del producto.
 - Conexión bancaria en vivo / Open Banking, soporte OFX, conciliación asistida por IA — fuera de esta fase de conciliación (Fase B); solo CSV con cruce manual/semiautomático.
 - Generación/presentación de declaración de ICA ante la Secretaría de Hacienda municipal — Fase C solo calcula y registra la retención, no declara.
+- ReteICA por actividad económica (CIIU) del `ThirdParty` — es el estándar real de mercado (Siigo/Siesa/SysCafé calculan por actividad × municipio del proveedor, no domicilio de la empresa pagadora), pero se descarta deliberadamente por simplicidad tras confirmarlo con el usuario (research 2026-09-16). Revisar si algún cliente concreto lo exige antes de construir Fase C.
 - Motor de Nómina pública, módulo Secretaría/Contratación, MGA/CCPET, Estampillas, Depreciación de activos fijos, módulo de Suscriptores/Tarifas/PQRS para ESP — brechas conocidas contra Apolo, documentadas en `docs/roadmap-apolo.md`, pero fuera de este milestone (que es para mercado privado, no público).
 
 ## Context
@@ -65,7 +66,8 @@ Cada movimiento relevante produce un comprobante contable auditable e inmutable 
 |----------|-----------|---------|
 | No facturación electrónica propia en este milestone | Certificación DIAN/PTO es un esfuerzo regulatorio grande; se integrará proveedor tercero después | — Pending |
 | No motor de nómina electrónica ni POS en este milestone | Mercado privado ya bien servido por competidores ahí; ContPass compite en trazabilidad/auditoría | — Pending |
-| ReteICA (Fase C): municipio se toma del domicilio de la `Company`, con opción de edición manual | Simplicidad sobre exactitud por-tercero; decisión de negocio del usuario | — Pending |
+| ReteICA (Fase C): municipio se toma del domicilio de la `Company`, con opción de edición manual | Simplicidad sobre exactitud por-tercero; decisión de negocio del usuario. Research de mercado (2026-09-16) encontró que el estándar real (Siigo/Siesa/SysCafé) es tarifa por actividad económica CIIU × municipio del `ThirdParty`, no domicilio de `Company` — el usuario confirmó explícitamente mantener el modelo simple después de conocer ese tradeoff | — Pending |
+| Out of scope explícito: ReteICA por actividad económica (CIIU) del `ThirdParty` | Más preciso y esperado por contadores acostumbrados a Siigo/Alegra, pero requiere nueva dimensión de datos en `ThirdParty` — descartado deliberadamente por simplicidad, no por desconocimiento | — Pending |
 | Excel (Fase D): elegir librería por eficiencia y calidad, no por familiaridad previa | Usuario delegó el criterio técnico explícitamente; requiere aprobación de dependencia antes de instalar | — Pending |
 | Orden de ejecución de fases: A → C → B → E → D | Priorizado por esfuerzo vs. valor comercial percibido (ver `docs/roadmap-apolo.md`) | — Pending |
 | Estrategia de precios: ContPass privado post-mejoras ~$1.5M–$2.2M COP/año | Basado en research de mercado real (SECOP + SaaS privado); posiciona justo debajo de Alegra/Siigo/World Office compensado por rigor de auditoría | — Pending |

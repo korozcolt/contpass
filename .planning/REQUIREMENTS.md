@@ -97,7 +97,7 @@ Excluidos explícitamente de este milestone. Ver `docs/roadmap-apolo.md` y `.pla
 | RETICA-03 | Phase 2 (Fase C) | Complete |
 | RETICA-04 | Phase 2 (Fase C) | Complete |
 | RETICA-05 | Phase 2 (Fase C) | Complete |
-| BANKREC-01 | Phase 3 (Fase B) | Pending |
+| BANKREC-01 | Phase 3 (Fase B) | Partial (schema/modelos listos, Plan 1/4; falta upload real en Plan 4) |
 | BANKREC-02 | Phase 3 (Fase B) | Pending |
 | BANKREC-03 | Phase 3 (Fase B) | Pending |
 | BANKREC-04 | Phase 3 (Fase B) | Pending |
@@ -117,4 +117,4 @@ Excluidos explícitamente de este milestone. Ver `docs/roadmap-apolo.md` y `.pla
 
 ---
 *Requirements defined: 2026-09-16*
-*Last updated: 2026-09-17 after Phase 2 Plan 3 (filtro de municipio en ApplyWithholdingRules + causación con municipio de operación) — Phase 2 (Fase C) completa*
+*Last updated: 2026-09-17 after Phase 3 Plan 1 (fundamento de dominio de conciliación bancaria: enums, migraciones, modelos) — BANKREC-01 parcial, resto de Fase B pendiente*

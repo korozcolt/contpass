@@ -18,18 +18,18 @@ function importBankStatementCsvFixture(array $rows, string $delimiter = ',', str
 {
     $path = tempnam(sys_get_temp_dir(), 'bankstmt_').'.csv';
 
-    $lines = array_map(
-        fn (array $row): string => implode($delimiter, $row),
-        $rows,
-    );
+    $handle = fopen($path, 'w');
 
-    $content = implode("\r\n", $lines)."\r\n";
-
-    if ($encoding !== 'UTF-8') {
-        $content = mb_convert_encoding($content, $encoding, 'UTF-8');
+    foreach ($rows as $row) {
+        fputcsv($handle, $row, $delimiter);
     }
 
-    file_put_contents($path, $content);
+    fclose($handle);
+
+    if ($encoding !== 'UTF-8') {
+        $content = mb_convert_encoding((string) file_get_contents($path), $encoding, 'UTF-8');
+        file_put_contents($path, $content);
+    }
 
     return $path;
 }

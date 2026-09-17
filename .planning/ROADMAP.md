@@ -11,7 +11,7 @@ Cinco features aditivas al monolito Laravel 13 + Filament v5 existente, dirigida
 - Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
 
 - [x] **Phase 1: Cotización electrónica (Fase A)** - Cotizar, transicionar estados y convertir a ingreso sin duplicados
-- [ ] **Phase 2: ReteICA por municipio (Fase C)** - Retención ICA parametrizable por municipio sin acumulación entre municipios
+- [x] **Phase 2: ReteICA por municipio (Fase C)** - Retención ICA parametrizable por municipio sin acumulación entre municipios
 - [ ] **Phase 3: Conciliación bancaria CSV (Fase B)** - Importar extracto bancario y proponer cruces contra pagos sin duplicar ni perder filas
 - [ ] **Phase 4: Hook de facturación externa (Fase E)** - Capturar referencia de factura electrónica de terceros, sin integración activa
 - [ ] **Phase 5: Exportación Excel (Fase D)** - Exportar los 6 reportes existentes a .xlsx con celdas nativas
@@ -46,11 +46,11 @@ Plans:
   3. El municipio usado para seleccionar la regla de ICA aplicable toma por defecto el domicilio registrado de la `Company`, con opción de edición manual
   4. Con dos reglas de ICA activas para distintos municipios, solo se aplica la regla que coincide con el municipio de la operación — nunca se acumulan retenciones de más de un municipio en la misma transacción
   5. Las retenciones nacionales existentes (ReteFuente, ReteIVA) siguen aplicándose sin verse afectadas por la nueva dimensión de municipio
-**Plans**: 2/3 plans complete
+**Plans**: 3/3 plans complete
 Plans:
 - [x] 02-01-PLAN.md — Catálogo DIVIPOLA (departments/municipalities) + enum WithholdingType
 - [x] 02-02-PLAN.md — WithholdingRule: type/municipio + validación de solapamiento ICA (D-08) + UI
-- [ ] 02-03-PLAN.md — Filtro de municipio en ApplyWithholdingRules + municipio de la operación en ExpenseRecord
+- [x] 02-03-PLAN.md — Filtro de municipio en ApplyWithholdingRules + municipio de la operación en ExpenseRecord
 **UI hint**: yes
 
 ### Phase 3: Conciliación bancaria CSV (Fase B)
@@ -96,7 +96,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 (A → C → B → E 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Cotización electrónica (Fase A) | 4/4 | Complete   | 2026-09-16 |
-| 2. ReteICA por municipio (Fase C) | 2/3 | In progress | - |
+| 2. ReteICA por municipio (Fase C) | 3/3 | Complete   | 2026-09-17 |
 | 3. Conciliación bancaria CSV (Fase B) | 0/TBD | Not started | - |
 | 4. Hook de facturación externa (Fase E) | 0/TBD | Not started | - |
 | 5. Exportación Excel (Fase D) | 0/TBD | Not started | - |

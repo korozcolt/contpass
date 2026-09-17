@@ -19,9 +19,9 @@
 
 - [x] **RETICA-01**: Existe un catálogo de municipios colombianos (códigos DANE de departamento/municipio + nombres), construido desde cero para esta fase
 - [x] **RETICA-02**: Usuario puede configurar una regla de retención ICA con vigencia, tarifa y base mínima propias, ligada a un municipio específico (reusando el versionado ya existente de `WithholdingRule`)
-- [ ] **RETICA-03**: El municipio usado para seleccionar la regla de ICA aplicable toma por defecto el domicilio registrado de la `Company`, con opción de edición manual
-- [ ] **RETICA-04**: Cuando existen reglas de ICA activas para distintos municipios, solo se aplica la regla que coincide con el municipio de la operación — nunca se acumulan retenciones ICA de más de un municipio en una misma transacción (mitad cumplida en Plan 02-02: bloqueo de configuración conflictiva en origen vía `EnsureNoOverlappingIcaRule`; falta el filtro en tiempo de causación, Plan 02-03)
-- [ ] **RETICA-05**: Las retenciones nacionales existentes (ReteFuente, ReteIVA) siguen aplicándose sin verse afectadas por la nueva dimensión de municipio
+- [x] **RETICA-03**: El municipio usado para seleccionar la regla de ICA aplicable toma por defecto el domicilio registrado de la `Company`, con opción de edición manual
+- [x] **RETICA-04**: Cuando existen reglas de ICA activas para distintos municipios, solo se aplica la regla que coincide con el municipio de la operación — nunca se acumulan retenciones ICA de más de un municipio en una misma transacción
+- [x] **RETICA-05**: Las retenciones nacionales existentes (ReteFuente, ReteIVA) siguen aplicándose sin verse afectadas por la nueva dimensión de municipio
 
 ### Conciliación Bancaria por Extracto (BANKREC) — Fase B
 
@@ -94,9 +94,9 @@ Excluidos explícitamente de este milestone. Ver `docs/roadmap-apolo.md` y `.pla
 | QUOT-07 | Phase 1 (Fase A) | Complete |
 | RETICA-01 | Phase 2 (Fase C) | Complete |
 | RETICA-02 | Phase 2 (Fase C) | Complete |
-| RETICA-03 | Phase 2 (Fase C) | Pending |
-| RETICA-04 | Phase 2 (Fase C) | Partial (Plan 02-03 completes) |
-| RETICA-05 | Phase 2 (Fase C) | Pending |
+| RETICA-03 | Phase 2 (Fase C) | Complete |
+| RETICA-04 | Phase 2 (Fase C) | Complete |
+| RETICA-05 | Phase 2 (Fase C) | Complete |
 | BANKREC-01 | Phase 3 (Fase B) | Pending |
 | BANKREC-02 | Phase 3 (Fase B) | Pending |
 | BANKREC-03 | Phase 3 (Fase B) | Pending |
@@ -117,4 +117,4 @@ Excluidos explícitamente de este milestone. Ver `docs/roadmap-apolo.md` y `.pla
 
 ---
 *Requirements defined: 2026-09-16*
-*Last updated: 2026-09-17 after Phase 2 Plan 2 (WithholdingRule por-municipio + bloqueo de solapamiento ICA)*
+*Last updated: 2026-09-17 after Phase 2 Plan 3 (filtro de municipio en ApplyWithholdingRules + causación con municipio de operación) — Phase 2 (Fase C) completa*

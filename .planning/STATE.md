@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: In progress
-stopped_at: Completed 02-02 (WithholdingRule por-municipio + bloqueo de solapamiento ICA)
-last_updated: "2026-09-17T05:15:00.000Z"
+stopped_at: Completed 02-03 (filtro de municipio en ApplyWithholdingRules + municipio de la operación en ExpenseRecord) — Phase 2 completa
+last_updated: "2026-09-17T05:21:00.000Z"
 progress:
   total_phases: 5
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 7
-  completed_plans: 6
+  completed_plans: 7
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-09-16)
 
 **Core value:** Cada movimiento relevante produce un comprobante contable auditable e inmutable por partida doble — trazabilidad e inmutabilidad sobre conveniencia.
-**Current focus:** Phase 02 — reteica-por-municipio-fase-c
+**Current focus:** Phase 02 — reteica-por-municipio-fase-c (COMPLETE) — next: Phase 3 (Conciliación bancaria CSV, Fase B)
 
 ## Current Position
 
-Phase: 02 (reteica-por-municipio-fase-c) — EXECUTING
-Plan: 2 of 3 complete (next: 02-03)
+Phase: 02 (reteica-por-municipio-fase-c) — COMPLETE
+Plan: 3 of 3 complete
 
 ## Performance Metrics
 
@@ -52,6 +52,7 @@ Plan: 2 of 3 complete (next: 02-03)
 | Phase 01 P04 | ~35min | 2 tasks | 8 files |
 | Phase 02 P01 | ~30min | 3 tasks | 11 files |
 | Phase 02 P02 | ~45min | 3 tasks | 12 files |
+| Phase 02 P03 | ~25min | 3 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -77,6 +78,8 @@ Recent decisions affecting current work:
 - [Phase 02 P02]: `$data['enum_field']` dentro de `handleRecordCreation`/`handleRecordUpdate` de una página Filament v5 llega como el CASE del enum (no `->value`) cuando el `Select` usa `options(EnumClass::class)`, aunque la propiedad Livewire cruda (`$component->get('data')`) muestre el string plano — el mismo bug de comparación de enum de Filament v5 (issue #1) documentado para `->visible()`/`Get`, pero manifestado también en los hooks de ciclo de vida de la página, no solo en closures del schema; encontrado y corregido en `CreateWithholdingRule`/`EditWithholdingRule` (ver `02-02-SUMMARY.md`)
 - [Phase 02 P02]: una `ValidationException` lanzada dentro de `handleRecordCreation`/`handleRecordUpdate` (no desde una regla de campo del schema) se verifica en tests con `assertHasErrors()`, no `assertHasFormErrors()` — confirmado contra el precedente ya existente en `QuotationLifecycleTest`'s number-collision test
 - [Phase 02 P02]: RETICA-04 se marca "Partial" en REQUIREMENTS.md, no "Complete", pese a estar en el `requirements:` frontmatter de `02-02-PLAN.md` — el propio objective del plan reconoce que solo la mitad de la garantía (bloqueo de configuración conflictiva en origen) se implementa aquí; la otra mitad (filtro en tiempo de causación) es 02-03. Decisión: reflejar el estado real en vez de marcar el checkbox ciegamente desde el frontmatter
+- [Phase 02 P03]: el filtro de municipio en `ApplyWithholdingRules` se implementó como un único `where()` closure aditivo (`type != Ica OR (type == Ica AND municipality_id = X)`) en vez de construir la query condicionalmente — garantiza RETICA-05 (ReteFuente/ReteIVA intactas) por construcción, no solo por cobertura de tests; cuando `$municipalityId` es `null`, `where('municipality_id', null)` nunca matchea ninguna fila en SQL, así que las reglas ICA fallan cerrado (fail-closed) por defecto sin necesidad de un caso especial
+- [Phase 02 P03]: RETICA-03/04/05 quedan "Complete" en REQUIREMENTS.md — este plan cierra la mitad pendiente de RETICA-04 identificada en 02-02 (filtro en tiempo de causación) y prueba RETICA-05 por regresión (el test `AccountingPostingTest` existente pasa sin modificar)
 
 ### Pending Todos
 
@@ -93,9 +96,10 @@ Recent decisions affecting current work:
 - Phase 02 (Plan 1/3, esta ejecución): causa raíz del bug de tooling identificada — `findProjectRoot(cwd)` en `~/.claude/get-shit-done/bin/lib/core.cjs` siempre camina hacia los directorios **ancestros** de `cwd` buscando uno que posea `.planning/`, pero nunca verifica primero si el propio `cwd` ya tiene su `.planning/` local. Como este worktree vive anidado dentro del árbol del repo principal (`.../contpass/.claude/worktrees/agent-.../`) y el repo principal también tiene `.planning/`, la heurística 3 (`parent tiene .planning/` + `cwd está dentro de un repo git`) siempre redirige a `/Volumes/NAS(MAC)/Data/Herd/contpass` sin importar que el worktree ya tenga su propio `.planning/` completo. Esto ocurre incluso después de que `gsd-tools.cjs`'s `main()` correctamente omite `resolveWorktreeRoot()` (que sí tiene esa guarda) porque `findProjectRoot()` se llama después, de forma independiente, sin la misma guarda. Se ejecutó `state advance-plan` una vez (escribió sobre el checkout principal, no revertido — Write/git rechazados por aislamiento de worktree, mismo patrón que Phase 01); todas las demás actualizaciones de este plan (`STATE.md`, `ROADMAP.md`, `REQUIREMENTS.md`) se hicieron a mano en este worktree y son la fuente de verdad correcta. Reportar este bug para fix en `gsd-tools.cjs` (agregar el mismo check de `.planning/` propio al inicio de `findProjectRoot()`).
 - Phase 02 (Plan 2/3, esta ejecución): al iniciar esta ejecución, el worktree NO estaba recién creado desde `main` como afirmaba el prompt de ejecución — su rama (`worktree-agent-a956e036779bb34f9`) apuntaba a un commit ("Libro Mayor / bank reconciliation") de una sesión anterior no relacionada, sin `.planning/` local. Se verificó vía `git merge-base` que ese commit era un ancestro estricto de `main` (sin trabajo sin commitear en riesgo) y se corrigió con `git merge --ff-only main` (operación no destructiva, solo fast-forward). Dado este patrón ya se ha repetido en Phase 01 y Phase 02 P01 (bug de `gsd-tools.cjs` sobreescribiendo el `.planning/` del checkout principal), y ahora se suma un problema distinto (worktree no sincronizado con `main` al spawnear), se recomienda que el orquestador verifique `git merge-base HEAD main` == `HEAD` (o cree el worktree explícitamente desde `main`) antes de invocar al ejecutor, en vez de asumir que el worktree ya está actualizado.
 - Dado el bug de tooling arriba, esta ejecución (Plan 2/3) NO invocó `gsd-tools.cjs state advance-plan` / `roadmap update-plan-progress` / `requirements mark-complete` en absoluto — todas las actualizaciones de `STATE.md`, `ROADMAP.md` y `REQUIREMENTS.md` se hicieron a mano directamente en este worktree, evitando corromper el checkout principal compartido de nuevo.
+- Phase 02 (Plan 3/3, esta ejecución): al iniciar, el worktree de nuevo NO estaba sincronizado con `main` — su rama apuntaba a un commit ("Libro Mayor / bank reconciliation") 54 commits detrás de `main`, sin `.planning/` local en absoluto (ni siquiera Phase 1). Mismo patrón documentado en Plan 2/3 de esta fase. Verificado vía `git merge-base --is-ancestor HEAD main` (true, ancestro estricto, sin commits únicos locales) y corregido con `git merge main --ff-only` (no destructivo). También requirió bootstrap completo del entorno no hecho aún en esta instancia del worktree: `composer install`, `cp .env.example .env && php artisan key:generate`, `npm install && npm run build` (ninguno de estos existía: sin `vendor/`, sin `.env`, sin `node_modules`, sin `public/build/`). Esta ejecución (Plan 3/3) tampoco invocó `gsd-tools.cjs state advance-plan` / `roadmap update-plan-progress` / `requirements mark-complete` — todas las actualizaciones de `STATE.md`, `ROADMAP.md` y `REQUIREMENTS.md` se hicieron a mano directamente en este worktree. Con Phase 2 ahora completa (3/3), el patrón de worktree-desactualizado se ha repetido en las 3 ejecuciones de esta fase; se reitera la recomendación al orquestador de verificar `git merge-base HEAD main == HEAD` (o crear el worktree explícitamente desde `main`) antes de invocar al ejecutor.
 
 ## Session Continuity
 
-Last session: 2026-09-17T05:15:00.000Z
-Stopped at: Completed 02-02 (WithholdingRule por-municipio + bloqueo de solapamiento ICA)
-Resume file: .planning/phases/02-reteica-por-municipio-fase-c/02-03-PLAN.md
+Last session: 2026-09-17T05:21:00.000Z
+Stopped at: Completed 02-03 (filtro de municipio en ApplyWithholdingRules + municipio de la operación en ExpenseRecord) — Phase 2 (Fase C) completa
+Resume file: .planning/phases/03-conciliacion-bancaria-csv-fase-b/03-01-PLAN.md (Phase 3 aún no planeada — ejecutar `/gsd:plan-phase 3` antes de continuar)

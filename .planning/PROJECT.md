@@ -22,12 +22,12 @@ Cada movimiento relevante produce un comprobante contable auditable e inmutable 
 - ✓ Clasificación de entidad pública (`PublicEntityType`), firmantes y dependencias con códigos DANE, cuentas por edades (cartera y obligaciones) — existente
 - ✓ 158 tests Pest pasando, 560 assertions, `vendor/bin/pint --dirty` limpio — verificado 2026-09-16
 - ✓ Fase A — Cotización electrónica: modelo `Quotation`/`QuotationLine`, numeración segura company-scoped, ciclo de vida Borrador→Enviada→Aceptada/Rechazada/Vencida (calculada), PDF (`barryvdh/laravel-dompdf`), conversión idempotente a `IncomeRecord` reusando `PostIncomeVoucher` sin modificarlo — validado en Phase 1 (2026-09-17), 176 tests Pest pasando, QUOT-01 a QUOT-07 completos
+- ✓ Fase C — ReteICA por municipio: catálogo DIVIPOLA (`departments`/`municipalities`, 33/1122 registros) construido desde cero, `WithholdingRule` extendida con `type`/`municipality_id` reusando el versionado existente (`scopeEffectiveOn`), bloqueo de reglas ICA solapadas por municipio (`EnsureNoOverlappingIcaRule`) y filtro exacto por municipio en `ApplyWithholdingRules` que deja ReteFuente/ReteIVA intactos por construcción — validado en Phase 2 (2026-09-17), 191 tests Pest pasando, RETICA-01 a RETICA-05 completos
 
 ### Active
 
 **Milestone: Mejoras Comerciales para Mercado Privado** (roadmap detallado y research de mercado en `docs/roadmap-apolo.md`):
 
-- [ ] Fase C — ReteICA parametrizable por municipio (domicilio de `Company`, con opción de edición manual)
 - [ ] Fase B — Conciliación bancaria por importación de extracto CSV, cruce automático contra `Payment`
 - [ ] Fase E — Hook de datos para integración futura con facturador electrónico de terceros
 - [ ] Fase D — Exportación Excel dedicada de los reportes existentes (requiere elegir y aprobar librería nueva)
@@ -66,8 +66,8 @@ Cada movimiento relevante produce un comprobante contable auditable e inmutable 
 |----------|-----------|---------|
 | No facturación electrónica propia en este milestone | Certificación DIAN/PTO es un esfuerzo regulatorio grande; se integrará proveedor tercero después | — Pending |
 | No motor de nómina electrónica ni POS en este milestone | Mercado privado ya bien servido por competidores ahí; ContPass compite en trazabilidad/auditoría | — Pending |
-| ReteICA (Fase C): municipio se toma del domicilio de la `Company`, con opción de edición manual | Simplicidad sobre exactitud por-tercero; decisión de negocio del usuario. Research de mercado (2026-09-16) encontró que el estándar real (Siigo/Siesa/SysCafé) es tarifa por actividad económica CIIU × municipio del `ThirdParty`, no domicilio de `Company` — el usuario confirmó explícitamente mantener el modelo simple después de conocer ese tradeoff | — Pending |
-| Out of scope explícito: ReteICA por actividad económica (CIIU) del `ThirdParty` | Más preciso y esperado por contadores acostumbrados a Siigo/Alegra, pero requiere nueva dimensión de datos en `ThirdParty` — descartado deliberadamente por simplicidad, no por desconocimiento | — Pending |
+| ReteICA (Fase C): municipio se toma del domicilio de la `Company`, con opción de edición manual | Simplicidad sobre exactitud por-tercero; decisión de negocio del usuario. Research de mercado (2026-09-16) encontró que el estándar real (Siigo/Siesa/SysCafé) es tarifa por actividad económica CIIU × municipio del `ThirdParty`, no domicilio de `Company` — el usuario confirmó explícitamente mantener el modelo simple después de conocer ese tradeoff | ✓ Aplicado, Phase 2 (2026-09-17) |
+| Out of scope explícito: ReteICA por actividad económica (CIIU) del `ThirdParty` | Más preciso y esperado por contadores acostumbrados a Siigo/Alegra, pero requiere nueva dimensión de datos en `ThirdParty` — descartado deliberadamente por simplicidad, no por desconocimiento | ✓ Confirmado fuera de alcance, Phase 2 (2026-09-17) |
 | Excel (Fase D): elegir librería por eficiencia y calidad, no por familiaridad previa | Usuario delegó el criterio técnico explícitamente; requiere aprobación de dependencia antes de instalar | — Pending |
 | Orden de ejecución de fases: A → C → B → E → D | Priorizado por esfuerzo vs. valor comercial percibido (ver `docs/roadmap-apolo.md`) | — Pending |
 | Estrategia de precios: ContPass privado post-mejoras ~$1.5M–$2.2M COP/año | Basado en research de mercado real (SECOP + SaaS privado); posiciona justo debajo de Alegra/Siigo/World Office compensado por rigor de auditoría | — Pending |
@@ -92,4 +92,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-09-17 after Phase 1 (Cotización electrónica — Fase A) completion*
+*Last updated: 2026-09-17 after Phase 2 (ReteICA por municipio — Fase C) completion*

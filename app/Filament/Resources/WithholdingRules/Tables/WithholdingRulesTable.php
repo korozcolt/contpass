@@ -15,7 +15,9 @@ class WithholdingRulesTable
     {
         return $table
             ->columns([
-                TextColumn::make('concept')->label('Concepto')->searchable()->sortable(),
+                TextColumn::make('type')->label('Tipo')->badge()->sortable(),
+                TextColumn::make('municipality.name')->label('Municipio')->placeholder('—')->toggleable(),
+                TextColumn::make('description')->label('Descripción')->toggleable()->searchable(),
                 TextColumn::make('minimum_base')->label('Base')->money('COP')->sortable(),
                 TextColumn::make('rate')->label('Tarifa')->suffix('%')->sortable(),
                 TextColumn::make('chartAccount.full_name')->label('Cuenta')->searchable(),

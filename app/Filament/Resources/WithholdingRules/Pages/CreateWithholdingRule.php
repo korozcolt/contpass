@@ -18,7 +18,7 @@ class CreateWithholdingRule extends CreateRecord
      */
     protected function handleRecordCreation(array $data): Model
     {
-        if (($data['type'] ?? null) === WithholdingType::Ica->value) {
+        if (($data['type'] ?? null) === WithholdingType::Ica) {
             app(EnsureNoOverlappingIcaRule::class)->handle(
                 Company::query()->findOrFail((int) $data['company_id']),
                 (int) $data['municipality_id'],

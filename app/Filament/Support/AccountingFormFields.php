@@ -7,6 +7,7 @@ use App\Models\BudgetAvailabilityCertificate;
 use App\Models\BudgetRegistration;
 use App\Models\BudgetRevenue;
 use App\Models\ChartAccount;
+use App\Models\Municipality;
 use App\Models\ThirdParty;
 use App\Models\Voucher;
 use App\Services\Accounting\CurrentCompany;
@@ -118,6 +119,22 @@ class AccountingFormFields
                         }
                     });
             });
+    }
+
+    public static function municipality(string $name = 'municipality_id'): Select
+    {
+        return Select::make($name)
+            ->label('Municipio')
+            ->options(fn (): array => Municipality::query()
+                ->with('department')
+                ->orderBy('name')
+                ->get()
+                ->mapWithKeys(fn (Municipality $municipality) => [
+                    $municipality->id => "{$municipality->name} ({$municipality->department->name})",
+                ])
+                ->all())
+            ->searchable()
+            ->preload();
     }
 
     public static function voucher(string $name = 'source_voucher_id'): Select

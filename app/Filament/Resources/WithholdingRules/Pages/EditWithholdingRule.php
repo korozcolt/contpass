@@ -25,7 +25,7 @@ class EditWithholdingRule extends EditRecord
      */
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
-        if (($data['type'] ?? null) === WithholdingType::Ica->value) {
+        if (($data['type'] ?? null) === WithholdingType::Ica) {
             app(EnsureNoOverlappingIcaRule::class)->handle(
                 $record->company,
                 (int) $data['municipality_id'],

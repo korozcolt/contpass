@@ -86,7 +86,7 @@ it('surfaces a form validation error when creating an overlapping ica rule via t
             'is_active' => true,
         ])
         ->call('create')
-        ->assertHasFormErrors(['starts_on']);
+        ->assertHasErrors(['starts_on']);
 
     expect(WithholdingRule::query()->where('company_id', $company->id)->count())->toBe(1);
 });

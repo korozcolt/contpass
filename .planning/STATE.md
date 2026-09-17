@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Ready to execute
-stopped_at: Completed 01-02-PLAN.md
-last_updated: "2026-09-17T02:19:52.000Z"
+stopped_at: Completed 01-03-PLAN.md
+last_updated: "2026-09-16T00:00:00.000Z"
 progress:
   total_phases: 5
   completed_phases: 0
   total_plans: 4
-  completed_plans: 2
+  completed_plans: 3
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-09-16)
 ## Current Position
 
 Phase: 01 (cotizaci-n-electr-nica-fase-a) — EXECUTING
-Plan: 3 of 4
+Plan: 4 of 4
 
 ## Performance Metrics
 
@@ -48,6 +48,7 @@ Plan: 3 of 4
 *Updated after each plan completion*
 | Phase 01 P01 | 20min | 2 tasks | 8 files |
 | Phase 01 P02 | ~35min | 2 tasks | 4 files |
+| Phase 01 P03 | ~50min | 3 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -63,6 +64,8 @@ Recent decisions affecting current work:
 - [Phase 01]: QuotationStatus::Expired es un caso real del enum pero solo lo retorna effectiveStatus(); nunca se persiste directamente en la columna status
 - [Phase 01 P02]: en `BuildQuotationNumber`, `lockForUpdate()` sobre el COUNT(*) es solo una optimización — la garantía real de no-duplicados es el índice único compuesto (company_id, number) de la migración de Plan 1
 - [Phase 01 P02]: `ConvertQuotationToIncome::handle()` recibe solo `Quotation` (sin parámetros de cuenta) porque revenue_account_id/receivable_account_id ya están en el modelo por D-05
+- [Phase 01 P03]: `assertHasFormErrors()` (no `assertHasErrors()`) es el método correcto para validar errores dentro de un formulario modal de acción de tabla en Filament v5/Livewire 4, porque prefija la clave de error con el schema state path de la acción montada (`mountedActionSchema0.campo`)
+- [Phase 01 P03]: los helpers de fixtures en tests Pest de `tests/Feature/*.php` comparten namespace global — nombres como `quotationFixture()` deben ser únicos por archivo o colisionan en tiempo de ejecución
 
 ### Pending Todos
 
@@ -73,9 +76,10 @@ None yet.
 - Fase C: `ApplyWithholdingRules` aplica todas las reglas activas que coincidan sin filtro — mayor riesgo de cumplimiento del milestone; requiere filtro de municipio explícito (research pitfall #4)
 - Fase B: matching many-to-one (transferencias por lote) es más complejo de lo descrito originalmente — necesita diseño explícito durante plan-phase, no solo el caso simple (research flag)
 - Fase C: fuente/proceso de seed del catálogo de municipios DANE debe definirse durante plan-phase
+- Tooling: `gsd-tools.cjs state advance-plan` (ejecutado desde este worktree) escribió sobre `.planning/STATE.md` del checkout principal compartido en vez del `.planning/` local de este worktree (bug conocido documentado en el prompt de ejecución). El harness bloqueó cualquier intento de revertir ese archivo compartido (Write/Edit/git rechazados por aislamiento de worktree), así que el `Plan: 4 of 4` / `completed_plans: 3` del checkout principal quedó adelantado prematuramente respecto al resto de sus commits — se resolverá solo al mergear esta rama de vuelta a `main`. Este worktree's propio STATE.md fue editado a mano y es la fuente de verdad correcta.
 
 ## Session Continuity
 
-Last session: 2026-09-17T02:19:52.000Z
-Stopped at: Completed 01-02-PLAN.md
+Last session: 2026-09-16T00:00:00.000Z
+Stopped at: Completed 01-03-PLAN.md
 Resume file: None

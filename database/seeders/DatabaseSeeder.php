@@ -17,6 +17,8 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        $this->call(DivipolaCatalogSeeder::class);
+
         User::query()->firstOrCreate(
             ['email' => 'admin@example.com'],
             ['name' => 'Administrador', 'password' => Hash::make('password'), 'role' => UserRole::Admin],

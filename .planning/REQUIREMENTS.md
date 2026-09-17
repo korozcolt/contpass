@@ -17,7 +17,7 @@
 
 ### ReteICA por Municipio (RETICA) — Fase C
 
-- [ ] **RETICA-01**: Existe un catálogo de municipios colombianos (códigos DANE de departamento/municipio + nombres), construido desde cero para esta fase
+- [x] **RETICA-01**: Existe un catálogo de municipios colombianos (códigos DANE de departamento/municipio + nombres), construido desde cero para esta fase
 - [ ] **RETICA-02**: Usuario puede configurar una regla de retención ICA con vigencia, tarifa y base mínima propias, ligada a un municipio específico (reusando el versionado ya existente de `WithholdingRule`)
 - [ ] **RETICA-03**: El municipio usado para seleccionar la regla de ICA aplicable toma por defecto el domicilio registrado de la `Company`, con opción de edición manual
 - [ ] **RETICA-04**: Cuando existen reglas de ICA activas para distintos municipios, solo se aplica la regla que coincide con el municipio de la operación — nunca se acumulan retenciones ICA de más de un municipio en una misma transacción
@@ -92,7 +92,7 @@ Excluidos explícitamente de este milestone. Ver `docs/roadmap-apolo.md` y `.pla
 | QUOT-05 | Phase 1 (Fase A) | Complete |
 | QUOT-06 | Phase 1 (Fase A) | Complete |
 | QUOT-07 | Phase 1 (Fase A) | Complete |
-| RETICA-01 | Phase 2 (Fase C) | Pending |
+| RETICA-01 | Phase 2 (Fase C) | Complete |
 | RETICA-02 | Phase 2 (Fase C) | Pending |
 | RETICA-03 | Phase 2 (Fase C) | Pending |
 | RETICA-04 | Phase 2 (Fase C) | Pending |
@@ -117,4 +117,4 @@ Excluidos explícitamente de este milestone. Ver `docs/roadmap-apolo.md` y `.pla
 
 ---
 *Requirements defined: 2026-09-16*
-*Last updated: 2026-09-16 after initial definition*
+*Last updated: 2026-09-17 after Phase 2 Plan 1 (DIVIPOLA catalog + WithholdingType enum)*

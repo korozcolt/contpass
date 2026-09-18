@@ -74,6 +74,10 @@ class TrialBalanceReport extends Page implements HasTable
                     ->label('Exportar CSV')
                     ->icon(Heroicon::ArrowDownTray)
                     ->url(fn (): string => route('accounting-reports.trial-balance', array_merge($this->reportQueryParameters(), ['export' => 1]))),
+                Action::make('exportExcel')
+                    ->label('Exportar Excel')
+                    ->icon(Heroicon::ArrowDownTray)
+                    ->url(fn (): string => route('accounting-reports.trial-balance.xlsx', $this->reportQueryParameters())),
             ])
             ->paginated([25, 50, 100])
             ->emptyStateHeading('No hay cuentas con movimiento')

@@ -89,6 +89,10 @@ class ThirdPartyMovementsReport extends Page implements HasTable
                     ->label('Exportar CSV')
                     ->icon(Heroicon::ArrowDownTray)
                     ->url(fn (): string => route('accounting-reports.third-party-movements', array_merge($this->reportQueryParameters(), ['export' => 1]))),
+                Action::make('exportExcel')
+                    ->label('Exportar Excel')
+                    ->icon(Heroicon::ArrowDownTray)
+                    ->url(fn (): string => route('accounting-reports.third-party-movements.xlsx', $this->reportQueryParameters())),
             ])
             ->defaultSort('id', 'desc')
             ->paginated([25, 50, 100])

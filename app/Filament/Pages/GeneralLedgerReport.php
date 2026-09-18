@@ -79,6 +79,10 @@ class GeneralLedgerReport extends Page implements HasTable
                     ->label('Exportar CSV')
                     ->icon(Heroicon::ArrowDownTray)
                     ->url(fn (): string => route('accounting-reports.general-ledger', $this->reportQueryParameters())),
+                Action::make('exportExcel')
+                    ->label('Exportar Excel')
+                    ->icon(Heroicon::ArrowDownTray)
+                    ->url(fn (): string => route('accounting-reports.general-ledger.xlsx', $this->reportQueryParameters())),
             ])
             ->paginated([25, 50, 100])
             ->emptyStateHeading('No hay cuentas con movimiento')

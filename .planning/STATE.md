@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to plan
-stopped_at: Phase 5 context gathered
-last_updated: "2026-09-18T15:02:57.891Z"
+status: Executing Phase 05
+stopped_at: Completed 05-02-PLAN.md
+last_updated: "2026-09-18T16:51:52.000Z"
 progress:
   total_phases: 5
   completed_phases: 4
-  total_plans: 12
-  completed_plans: 12
+  total_plans: 17
+  completed_plans: 13
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-09-16)
 
 **Core value:** Cada movimiento relevante produce un comprobante contable auditable e inmutable por partida doble — trazabilidad e inmutabilidad sobre conveniencia.
-**Current focus:** Phase 04 — hook-de-facturaci-n-externa-fase-e (COMPLETE, 1/1 plans) — ready for Phase 5 (Exportación Excel, Fase D)
+**Current focus:** Phase 05 — exportaci-n-excel-fase-d (executing, plan 05-02 complete: row-builders privados compartidos en AccountingReportController + fix cast float)
 
 ## Current Position
 
 Phase: 5
-Plan: Not started
+Plan: 05-02 complete (executed in parallel worktree alongside 05-01; see Blockers/Concerns for reconciliation note)
 
 ## Performance Metrics
 
@@ -58,6 +58,7 @@ Plan: Not started
 | Phase 03 P03 | ~35min | 2 tasks | 5 files |
 | Phase 03 P04 | ~55min | 2 tasks | 6 files |
 | Phase 04 P01 | ~35min | 2 tasks | 6 files |
+| Phase 05 P02 | ~25min | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -102,6 +103,9 @@ Recent decisions affecting current work:
 - [Phase 03 P04]: `FileUpload` de Filament v5 no tiene método `->extensions()` (API de versiones anteriores) — el filtro de tipo de archivo real es `->acceptedFileTypes([...])` (MIME types, ej. `'text/csv'`), verificado contra el código fuente instalado (`vendor/filament/forms/src/Components/BaseFileUpload.php`)
 - [Phase 04 P01]: `mountAction(TestAction::make('name')->table($record))->assertSchemaStateSet([...])` funciona igual que `callAction(...)` para pre-verificar el estado pre-rellenado (`fillForm`) de un modal de acción de tabla, sin necesidad de invocar la acción — confirmado contra el código fuente instalado (`vendor/filament/actions/src/Testing/TestsActions.php`), no solo contra el precedente de `EditEmployee`/`CompanySignatoryTest` (que son formularios de página completa, no acciones de tabla)
 - [Phase 04 P01]: cuando el `unique()` de un campo de un modal de Action necesita ignorar un modelo DISTINTO al `$record` de la fila (aquí: ignorar el `ExternalInvoiceReference` relacionado, no el `IncomeRecord` de la fila), `ignorable` debe pasarse como closure explícito — el default de `ignoreRecord: true` resuelve a `$component->getRecord()`, que es el `IncomeRecord`, no la relación
+- [Phase 05 P02]: los 6 métodos privados `*Rows()` en `AccountingReportController` devuelven fechas `Carbon` crudas (no strings `Y-m-d`) para que 05-03 pueda escribir celdas de fecha nativas en Excel (XLSEXPORT-02); solo los call-sites de export CSV formatean a `Y-m-d` vía `array_map` en el punto de exportación — el método compartido queda agnóstico de formato de salida
+- [Phase 05 P02]: `XLSEXPORT-03` se marca "Partial" en REQUIREMENTS.md, no "Complete", pese a estar en el `requirements:` frontmatter de `05-02-PLAN.md` — este plan solo expone la fuente de datos compartida (prerrequisito de contrato); la capacidad real de exportar a Excel no existe hasta 05-03. Mismo criterio ya aplicado a RETICA-04 (02-02) y BANKREC-01 (03-01)
+- [Phase 05 P02]: el propio plan describía el Test 1 de `AccountingReportRowBuildersTest` como "la fila devuelta tiene una sola fila" tras postear un comprobante de ingreso — incorrecto: `PostIncomeVoucher` postea un comprobante balanceado de dos líneas (débito receivable + crédito revenue), así que `ledgerRows()` devuelve 2 filas por comprobante, no 1; corregido en el test, no en el método
 
 ### Pending Todos
 
@@ -124,9 +128,10 @@ Recent decisions affecting current work:
 - Phase 03 (Plan 3/4, worktree nuevo `agent-a945621aaa0ba851b` corriendo en paralelo con el ejecutor de Plan 2/4 en otro worktree): mismo patrón otra vez — worktree sin `.planning/`, `vendor/`, `.env`, `node_modules/` ni `public/build/`. Corregido con `git merge main --ff-only` (verificado ancestro estricto) + bootstrap completo. El rol/base de datos `contpass` en el Postgres compartido ya existía (persistente desde Plan 03-01) y todas las migraciones (incluidas las de 03-01) ya estaban `Ran` contra esa base compartida — no se requirió `migrate`. Dado el bug conocido de `gsd-tools.cjs` `findProjectRoot()`, esta ejecución tampoco invocó ningún comando de estado — `STATE.md`, `ROADMAP.md` y `REQUIREMENTS.md` se editaron a mano directamente en este worktree. Ambas ramas (Plan 03-02 y Plan 03-03) se reconciliaron por merge manual en el checkout principal — ver commits de merge en `main` para el detalle de la resolución de conflictos en `.planning/*.md`.
 - Phase 03 (Plan 4/4, esta ejecución, última del milestone Fase B): mismo patrón por séptima vez — este worktree (`agent-adb5ab89687770c09`) apuntaba a un commit no relacionado ("Libro Mayor / bank reconciliation"), 84 commits detrás de `main`, sin `.planning/`, `vendor/`, `.env`, `node_modules/` ni `public/build/`. Verificado `git merge-base --is-ancestor HEAD main` (true) y corregido con `git merge main --ff-only` + bootstrap completo. El rol/base de datos `contpass` y todas las migraciones (incluidas 03-01/02/03) ya existían persistentes en el Postgres compartido — solo se ajustó `DB_PASSWORD=contpass` en el `.env` local nuevo. Dado el bug conocido de `findProjectRoot()`, ningún comando de estado de `gsd-tools.cjs` fue invocado en esta ejecución — `STATE.md`, `ROADMAP.md` y `REQUIREMENTS.md` se editaron a mano directamente en este worktree, que es la fuente de verdad correcta. Con esto, Phase 03 (Fase B) queda completa (4/4 plans); el patrón de worktree-desincronizado se repitió en las 4 ejecuciones de esta fase sin excepción — se reitera al orquestador la recomendación de verificar `git merge-base HEAD main == HEAD` (o crear el worktree explícitamente desde `main`) antes de invocar al ejecutor, para las fases futuras (4 y 5).
 - Phase 04 (Plan 1/1, esta ejecución, única del milestone Fase E): mismo patrón por octava vez — este worktree (`agent-aabccc99a9e54ba3e`) apuntaba al mismo commit no relacionado ("Libro Mayor / bank reconciliation") de siempre, sin `.planning/`, `vendor/`, `.env`, `node_modules/` ni `public/build/`. Verificado `git merge-base --is-ancestor HEAD main` (true) y corregido con `git merge main --ff-only` + bootstrap completo (`composer install`, `.env`+`key:generate`, `npm install && npm run build`). Novedad esta vez: el Postgres compartido (antes un contenedor Docker `postgres:16` persistente) NO estaba disponible — `docker ps` falló con "Cannot connect to the Docker daemon" y `open -a Docker` dejó un proceso de instalación colgado (`com.docker.install/in_progress/...`) que nunca llegó a exponer el socket tras ~60s de espera. No fue necesario resolverlo: el plan solo tocaba backend (modelo/migración/acción de tabla) y toda su verificación corre contra sqlite in-memory vía `phpunit.xml` (`DB_CONNECTION=sqlite`, `LazilyRefreshDatabase`), que sí ejecuta la migración nueva en cada test. No se corrió `php artisan migrate` contra el Postgres real de desarrollo — queda como blocker abierto para cualquier fase futura que sí lo necesite. `npm install` volvió a mutar el `name` de `package-lock.json` (mismo bug ya documentado en Plan 03-02) — revertido con `git checkout -- package-lock.json` antes de cualquier commit. Dado el bug conocido de `findProjectRoot()`, ningún comando de estado de `gsd-tools.cjs` fue invocado — `STATE.md`, `ROADMAP.md` y `REQUIREMENTS.md` se editaron a mano directamente en este worktree, que es la fuente de verdad correcta. Con esto, Phase 04 (Fase E) queda completa (1/1 plan); el patrón de worktree-desincronizado se ha repetido sin excepción en las 8 ejecuciones registradas de este proyecto hasta ahora.
+- Phase 05 (Plan 05-02, este worktree `agent-a5e588c7cae5d999c`, ejecutando en paralelo junto a 05-01 en otro worktree): mismo patrón por novena vez — este worktree apuntaba al mismo commit no relacionado ("Libro Mayor / bank reconciliation"), 1 commit detrás de `main`, sin `.planning/`, `vendor/`, `.env`, `node_modules/` ni `public/build/`. Verificado `git merge-base --is-ancestor HEAD main` (true) y corregido con `git merge main --ff-only` + bootstrap completo. Dato nuevo relevante para futuros ejecutores paralelos: antes del fast-forward, `Read` de rutas `.planning/*` con el path absoluto del worktree fallaba ("File does not exist"), así que los primeros reads de contexto (PLAN/PROJECT/STATE) usaron el path del checkout principal compartido — ese STATE.md mostraba el progreso EN VIVO del otro ejecutor paralelo (05-01, `Plan: 1 of 4`), NO el estado real de este worktree. Tras el `git merge --ff-only`, el STATE.md real de este worktree mostraba `status: Ready to plan` / `Plan: Not started` (heredado del commit `d34481f` de `main`, previo a que cualquiera de los dos ejecutores paralelos de Fase 5 corriera). Lección para futuros ejecutores en paralelo: si un `Read` a un path del propio worktree falla antes del fast-forward y hay que caer al checkout principal, tratar ese contenido como snapshot de OTRO agente, no como la propia línea base — confirmar con `git log`/`git show <merge-base>:.planning/STATE.md` cuál es el estado real post-merge antes de escribir. Como en las 8 ejecuciones anteriores, no se invocó ningún comando de estado de `gsd-tools.cjs` — `STATE.md`, `ROADMAP.md` y `REQUIREMENTS.md` se editaron a mano directamente en este worktree, marcando solo 05-02 como completo (05-01 queda sin marcar aquí porque este worktree no tiene visibilidad de si el otro ejecutor paralelo ya lo completó; la reconciliación ocurre al mergear ambas ramas a `main`). Tests de este plan corren 100% contra sqlite in-memory (`phpunit.xml`), sin necesidad de Postgres. `npm install` volvió a mutar `package-lock.json` — revertido con `git checkout -- package-lock.json` antes de cualquier commit.
 
 ## Session Continuity
 
-Last session: 2026-09-18T15:02:57.888Z
-Stopped at: Phase 5 context gathered
-Resume file: .planning/phases/05-exportaci-n-excel-fase-d/05-CONTEXT.md
+Last session: 2026-09-18T16:51:52.000Z
+Stopped at: Completed 05-02-PLAN.md
+Resume file: .planning/phases/05-exportaci-n-excel-fase-d/05-02-SUMMARY.md

@@ -95,7 +95,7 @@ Plans:
 **Plans**: 4 plans
 Plans:
 - [ ] 05-01-PLAN.md — Servicio compartido ExcelReportExporter (D-03/D-05, celdas tipadas nativas)
-- [ ] 05-02-PLAN.md — Refactor AccountingReportController: row-builders privados compartidos por reporte (D-04) + fix cast float
+- [x] 05-02-PLAN.md — Refactor AccountingReportController: row-builders privados compartidos por reporte (D-04) + fix cast float
 - [ ] 05-03-PLAN.md — 6 rutas/métodos .xlsx (ExcelReportExporter + row-builders) con gate de autenticación
 - [ ] 05-04-PLAN.md — Botón "Exportar Excel" en las 6 páginas Filament de reporte (D-09)
 **UI hint**: yes
@@ -111,4 +111,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 (A → C → B → E 
 | 2. ReteICA por municipio (Fase C) | 3/3 | Complete   | 2026-09-17 |
 | 3. Conciliación bancaria CSV (Fase B) | 4/4 | Complete   | 2026-09-17 |
 | 4. Hook de facturación externa (Fase E) | 1/1 | Complete   | 2026-09-18 |
-| 5. Exportación Excel (Fase D) | 0/4 | Not started | - |
+| 5. Exportación Excel (Fase D) | 1/4 | Executing | - |

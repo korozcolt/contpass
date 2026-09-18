@@ -24,12 +24,12 @@ Cada movimiento relevante produce un comprobante contable auditable e inmutable 
 - ✓ Fase A — Cotización electrónica: modelo `Quotation`/`QuotationLine`, numeración segura company-scoped, ciclo de vida Borrador→Enviada→Aceptada/Rechazada/Vencida (calculada), PDF (`barryvdh/laravel-dompdf`), conversión idempotente a `IncomeRecord` reusando `PostIncomeVoucher` sin modificarlo — validado en Phase 1 (2026-09-17), 176 tests Pest pasando, QUOT-01 a QUOT-07 completos
 - ✓ Fase C — ReteICA por municipio: catálogo DIVIPOLA (`departments`/`municipalities`, 33/1122 registros) construido desde cero, `WithholdingRule` extendida con `type`/`municipality_id` reusando el versionado existente (`scopeEffectiveOn`), bloqueo de reglas ICA solapadas por municipio (`EnsureNoOverlappingIcaRule`) y filtro exacto por municipio en `ApplyWithholdingRules` que deja ReteFuente/ReteIVA intactos por construcción — validado en Phase 2 (2026-09-17), 191 tests Pest pasando, RETICA-01 a RETICA-05 completos
 - ✓ Fase B — Conciliación bancaria CSV: esquema `BankStatementImport`/`Line`/`Match` (D-01/D-02, perfiles Bancolombia/Davivienda hardcoded), `ImportBankStatement` reusando el patrón de `ArchiveMasterPreviewImporter` (encoding/delimitador vía `league/csv`, ya vendorizado — sin dependencia nueva), motor de cruce `ProposeBankStatementMatches` (1:1 + lote acotado a `match_pool_limit=10`) y `ConfirmBankStatementMatch` reusando `Payment.is_reconciled` sin duplicar estado, páginas Filament `UploadBankStatement`/`BankStatementReview` — validado en Phase 3 (2026-09-17), 226 tests Pest pasando, BANKREC-01 a BANKREC-06 completos
+- ✓ Fase E — Hook de facturación externa: modelo `ExternalInvoiceReference` relacionado 1:1 (`hasOne`, siguiendo el precedente `BudgetObligation::hasOne(PaymentOrder::class)`) a `IncomeRecord`, captura manual vía acción de tabla "Registrar/Ver factura externa" en `IncomeRecordsTable` (número, CUFE sin validar formato, proveedor texto libre, URL documento), editable libremente sin nota de ajuste (metadata de referencia, no toca `Voucher`/`IncomeRecord`), sin ninguna llamada `Http::` — validado en Phase 4 (2026-09-18), 233 tests Pest pasando, INVHOOK-01 a INVHOOK-03 completos
 
 ### Active
 
 **Milestone: Mejoras Comerciales para Mercado Privado** (roadmap detallado y research de mercado en `docs/roadmap-apolo.md`):
 
-- [ ] Fase E — Hook de datos para integración futura con facturador electrónico de terceros
 - [ ] Fase D — Exportación Excel dedicada de los reportes existentes (requiere elegir y aprobar librería nueva)
 
 ### Out of Scope
@@ -94,4 +94,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-09-17 after Phase 3 (Conciliación bancaria CSV — Fase B) completion*
+*Last updated: 2026-09-18 after Phase 4 (Hook de facturación externa — Fase E) completion*

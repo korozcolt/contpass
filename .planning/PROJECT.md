@@ -26,10 +26,11 @@ Cada movimiento relevante produce un comprobante contable auditable e inmutable 
 - ✓ Fase B — Conciliación bancaria CSV: esquema `BankStatementImport`/`Line`/`Match` (D-01/D-02, perfiles Bancolombia/Davivienda hardcoded), `ImportBankStatement` reusando el patrón de `ArchiveMasterPreviewImporter` (encoding/delimitador vía `league/csv`, ya vendorizado — sin dependencia nueva), motor de cruce `ProposeBankStatementMatches` (1:1 + lote acotado a `match_pool_limit=10`) y `ConfirmBankStatementMatch` reusando `Payment.is_reconciled` sin duplicar estado, páginas Filament `UploadBankStatement`/`BankStatementReview` — validado en Phase 3 (2026-09-17), 226 tests Pest pasando, BANKREC-01 a BANKREC-06 completos
 - ✓ Fase E — Hook de facturación externa: modelo `ExternalInvoiceReference` relacionado 1:1 (`hasOne`, siguiendo el precedente `BudgetObligation::hasOne(PaymentOrder::class)`) a `IncomeRecord`, captura manual vía acción de tabla "Registrar/Ver factura externa" en `IncomeRecordsTable` (número, CUFE sin validar formato, proveedor texto libre, URL documento), editable libremente sin nota de ajuste (metadata de referencia, no toca `Voucher`/`IncomeRecord`), sin ninguna llamada `Http::` — validado en Phase 4 (2026-09-18), 233 tests Pest pasando, INVHOOK-01 a INVHOOK-03 completos
 - ✓ Fase D — Exportación Excel: servicio compartido `ExcelReportExporter` (celdas numéricas/fecha nativas vía `openspout/openspout`, ya vendorizado transitivamente — **cero dependencia nueva**, descartado `maatwebsite/excel`), 6 métodos privados `*Rows()` extraídos en `AccountingReportController` reusados por CSV y por los 6 nuevos endpoints `.xlsx` (mismo gate de autenticación que CSV), botón "Exportar Excel" junto al de CSV en las 6 páginas Filament de reporte — validado en Phase 5 (2026-09-18), 260 tests Pest pasando, XLSEXPORT-01 a XLSEXPORT-03 completos
+- ✓ Fase 6 (gap closure, audit v1.0) — Limpieza de código huérfano ReteICA: eliminados `WithholdingRuleController`, `StoreWithholdingRuleRequest` y `resources/views/withholding-rules/*.blade.php` (código muerto pre-Filament sin ruta activa, referenciaba una columna `concept` ya eliminada); confirmado por grep que el `WithholdingRuleResource` de Filament es la única implementación real y quedó intacto — validado en Phase 6 (2026-09-18), 260 tests Pest pasando sin regresión, TECHDEBT-01 completo
 
 ### Active
 
-**Milestone: Mejoras Comerciales para Mercado Privado** — completo (5/5 fases). Pendiente ejecutar `/gsd:complete-milestone` para archivar y decidir el siguiente ciclo.
+**Milestone: Mejoras Comerciales para Mercado Privado** — 5/5 fases originales completas + Phase 6 (gap closure) completa. Pendiente Phase 7 (gap closure: cuentas por pagar mercado privado, AP-01) antes de re-auditar y ejecutar `/gsd:complete-milestone`.
 
 ### Out of Scope
 
@@ -93,4 +94,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-09-18 after Phase 5 (Exportación Excel — Fase D) completion — milestone "Mejoras Comerciales para Mercado Privado" completo (5/5 fases)*
+*Last updated: 2026-09-18 after Phase 6 (Limpieza de código huérfano ReteICA — gap closure, audit v1.0) completion — milestone "Mejoras Comerciales para Mercado Privado" con 5/5 fases originales + Phase 6 completas; Phase 7 (gap closure) pendiente*

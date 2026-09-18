@@ -117,4 +117,4 @@ Excluidos explícitamente de este milestone. Ver `docs/roadmap-apolo.md` y `.pla
 
 ---
 *Requirements defined: 2026-09-16*
-*Last updated: 2026-09-18 after Phase 5 Plan 3 (6 rutas .xlsx autenticadas) — XLSEXPORT-01/02/03 completos end-to-end*
+*Last updated: 2026-09-18 after Phase 5 Plan 4 (botón "Exportar Excel" en las 6 páginas Filament) — Fase D (Exportación Excel) completa, milestone "Mejoras Comerciales para Mercado Privado" cierra sus 24 requirements v1*

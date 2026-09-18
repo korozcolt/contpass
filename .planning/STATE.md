@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Executing Phase 05
-stopped_at: Completed 05-03-PLAN.md
-last_updated: "2026-09-18T17:00:06Z"
+status: Phase 05 complete
+stopped_at: Completed 05-04-PLAN.md
+last_updated: "2026-09-18T17:05:31Z"
 progress:
   total_phases: 5
-  completed_phases: 4
+  completed_phases: 5
   total_plans: 16
-  completed_plans: 15
+  completed_plans: 16
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-09-16)
 
 **Core value:** Cada movimiento relevante produce un comprobante contable auditable e inmutable por partida doble — trazabilidad e inmutabilidad sobre conveniencia.
-**Current focus:** Phase 05 — exportaci-n-excel-fase-d (3/4 plans complete: 05-01 ExcelReportExporter, 05-02 row-builders privados compartidos + fix cast float, 05-03 6 rutas .xlsx autenticadas)
+**Current focus:** Phase 05 — exportaci-n-excel-fase-d COMPLETA (4/4 plans: 05-01 ExcelReportExporter, 05-02 row-builders privados compartidos + fix cast float, 05-03 6 rutas .xlsx autenticadas, 05-04 botón "Exportar Excel" en las 6 páginas Filament). Milestone "Mejoras Comerciales para Mercado Privado" cierra sus 5 fases y 24 requirements v1.
 
 ## Current Position
 
-Phase: 05 (exportaci-n-excel-fase-d) — EXECUTING
-Plan: 3 of 4 complete (05-01-PLAN.md — ExcelReportExporter; 05-02-PLAN.md — row-builders; 05-03-PLAN.md — 6 rutas .xlsx)
+Phase: 05 (exportaci-n-excel-fase-d) — COMPLETE
+Plan: 4 of 4 complete (05-01-PLAN.md — ExcelReportExporter; 05-02-PLAN.md — row-builders; 05-03-PLAN.md — 6 rutas .xlsx; 05-04-PLAN.md — botón Exportar Excel)
 
 ## Performance Metrics
 
@@ -61,6 +61,7 @@ Plan: 3 of 4 complete (05-01-PLAN.md — ExcelReportExporter; 05-02-PLAN.md — 
 | Phase 05 P01 | ~25min | 2 tasks | 2 files |
 | Phase 05 P02 | ~25min | 2 tasks | 2 files |
 | Phase 05 P03 | ~20min | 2 tasks | 3 files |
+| Phase 05 P04 | ~20min | 3 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -111,6 +112,8 @@ Recent decisions affecting current work:
 - [Phase 05 P02]: `XLSEXPORT-03` se marca "Partial" en REQUIREMENTS.md, no "Complete", pese a estar en el `requirements:` frontmatter de `05-02-PLAN.md` — este plan solo expone la fuente de datos compartida (prerrequisito de contrato); la capacidad real de exportar a Excel no existe hasta 05-03. Mismo criterio ya aplicado a RETICA-04 (02-02) y BANKREC-01 (03-01)
 - [Phase 05 P02]: el propio plan describía el Test 1 de `AccountingReportRowBuildersTest` como "la fila devuelta tiene una sola fila" tras postear un comprobante de ingreso — incorrecto: `PostIncomeVoucher` postea un comprobante balanceado de dos líneas (débito receivable + crédito revenue), así que `ledgerRows()` devuelve 2 filas por comprobante, no 1; corregido en el test, no en el método
 - [Phase 05 P03]: las 6 rutas `.xlsx` cierran XLSEXPORT-01/02/03 end-to-end (marcadas "Complete" en REQUIREMENTS.md, no "Partial") — la prueba de tipado nativo abre el archivo `.xlsx` real descargado vía HTTP (no solo el servicio aislado de 05-01), confirmando que la garantía sobrevive intacta a través de la capa de controlador/ruta. Sin desviaciones del plan — los 6 métodos `*Xlsx()` son una línea cada uno (`app(ExcelReportExporter::class)->handle(...)`), reusando exactamente los row-builders privados de 05-02
+- [Phase 05 P04, última del milestone]: las 6 páginas Filament coincidían exactamente con la forma documentada en `interfaces`/`read_first` del plan — sin desviaciones, solo se agregó una segunda `Action::make('exportExcel')` hermana de la `Action::make('export')` (CSV) existente en cada `headerActions([...])`, propagando `$this->reportQueryParameters()` igual que su acción CSV (o sin parámetros en las 2 páginas "no filtradas", por Pitfall 4). Test Pest nuevo (`AccountingReportExcelActionsTest`, 6 casos) usa `assertTableActionExists()`/`assertTableActionHasUrl()` confirmados contra `vendor/filament/tables/src/Testing/TestsActions.php`. Con esto, Fase D (Exportación Excel) queda completa 4/4 y el milestone "Mejoras Comerciales para Mercado Privado" cierra sus 5 fases y 24 requirements v1
+- [Phase 05 P04]: a diferencia de 05-01/05-03 (backend-only, `npm install && npm run build` omitido deliberadamente), este plan sí tocaba páginas Filament y corrió el bootstrap frontend completo — efecto colateral: los 3 fallos `ViteManifestNotFoundException` documentados desde 05-01 en `deferred-items.md` ya no se reproducen (full suite 260/260 passed, 0 failed)
 
 ### Pending Todos
 
@@ -137,9 +140,10 @@ Recent decisions affecting current work:
 - Phase 05 (Plan 05-02, worktree `agent-a5e588c7cae5d999c`, ejecutando en paralelo junto a 05-01 en otro worktree): mismo patrón por novena vez — este worktree apuntaba al mismo commit no relacionado ("Libro Mayor / bank reconciliation"), 1 commit detrás de `main`, sin `.planning/`, `vendor/`, `.env`, `node_modules/` ni `public/build/`. Verificado `git merge-base --is-ancestor HEAD main` (true) y corregido con `git merge main --ff-only` + bootstrap completo. Dato nuevo relevante para futuros ejecutores paralelos: antes del fast-forward, `Read` de rutas `.planning/*` con el path absoluto del worktree fallaba ("File does not exist"), así que los primeros reads de contexto (PLAN/PROJECT/STATE) usaron el path del checkout principal compartido — ese STATE.md mostraba el progreso EN VIVO del otro ejecutor paralelo (05-01, `Plan: 1 of 4`), NO el estado real de este worktree. Tras el `git merge --ff-only`, el STATE.md real de este worktree mostraba `status: Ready to plan` / `Plan: Not started` (heredado del commit `d34481f` de `main`, previo a que cualquiera de los dos ejecutores paralelos de Fase 5 corriera). Lección para futuros ejecutores en paralelo: si un `Read` a un path del propio worktree falla antes del fast-forward y hay que caer al checkout principal, tratar ese contenido como snapshot de OTRO agente, no como la propia línea base — confirmar con `git log`/`git show <merge-base>:.planning/STATE.md` cuál es el estado real post-merge antes de escribir. Tests de este plan corren 100% contra sqlite in-memory (`phpunit.xml`), sin necesidad de Postgres. `npm install` volvió a mutar `package-lock.json` — revertido con `git checkout -- package-lock.json` antes de cualquier commit.
 - **Reconciliación 05-01/05-02 (orquestador, merge a `main`):** ambas ramas se mergearon (05-01 fast-forward, 05-02 con `--no-ff` por conflictos solo en `.planning/*.md` — código sin overlap). Frontmatter/progreso consolidado manualmente: `total_plans: 16`, `completed_plans: 14`, XLSEXPORT-02/03 quedan "Partial" en REQUIREMENTS.md (correctos: ambos requieren 05-03 para cerrar end-to-end, no solo el pre-requisito de cada plan). Reconciliación con 05-03/05-04 pendiente para cuando esas ramas completen.
 - Phase 05 (Plan 05-03, worktree `agent-ae07458879e47f602`, tras merge de 05-01/05-02 a `main`): mismo patrón otra vez — el worktree apuntaba a un commit no relacionado ("Libro Mayor / bank reconciliation"), sin `.planning/`, `vendor/`, `.env`, `node_modules/` ni `public/build/`. Verificado `git merge-base --is-ancestor HEAD main` (true) y corregido con `git merge main --ff-only` (trajo consigo `.planning/` completo, incluyendo las 4 fases previas ya mergeadas). Bootstrap parcial: `composer install`, `.env`+`key:generate`. Deliberadamente NO se corrió `npm install && npm run build` — el plan es backend-only (controller + routes + test Pest), sin dependencia de Postgres (sqlite in-memory vía `phpunit.xml`). Full suite: 254 tests, 251 passed, 3 failed (mismos 3 fallos pre-existentes `ViteManifestNotFoundException` documentados desde 05-01, ver `deferred-items.md`) — sin regresión causada por este plan. Dado el bug conocido de `findProjectRoot()`, ningún comando de estado de `gsd-tools.cjs` fue invocado — `STATE.md`, `ROADMAP.md` y `REQUIREMENTS.md` se editaron a mano directamente en este worktree, que es la fuente de verdad correcta. Con esto, XLSEXPORT-01/02/03 quedan "Complete" en REQUIREMENTS.md (cierre end-to-end confirmado por la prueba que abre el archivo `.xlsx` real descargado vía HTTP).
+- Phase 05 (Plan 05-04, worktree `agent-a694d92db3bae70a1`, última del milestone): mismo patrón por décima vez — el worktree apuntaba al mismo commit no relacionado ("Libro Mayor / bank reconciliation"), sin `.planning/`, `vendor/`, `.env`, `node_modules/` ni `public/build/`. Verificado `git merge-base --is-ancestor HEAD main` (true) y corregido con `git merge main --ff-only` (trajo `.planning/` completo con las 5 fases previas). Esta vez SÍ se corrió el bootstrap completo (`composer install`, `.env`+`key:generate`, `npm install && npm run build`) porque el plan tocaba páginas Filament (superficie de build frontend), a diferencia de 05-01/05-03 que lo omitieron deliberadamente por ser backend-only. `npm install` volvió a mutar `package-lock.json` — revertido con `git checkout -- package-lock.json` antes de cualquier commit. Efecto colateral positivo: con `public/build/manifest.json` presente, los 3 fallos `ViteManifestNotFoundException` documentados desde 05-01 ya no se reproducen — full suite 260/260 passed, 0 failed. Dado el bug conocido de `findProjectRoot()`, ningún comando de estado de `gsd-tools.cjs` fue invocado — `STATE.md`, `ROADMAP.md` y `REQUIREMENTS.md` se editaron a mano directamente en este worktree, que es la fuente de verdad correcta. Con esto, Phase 05 (Fase D) queda completa (4/4 plans) y el milestone completo (5/5 fases, 24 requirements v1) — el patrón de worktree-desincronizado se repitió sin excepción en las 10 ejecuciones registradas de este proyecto hasta ahora.
 
 ## Session Continuity
 
-Last session: 2026-09-18T17:00:06Z
-Stopped at: Completed 05-03-PLAN.md
-Resume file: .planning/phases/05-exportaci-n-excel-fase-d/05-04-PLAN.md
+Last session: 2026-09-18T17:05:31Z
+Stopped at: Completed 05-04-PLAN.md (Phase 05 complete, milestone complete)
+Resume file: none — no phases pending in the active roadmap; next step is /gsd:complete-milestone or a new milestone definition

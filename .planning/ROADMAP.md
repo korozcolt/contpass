@@ -125,7 +125,9 @@ Plans:
   1. `AccountsPayable::openItems()` (o un origen de datos equivalente) incluye `ExpenseRecord`s sin `BudgetObligation` asociada, no solo `BudgetObligation`
   2. El reporte "cuentas por pagar" en pantalla, su CSV y su export Excel muestran los mismos `ExpenseRecord`s de mercado privado sin lógica de consulta duplicada entre los tres
   3. Un `ExpenseRecord` con retención ICA (Fase 2) o ya conciliado (Fase 3) aparece correctamente en el reporte mientras esté pendiente de pago
-**Plans**: 0/? plans complete
+**Plans**: 0/1 plans complete
+Plans:
+- [ ] 07-01-PLAN.md — Combinar ExpenseRecords de mercado privado en AccountsPayable::openItems() (D-01/D-02/D-03) + cobertura Pest
 **UI hint**: no
 
 ## Progress

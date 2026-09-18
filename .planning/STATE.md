@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Ready to plan
-stopped_at: Phase 4 context gathered
-last_updated: "2026-09-17T17:22:11.455Z"
+stopped_at: Phase 4 (Fase E) complete — 04-01-PLAN.md executed, INVHOOK-01/02/03 closed
+last_updated: "2026-09-18T15:23:00.000Z"
 progress:
   total_phases: 5
-  completed_phases: 3
-  total_plans: 11
-  completed_plans: 11
+  completed_phases: 4
+  total_plans: 12
+  completed_plans: 12
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-09-16)
 
 **Core value:** Cada movimiento relevante produce un comprobante contable auditable e inmutable por partida doble — trazabilidad e inmutabilidad sobre conveniencia.
-**Current focus:** Phase 03 — conciliaci-n-bancaria-csv-fase-b (COMPLETE, 4/4 plans) — ready for Phase 4 (Hook de facturación externa, Fase E)
+**Current focus:** Phase 04 — hook-de-facturaci-n-externa-fase-e (COMPLETE, 1/1 plans) — ready for Phase 5 (Exportación Excel, Fase D)
 
 ## Current Position
 
-Phase: 4
-Plan: Not started
+Phase: 4 (hook-de-facturaci-n-externa-fase-e) — COMPLETE
+Plan: 1 of 1 complete
 
 ## Performance Metrics
 
@@ -57,6 +57,7 @@ Plan: Not started
 | Phase 03 P02 | ~55min | 2 tasks | 2 files |
 | Phase 03 P03 | ~35min | 2 tasks | 5 files |
 | Phase 03 P04 | ~55min | 2 tasks | 6 files |
+| Phase 04 P01 | ~35min | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -99,6 +100,8 @@ Recent decisions affecting current work:
 - [Phase 03 P04]: `Table::recordActions()` solo acepta `array<Action|ActionGroup>` estático — nunca un `Closure` que devuelva una lista de longitud variable por registro (`ActionGroup::make(fn ($record) => [...])`, como sugería el plan, lanza `TypeError`). Un número variable de acciones nombradas por registro (una pareja Confirmar/Descartar por cada `BankStatementMatch` propuesto) no es soportado por esta versión; se resolvió con dos acciones estáticas (`confirm`/`discard`) cuyo `->schema()` (que sí acepta closure por-registro) renderiza un `Select` de candidatos
 - [Phase 03 P04]: `Livewire::test(Page::class)->set('propiedad', $valor)` corre DESPUÉS del primer render (que ya ejecutó `mount()`) — si `mount()` lee `request()->query(...)` para poblar esa propiedad (patrón D-09 de página dedicada por import vía query string), hay que sembrar el query string ANTES de instanciar el componente con `Livewire::withQueryParams(['import' => $id])->test(Page::class)`, no fijar la propiedad después
 - [Phase 03 P04]: `FileUpload` de Filament v5 no tiene método `->extensions()` (API de versiones anteriores) — el filtro de tipo de archivo real es `->acceptedFileTypes([...])` (MIME types, ej. `'text/csv'`), verificado contra el código fuente instalado (`vendor/filament/forms/src/Components/BaseFileUpload.php`)
+- [Phase 04 P01]: `mountAction(TestAction::make('name')->table($record))->assertSchemaStateSet([...])` funciona igual que `callAction(...)` para pre-verificar el estado pre-rellenado (`fillForm`) de un modal de acción de tabla, sin necesidad de invocar la acción — confirmado contra el código fuente instalado (`vendor/filament/actions/src/Testing/TestsActions.php`), no solo contra el precedente de `EditEmployee`/`CompanySignatoryTest` (que son formularios de página completa, no acciones de tabla)
+- [Phase 04 P01]: cuando el `unique()` de un campo de un modal de Action necesita ignorar un modelo DISTINTO al `$record` de la fila (aquí: ignorar el `ExternalInvoiceReference` relacionado, no el `IncomeRecord` de la fila), `ignorable` debe pasarse como closure explícito — el default de `ignoreRecord: true` resuelve a `$component->getRecord()`, que es el `IncomeRecord`, no la relación
 
 ### Pending Todos
 
@@ -120,9 +123,10 @@ Recent decisions affecting current work:
 - Phase 03 (Plan 2/4, ejecutor paralelo en worktree propio, junto a Plan 03-03 en otro worktree): el patrón de worktree-desincronizado se repitió una quinta vez — la rama apuntaba a un commit de una sesión anterior no relacionada ("Libro Mayor / bank reconciliation"), sin `.planning/`, `vendor/`, `.env`, `node_modules/` ni `public/build/`, 75 commits detrás de `main`. Verificado vía `git merge-base --is-ancestor HEAD main` (true, ancestro estricto) y corregido con `git merge main --ff-only`. El rol/base de datos `contpass` del Postgres compartido y el schema completo de migraciones ya estaban provisionados/migrados desde Plan 03-01 (persisten entre bootstraps de worktree en esta máquina); solo se recreó `.env` local (gitignored) con `DB_PASSWORD=contpass`. `npm install` ejecutado desde la ruta anidada del worktree mutó el campo `name` de `package-lock.json` al basename del directorio del worktree — revertido con `git checkout -- package-lock.json` antes de cualquier commit de plan (no relacionado con los archivos de este plan). Ningún comando `gsd-tools.cjs` de estado se invocó — todas las actualizaciones de `STATE.md`, `ROADMAP.md` y `REQUIREMENTS.md` se hicieron a mano directamente en este worktree.
 - Phase 03 (Plan 3/4, worktree nuevo `agent-a945621aaa0ba851b` corriendo en paralelo con el ejecutor de Plan 2/4 en otro worktree): mismo patrón otra vez — worktree sin `.planning/`, `vendor/`, `.env`, `node_modules/` ni `public/build/`. Corregido con `git merge main --ff-only` (verificado ancestro estricto) + bootstrap completo. El rol/base de datos `contpass` en el Postgres compartido ya existía (persistente desde Plan 03-01) y todas las migraciones (incluidas las de 03-01) ya estaban `Ran` contra esa base compartida — no se requirió `migrate`. Dado el bug conocido de `gsd-tools.cjs` `findProjectRoot()`, esta ejecución tampoco invocó ningún comando de estado — `STATE.md`, `ROADMAP.md` y `REQUIREMENTS.md` se editaron a mano directamente en este worktree. Ambas ramas (Plan 03-02 y Plan 03-03) se reconciliaron por merge manual en el checkout principal — ver commits de merge en `main` para el detalle de la resolución de conflictos en `.planning/*.md`.
 - Phase 03 (Plan 4/4, esta ejecución, última del milestone Fase B): mismo patrón por séptima vez — este worktree (`agent-adb5ab89687770c09`) apuntaba a un commit no relacionado ("Libro Mayor / bank reconciliation"), 84 commits detrás de `main`, sin `.planning/`, `vendor/`, `.env`, `node_modules/` ni `public/build/`. Verificado `git merge-base --is-ancestor HEAD main` (true) y corregido con `git merge main --ff-only` + bootstrap completo. El rol/base de datos `contpass` y todas las migraciones (incluidas 03-01/02/03) ya existían persistentes en el Postgres compartido — solo se ajustó `DB_PASSWORD=contpass` en el `.env` local nuevo. Dado el bug conocido de `findProjectRoot()`, ningún comando de estado de `gsd-tools.cjs` fue invocado en esta ejecución — `STATE.md`, `ROADMAP.md` y `REQUIREMENTS.md` se editaron a mano directamente en este worktree, que es la fuente de verdad correcta. Con esto, Phase 03 (Fase B) queda completa (4/4 plans); el patrón de worktree-desincronizado se repitió en las 4 ejecuciones de esta fase sin excepción — se reitera al orquestador la recomendación de verificar `git merge-base HEAD main == HEAD` (o crear el worktree explícitamente desde `main`) antes de invocar al ejecutor, para las fases futuras (4 y 5).
+- Phase 04 (Plan 1/1, esta ejecución, única del milestone Fase E): mismo patrón por octava vez — este worktree (`agent-aabccc99a9e54ba3e`) apuntaba al mismo commit no relacionado ("Libro Mayor / bank reconciliation") de siempre, sin `.planning/`, `vendor/`, `.env`, `node_modules/` ni `public/build/`. Verificado `git merge-base --is-ancestor HEAD main` (true) y corregido con `git merge main --ff-only` + bootstrap completo (`composer install`, `.env`+`key:generate`, `npm install && npm run build`). Novedad esta vez: el Postgres compartido (antes un contenedor Docker `postgres:16` persistente) NO estaba disponible — `docker ps` falló con "Cannot connect to the Docker daemon" y `open -a Docker` dejó un proceso de instalación colgado (`com.docker.install/in_progress/...`) que nunca llegó a exponer el socket tras ~60s de espera. No fue necesario resolverlo: el plan solo tocaba backend (modelo/migración/acción de tabla) y toda su verificación corre contra sqlite in-memory vía `phpunit.xml` (`DB_CONNECTION=sqlite`, `LazilyRefreshDatabase`), que sí ejecuta la migración nueva en cada test. No se corrió `php artisan migrate` contra el Postgres real de desarrollo — queda como blocker abierto para cualquier fase futura que sí lo necesite. `npm install` volvió a mutar el `name` de `package-lock.json` (mismo bug ya documentado en Plan 03-02) — revertido con `git checkout -- package-lock.json` antes de cualquier commit. Dado el bug conocido de `findProjectRoot()`, ningún comando de estado de `gsd-tools.cjs` fue invocado — `STATE.md`, `ROADMAP.md` y `REQUIREMENTS.md` se editaron a mano directamente en este worktree, que es la fuente de verdad correcta. Con esto, Phase 04 (Fase E) queda completa (1/1 plan); el patrón de worktree-desincronizado se ha repetido sin excepción en las 8 ejecuciones registradas de este proyecto hasta ahora.
 
 ## Session Continuity
 
-Last session: 2026-09-17T17:22:11.449Z
-Stopped at: Phase 4 context gathered
-Resume file: .planning/phases/04-hook-de-facturaci-n-externa-fase-e/04-CONTEXT.md
+Last session: 2026-09-18T15:23:00.000Z
+Stopped at: Phase 4 (Fase E) complete — 04-01-PLAN.md executed, INVHOOK-01/02/03 closed
+Resume file: .planning/phases/04-hook-de-facturaci-n-externa-fase-e/04-01-SUMMARY.md

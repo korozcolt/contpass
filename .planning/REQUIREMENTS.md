@@ -34,9 +34,9 @@
 
 ### Hook de Facturación Externa (INVHOOK) — Fase E
 
-- [ ] **INVHOOK-01**: Usuario puede registrar manualmente una referencia de factura electrónica externa (número, CUFE, proveedor, URL del documento) asociada a un `IncomeRecord`, después de creado
-- [ ] **INVHOOK-02**: La referencia de factura externa se guarda en un registro relacionado propio, sin modificar el `IncomeRecord` inmutable
-- [ ] **INVHOOK-03**: Ninguna parte del sistema intenta llamar a una API externa de facturación usando estos campos (solo captura, sin integración activa)
+- [x] **INVHOOK-01**: Usuario puede registrar manualmente una referencia de factura electrónica externa (número, CUFE, proveedor, URL del documento) asociada a un `IncomeRecord`, después de creado
+- [x] **INVHOOK-02**: La referencia de factura externa se guarda en un registro relacionado propio, sin modificar el `IncomeRecord` inmutable
+- [x] **INVHOOK-03**: Ninguna parte del sistema intenta llamar a una API externa de facturación usando estos campos (solo captura, sin integración activa)
 
 ### Exportación Excel (XLSEXPORT) — Fase D
 
@@ -103,9 +103,9 @@ Excluidos explícitamente de este milestone. Ver `docs/roadmap-apolo.md` y `.pla
 | BANKREC-04 | Phase 3 (Fase B) | Complete |
 | BANKREC-05 | Phase 3 (Fase B) | Complete |
 | BANKREC-06 | Phase 3 (Fase B) | Complete |
-| INVHOOK-01 | Phase 4 (Fase E) | Pending |
-| INVHOOK-02 | Phase 4 (Fase E) | Pending |
-| INVHOOK-03 | Phase 4 (Fase E) | Pending |
+| INVHOOK-01 | Phase 4 (Fase E) | Complete |
+| INVHOOK-02 | Phase 4 (Fase E) | Complete |
+| INVHOOK-03 | Phase 4 (Fase E) | Complete |
 | XLSEXPORT-01 | Phase 5 (Fase D) | Pending |
 | XLSEXPORT-02 | Phase 5 (Fase D) | Pending |
 | XLSEXPORT-03 | Phase 5 (Fase D) | Pending |
@@ -117,4 +117,4 @@ Excluidos explícitamente de este milestone. Ver `docs/roadmap-apolo.md` y `.pla
 
 ---
 *Requirements defined: 2026-09-16*
-*Last updated: 2026-09-17 after Phase 3 Plan 4 (UploadBankStatement + BankStatementReview UI) — BANKREC-01 a BANKREC-06 completos; Phase 3 (Fase B) cerrada*
+*Last updated: 2026-09-18 after Phase 4 Plan 1 (ExternalInvoiceReference model + table action) — INVHOOK-01 a INVHOOK-03 completos; Phase 4 (Fase E) cerrada*

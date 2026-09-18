@@ -13,7 +13,7 @@ Cinco features aditivas al monolito Laravel 13 + Filament v5 existente, dirigida
 - [x] **Phase 1: Cotización electrónica (Fase A)** - Cotizar, transicionar estados y convertir a ingreso sin duplicados
 - [x] **Phase 2: ReteICA por municipio (Fase C)** - Retención ICA parametrizable por municipio sin acumulación entre municipios
 - [x] **Phase 3: Conciliación bancaria CSV (Fase B)** - Importar extracto bancario y proponer cruces contra pagos sin duplicar ni perder filas
-- [ ] **Phase 4: Hook de facturación externa (Fase E)** - Capturar referencia de factura electrónica de terceros, sin integración activa
+- [x] **Phase 4: Hook de facturación externa (Fase E)** - Capturar referencia de factura electrónica de terceros, sin integración activa
 - [ ] **Phase 5: Exportación Excel (Fase D)** - Exportar los 6 reportes existentes a .xlsx con celdas nativas
 
 ## Phase Details
@@ -79,9 +79,9 @@ Plans:
   1. Usuario puede registrar manualmente una referencia de factura electrónica externa (número, CUFE, proveedor, URL del documento) asociada a un `IncomeRecord` ya creado
   2. La referencia de factura externa se guarda en un registro relacionado propio, sin modificar el `IncomeRecord` inmutable
   3. Ninguna parte del sistema intenta llamar a una API externa de facturación usando estos campos — solo captura, sin integración activa
-**Plans**: 1 plan
+**Plans**: 1/1 plans complete
 Plans:
-- [ ] 04-01-PLAN.md — Modelo ExternalInvoiceReference (hasOne) + acción de tabla en IncomeRecordsTable
+- [x] 04-01-PLAN.md — Modelo ExternalInvoiceReference (hasOne) + acción de tabla en IncomeRecordsTable
 **UI hint**: yes
 
 ### Phase 5: Exportación Excel (Fase D)
@@ -105,5 +105,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 (A → C → B → E 
 | 1. Cotización electrónica (Fase A) | 4/4 | Complete   | 2026-09-16 |
 | 2. ReteICA por municipio (Fase C) | 3/3 | Complete   | 2026-09-17 |
 | 3. Conciliación bancaria CSV (Fase B) | 4/4 | Complete   | 2026-09-17 |
-| 4. Hook de facturación externa (Fase E) | 0/1 | Not started | - |
+| 4. Hook de facturación externa (Fase E) | 1/1 | Complete   | 2026-09-18 |
 | 5. Exportación Excel (Fase D) | 0/TBD | Not started | - |

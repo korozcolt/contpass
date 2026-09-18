@@ -79,7 +79,9 @@ Plans:
   1. Usuario puede registrar manualmente una referencia de factura electrónica externa (número, CUFE, proveedor, URL del documento) asociada a un `IncomeRecord` ya creado
   2. La referencia de factura externa se guarda en un registro relacionado propio, sin modificar el `IncomeRecord` inmutable
   3. Ninguna parte del sistema intenta llamar a una API externa de facturación usando estos campos — solo captura, sin integración activa
-**Plans**: TBD
+**Plans**: 1 plan
+Plans:
+- [ ] 04-01-PLAN.md — Modelo ExternalInvoiceReference (hasOne) + acción de tabla en IncomeRecordsTable
 **UI hint**: yes
 
 ### Phase 5: Exportación Excel (Fase D)
@@ -103,5 +105,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 (A → C → B → E 
 | 1. Cotización electrónica (Fase A) | 4/4 | Complete   | 2026-09-16 |
 | 2. ReteICA por municipio (Fase C) | 3/3 | Complete   | 2026-09-17 |
 | 3. Conciliación bancaria CSV (Fase B) | 4/4 | Complete   | 2026-09-17 |
-| 4. Hook de facturación externa (Fase E) | 0/TBD | Not started | - |
+| 4. Hook de facturación externa (Fase E) | 0/1 | Not started | - |
 | 5. Exportación Excel (Fase D) | 0/TBD | Not started | - |

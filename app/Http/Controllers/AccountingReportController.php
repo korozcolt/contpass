@@ -11,6 +11,7 @@ use App\Services\Accounting\AccountsReceivable;
 use App\Services\Accounting\BankReconciliation;
 use App\Services\Accounting\CurrentCompany;
 use App\Services\Accounting\FinancialStatement;
+use App\Services\Reports\ExcelReportExporter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -39,6 +40,11 @@ class AccountingReportController extends Controller
             'thirdParties' => ThirdParty::query()->whereBelongsTo($company)->orderBy('name')->get(),
             'filters' => $request->only(['starts_on', 'ends_on', 'chart_account_id', 'third_party_id']),
         ]);
+    }
+
+    public function ledgerXlsx(Request $request): StreamedResponse
+    {
+        return app(ExcelReportExporter::class)->handle('libro-auxiliar.xlsx', ['Fecha', 'Comprobante', 'Cuenta', 'Tercero', 'Descripción', 'Débito', 'Crédito'], $this->ledgerRows($request));
     }
 
     public function trialBalance(Request $request): View|StreamedResponse
@@ -72,6 +78,11 @@ class AccountingReportController extends Controller
         ]);
     }
 
+    public function trialBalanceXlsx(Request $request): StreamedResponse
+    {
+        return app(ExcelReportExporter::class)->handle('balance-comprobacion.xlsx', ['Cuenta', 'Nombre', 'Débito', 'Crédito', 'Saldo'], $this->trialBalanceRows($request));
+    }
+
     public function thirdPartyMovements(Request $request): View|StreamedResponse
     {
         $entries = $this->ledgerQuery($request)->whereNotNull('third_party_id');
@@ -88,6 +99,11 @@ class AccountingReportController extends Controller
             'thirdParties' => ThirdParty::query()->whereBelongsTo($this->currentCompany->get())->orderBy('name')->get(),
             'filters' => $request->only(['starts_on', 'ends_on', 'third_party_id']),
         ]);
+    }
+
+    public function thirdPartyMovementsXlsx(Request $request): StreamedResponse
+    {
+        return app(ExcelReportExporter::class)->handle('movimientos-por-tercero.xlsx', ['Fecha', 'Tercero', 'Comprobante', 'Cuenta', 'Descripción', 'Débito', 'Crédito'], $this->thirdPartyMovementsRows($request));
     }
 
     public function journal(Request $request): StreamedResponse
@@ -153,6 +169,11 @@ class AccountingReportController extends Controller
         return $this->downloadCsv('libro-mayor.csv', ['Cuenta', 'Nombre', 'Saldo Inicial', 'Débito', 'Crédito', 'Saldo Final'], $this->generalLedgerRows($request));
     }
 
+    public function generalLedgerXlsx(Request $request): StreamedResponse
+    {
+        return app(ExcelReportExporter::class)->handle('libro-mayor.xlsx', ['Cuenta', 'Nombre', 'Saldo Inicial', 'Débito', 'Crédito', 'Saldo Final'], $this->generalLedgerRows($request));
+    }
+
     public function bankReconciliation(Request $request): StreamedResponse
     {
         $company = $this->currentCompany->get();
@@ -183,12 +204,22 @@ class AccountingReportController extends Controller
         ));
     }
 
+    public function accountsReceivableXlsx(): StreamedResponse
+    {
+        return app(ExcelReportExporter::class)->handle('cartera-clientes.xlsx', ['Tercero', 'Comprobante', 'Soporte', 'Fecha', 'Valor', 'Pagado', 'Saldo', 'Días', 'Edad'], $this->accountsReceivableRows());
+    }
+
     public function accountsPayable(): StreamedResponse
     {
         return $this->downloadCsv('cuentas-por-pagar.csv', ['Tercero', 'Obligación', 'Soporte', 'Fecha', 'Valor', 'Pagado', 'Saldo', 'Días', 'Edad'], array_map(
             fn (array $row): array => [...array_slice($row, 0, 3), $row[3]->format('Y-m-d'), ...array_slice($row, 4)],
             $this->accountsPayableRows(),
         ));
+    }
+
+    public function accountsPayableXlsx(): StreamedResponse
+    {
+        return app(ExcelReportExporter::class)->handle('cuentas-por-pagar.xlsx', ['Tercero', 'Obligación', 'Soporte', 'Fecha', 'Valor', 'Pagado', 'Saldo', 'Días', 'Edad'], $this->accountsPayableRows());
     }
 
     /**

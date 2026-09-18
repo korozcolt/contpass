@@ -14,17 +14,35 @@ Route::get('accounting-reports/ledger', function (Request $request): mixed {
     return app(AccountingReportController::class)->ledger($request);
 })->name('accounting-reports.ledger');
 
+Route::get('accounting-reports/ledger.xlsx', function (Request $request): mixed {
+    abort_unless($request->user() !== null, 403);
+
+    return app(AccountingReportController::class)->ledgerXlsx($request);
+})->name('accounting-reports.ledger.xlsx');
+
 Route::get('accounting-reports/third-party-movements', function (Request $request): mixed {
     abort_unless($request->user() !== null, 403);
 
     return app(AccountingReportController::class)->thirdPartyMovements($request);
 })->name('accounting-reports.third-party-movements');
 
+Route::get('accounting-reports/third-party-movements.xlsx', function (Request $request): mixed {
+    abort_unless($request->user() !== null, 403);
+
+    return app(AccountingReportController::class)->thirdPartyMovementsXlsx($request);
+})->name('accounting-reports.third-party-movements.xlsx');
+
 Route::get('accounting-reports/trial-balance', function (Request $request): mixed {
     abort_unless($request->user() !== null, 403);
 
     return app(AccountingReportController::class)->trialBalance($request);
 })->name('accounting-reports.trial-balance');
+
+Route::get('accounting-reports/trial-balance.xlsx', function (Request $request): mixed {
+    abort_unless($request->user() !== null, 403);
+
+    return app(AccountingReportController::class)->trialBalanceXlsx($request);
+})->name('accounting-reports.trial-balance.xlsx');
 
 Route::get('accounting-reports/journal', function (Request $request): mixed {
     abort_unless($request->user() !== null, 403);
@@ -44,17 +62,35 @@ Route::get('accounting-reports/accounts-receivable', function (Request $request)
     return app(AccountingReportController::class)->accountsReceivable();
 })->name('accounting-reports.accounts-receivable');
 
+Route::get('accounting-reports/accounts-receivable.xlsx', function (Request $request): mixed {
+    abort_unless($request->user() !== null, 403);
+
+    return app(AccountingReportController::class)->accountsReceivableXlsx();
+})->name('accounting-reports.accounts-receivable.xlsx');
+
 Route::get('accounting-reports/accounts-payable', function (Request $request): mixed {
     abort_unless($request->user() !== null, 403);
 
     return app(AccountingReportController::class)->accountsPayable();
 })->name('accounting-reports.accounts-payable');
 
+Route::get('accounting-reports/accounts-payable.xlsx', function (Request $request): mixed {
+    abort_unless($request->user() !== null, 403);
+
+    return app(AccountingReportController::class)->accountsPayableXlsx();
+})->name('accounting-reports.accounts-payable.xlsx');
+
 Route::get('accounting-reports/general-ledger', function (Request $request): mixed {
     abort_unless($request->user() !== null, 403);
 
     return app(AccountingReportController::class)->generalLedger($request);
 })->name('accounting-reports.general-ledger');
+
+Route::get('accounting-reports/general-ledger.xlsx', function (Request $request): mixed {
+    abort_unless($request->user() !== null, 403);
+
+    return app(AccountingReportController::class)->generalLedgerXlsx($request);
+})->name('accounting-reports.general-ledger.xlsx');
 
 Route::get('accounting-reports/bank-reconciliation', function (Request $request): mixed {
     abort_unless($request->user() !== null, 403);

@@ -48,7 +48,7 @@
 
 Añadidos por `/gsd:plan-milestone-gaps` para cerrar 2 gaps no-críticos del audit v1.0 (`.planning/v1.0-MILESTONE-AUDIT.md`). No forman parte del scope original v1; no bloquean el milestone.
 
-- [ ] **TECHDEBT-01**: `WithholdingRuleController`, `StoreWithholdingRuleRequest` y `resources/views/withholding-rules/*.blade.php` (código huérfano sin ruta, predecesor del `WithholdingRuleResource` de Filament, referencia una columna `concept` ya eliminada) quedan eliminados del repositorio
+- [x] **TECHDEBT-01**: `WithholdingRuleController`, `StoreWithholdingRuleRequest` y `resources/views/withholding-rules/*.blade.php` (código huérfano sin ruta, predecesor del `WithholdingRuleResource` de Filament, referencia una columna `concept` ya eliminada) quedan eliminados del repositorio
 - [ ] **AP-01**: El reporte/export "cuentas por pagar" incluye `ExpenseRecord`s de mercado privado sin `BudgetObligation` asociada (`budget_obligation_id` nulo), no solo obligaciones presupuestales públicas
 
 ## v2 Requirements
@@ -116,16 +116,16 @@ Excluidos explícitamente de este milestone. Ver `docs/roadmap-apolo.md` y `.pla
 | XLSEXPORT-01 | Phase 5 (Fase D) | Complete |
 | XLSEXPORT-02 | Phase 5 (Fase D) | Complete |
 | XLSEXPORT-03 | Phase 5 (Fase D) | Complete |
-| TECHDEBT-01 | Phase 6 (gap closure) | Pending |
+| TECHDEBT-01 | Phase 6 (gap closure) | Complete |
 | AP-01 | Phase 7 (gap closure) | Pending |
 
 **Coverage:**
 - v1 requirements: 24 total
 - Mapped to phases: 24
 - Unmapped: 0 ✓
-- Gap closure requirements (post-audit, not part of v1 scope): 2 total, 0 complete
+- Gap closure requirements (post-audit, not part of v1 scope): 2 total, 1 complete
 
 ---
 *Requirements defined: 2026-09-16*
-*Last updated: 2026-09-18 after Phase 5 Plan 4 (botón "Exportar Excel" en las 6 páginas Filament) — Fase D (Exportación Excel) completa, milestone "Mejoras Comerciales para Mercado Privado" cierra sus 24 requirements v1*
+*Last updated: 2026-09-18 after Phase 6 Plan 1 (eliminación de WithholdingRuleController/StoreWithholdingRuleRequest/vistas blade huérfanas) — TECHDEBT-01 cerrado*
 *2026-09-18: `/gsd:plan-milestone-gaps` añadió TECHDEBT-01 y AP-01 (Phases 6-7) para cerrar 2 gaps no-críticos del audit v1.0*

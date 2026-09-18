@@ -15,7 +15,7 @@ Cinco features aditivas al monolito Laravel 13 + Filament v5 existente, dirigida
 - [x] **Phase 3: Conciliación bancaria CSV (Fase B)** - Importar extracto bancario y proponer cruces contra pagos sin duplicar ni perder filas
 - [x] **Phase 4: Hook de facturación externa (Fase E)** - Capturar referencia de factura electrónica de terceros, sin integración activa
 - [x] **Phase 5: Exportación Excel (Fase D)** - Exportar los 6 reportes existentes a .xlsx con celdas nativas
-- [ ] **Phase 6: Limpieza de código huérfano ReteICA** - Eliminar `WithholdingRuleController`/request/vistas blade sin ruta, huérfanos desde antes del `WithholdingRuleResource` de Filament
+- [x] **Phase 6: Limpieza de código huérfano ReteICA** - Eliminar `WithholdingRuleController`/request/vistas blade sin ruta, huérfanos desde antes del `WithholdingRuleResource` de Filament
 - [ ] **Phase 7: Cuentas por pagar — alcance mercado privado** - Extender el reporte "cuentas por pagar" para incluir `ExpenseRecord`s de mercado privado, no solo `BudgetObligation`
 
 ## Phase Details
@@ -111,9 +111,9 @@ Plans:
   1. `WithholdingRuleController`, `StoreWithholdingRuleRequest` y `resources/views/withholding-rules/*.blade.php` ya no existen en el repositorio
   2. `php artisan route:list` confirma que ninguna ruta activa referenciaba esos archivos antes de eliminarlos
   3. La suite de tests completa (`php artisan test --compact`) sigue pasando sin regresiones
-**Plans**: 0/1 plans complete
+**Plans**: 1/1 plans complete
 Plans:
-- [ ] 06-01-PLAN.md — Auditoría grep + eliminación de WithholdingRuleController/StoreWithholdingRuleRequest/vistas blade huérfanas
+- [x] 06-01-PLAN.md — Auditoría grep + eliminación de WithholdingRuleController/StoreWithholdingRuleRequest/vistas blade huérfanas
 **UI hint**: no
 
 ### Phase 7: Cuentas por pagar — alcance mercado privado
@@ -140,5 +140,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 (A → C 
 | 3. Conciliación bancaria CSV (Fase B) | 4/4 | Complete   | 2026-09-17 |
 | 4. Hook de facturación externa (Fase E) | 1/1 | Complete   | 2026-09-18 |
 | 5. Exportación Excel (Fase D) | 4/4 | Complete   | 2026-09-18 |
-| 6. Limpieza de código huérfano ReteICA | 0/1 | Not started | - |
+| 6. Limpieza de código huérfano ReteICA | 1/1 | Complete   | 2026-09-18 |
 | 7. Cuentas por pagar — alcance mercado privado | 0/? | Not started | - |

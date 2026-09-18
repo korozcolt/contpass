@@ -45,7 +45,7 @@ it('ledgerRows casts debit and credit to float', function () {
 
     $rows = invokePrivateMethod(app(AccountingReportController::class), 'ledgerRows', [Request::create('/accounting-reports/ledger')]);
 
-    expect($rows)->toHaveCount(1);
+    expect($rows)->toHaveCount(2);
 
     $row = $rows[0];
 

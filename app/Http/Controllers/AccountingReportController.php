@@ -12,6 +12,7 @@ use App\Services\Accounting\BankReconciliation;
 use App\Services\Accounting\CurrentCompany;
 use App\Services\Accounting\FinancialStatement;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -26,15 +27,10 @@ class AccountingReportController extends Controller
         $entries = $this->ledgerQuery($request);
 
         if ($request->boolean('export')) {
-            return $this->downloadCsv('libro-auxiliar.csv', ['Fecha', 'Comprobante', 'Cuenta', 'Tercero', 'Descripción', 'Débito', 'Crédito'], $entries->get()->map(fn (AccountingEntry $entry) => [
-                $entry->voucher->date->format('Y-m-d'),
-                $entry->voucher->number,
-                $entry->chartAccount->full_name,
-                $entry->thirdParty?->name,
-                $entry->description,
-                $entry->debit,
-                $entry->credit,
-            ])->all());
+            return $this->downloadCsv('libro-auxiliar.csv', ['Fecha', 'Comprobante', 'Cuenta', 'Tercero', 'Descripción', 'Débito', 'Crédito'], array_map(
+                fn (array $row): array => [$row[0]->format('Y-m-d'), ...array_slice($row, 1)],
+                $this->ledgerRows($request),
+            ));
         }
 
         return view('accounting-reports.ledger', [
@@ -67,7 +63,7 @@ class AccountingReportController extends Controller
         ]);
 
         if ($request->boolean('export')) {
-            return $this->downloadCsv('balance-comprobacion.csv', ['Cuenta', 'Nombre', 'Débito', 'Crédito', 'Saldo'], $rows->map(fn ($row) => array_values($row))->all());
+            return $this->downloadCsv('balance-comprobacion.csv', ['Cuenta', 'Nombre', 'Débito', 'Crédito', 'Saldo'], $this->trialBalanceRows($request));
         }
 
         return view('accounting-reports.trial-balance', [
@@ -81,15 +77,10 @@ class AccountingReportController extends Controller
         $entries = $this->ledgerQuery($request)->whereNotNull('third_party_id');
 
         if ($request->boolean('export')) {
-            return $this->downloadCsv('movimientos-por-tercero.csv', ['Fecha', 'Tercero', 'Comprobante', 'Cuenta', 'Descripción', 'Débito', 'Crédito'], $entries->get()->map(fn (AccountingEntry $entry) => [
-                $entry->voucher->date->format('Y-m-d'),
-                $entry->thirdParty?->name,
-                $entry->voucher->number,
-                $entry->chartAccount->full_name,
-                $entry->description,
-                $entry->debit,
-                $entry->credit,
-            ])->all());
+            return $this->downloadCsv('movimientos-por-tercero.csv', ['Fecha', 'Tercero', 'Comprobante', 'Cuenta', 'Descripción', 'Débito', 'Crédito'], array_map(
+                fn (array $row): array => [$row[0]->format('Y-m-d'), ...array_slice($row, 1)],
+                $this->thirdPartyMovementsRows($request),
+            ));
         }
 
         return view('accounting-reports.third-party-movements', [
@@ -159,20 +150,7 @@ class AccountingReportController extends Controller
 
     public function generalLedger(Request $request): StreamedResponse
     {
-        $rows = app(FinancialStatement::class)->generalLedger(
-            $this->currentCompany->get(),
-            $request->input('starts_on'),
-            $request->input('ends_on'),
-        );
-
-        return $this->downloadCsv('libro-mayor.csv', ['Cuenta', 'Nombre', 'Saldo Inicial', 'Débito', 'Crédito', 'Saldo Final'], $rows->map(fn (array $row) => [
-            $row['code'],
-            $row['name'],
-            $row['opening_balance'],
-            $row['debit'],
-            $row['credit'],
-            $row['closing_balance'],
-        ])->all());
+        return $this->downloadCsv('libro-mayor.csv', ['Cuenta', 'Nombre', 'Saldo Inicial', 'Débito', 'Crédito', 'Saldo Final'], $this->generalLedgerRows($request));
     }
 
     public function bankReconciliation(Request $request): StreamedResponse
@@ -199,36 +177,135 @@ class AccountingReportController extends Controller
 
     public function accountsReceivable(): StreamedResponse
     {
-        $rows = app(AccountsReceivable::class)->openItems($this->currentCompany->get());
-
-        return $this->downloadCsv('cartera-clientes.csv', ['Tercero', 'Comprobante', 'Soporte', 'Fecha', 'Valor', 'Pagado', 'Saldo', 'Días', 'Edad'], $rows->map(fn (array $row) => [
-            $row['third_party'],
-            $row['voucher_number'],
-            $row['support_number'],
-            $row['accrual_date']->format('Y-m-d'),
-            $row['amount'],
-            $row['paid'],
-            $row['pending'],
-            $row['days_overdue'],
-            $row['bucket'],
-        ])->all());
+        return $this->downloadCsv('cartera-clientes.csv', ['Tercero', 'Comprobante', 'Soporte', 'Fecha', 'Valor', 'Pagado', 'Saldo', 'Días', 'Edad'], array_map(
+            fn (array $row): array => [...array_slice($row, 0, 3), $row[3]->format('Y-m-d'), ...array_slice($row, 4)],
+            $this->accountsReceivableRows(),
+        ));
     }
 
     public function accountsPayable(): StreamedResponse
     {
-        $rows = app(AccountsPayable::class)->openItems($this->currentCompany->get());
+        return $this->downloadCsv('cuentas-por-pagar.csv', ['Tercero', 'Obligación', 'Soporte', 'Fecha', 'Valor', 'Pagado', 'Saldo', 'Días', 'Edad'], array_map(
+            fn (array $row): array => [...array_slice($row, 0, 3), $row[3]->format('Y-m-d'), ...array_slice($row, 4)],
+            $this->accountsPayableRows(),
+        ));
+    }
 
-        return $this->downloadCsv('cuentas-por-pagar.csv', ['Tercero', 'Obligación', 'Soporte', 'Fecha', 'Valor', 'Pagado', 'Saldo', 'Días', 'Edad'], $rows->map(fn (array $row) => [
-            $row['third_party'],
-            $row['number'],
-            $row['support_number'],
-            $row['accrual_date']->format('Y-m-d'),
-            $row['amount'],
-            $row['paid'],
-            $row['pending'],
-            $row['days_overdue'],
-            $row['bucket'],
-        ])->all());
+    /**
+     * @return array<int, array{0: Carbon, 1: string, 2: string, 3: ?string, 4: ?string, 5: float, 6: float}>
+     */
+    private function ledgerRows(Request $request): array
+    {
+        return $this->ledgerQuery($request)->get()->map(fn (AccountingEntry $entry): array => [
+            $entry->voucher->date,
+            $entry->voucher->number,
+            $entry->chartAccount->full_name,
+            $entry->thirdParty?->name,
+            $entry->description,
+            (float) $entry->debit,
+            (float) $entry->credit,
+        ])->all();
+    }
+
+    /**
+     * @return array<int, array{0: Carbon, 1: ?string, 2: string, 3: string, 4: ?string, 5: float, 6: float}>
+     */
+    private function thirdPartyMovementsRows(Request $request): array
+    {
+        return $this->ledgerQuery($request)->whereNotNull('third_party_id')->get()->map(fn (AccountingEntry $entry): array => [
+            $entry->voucher->date,
+            $entry->thirdParty?->name,
+            $entry->voucher->number,
+            $entry->chartAccount->full_name,
+            $entry->description,
+            (float) $entry->debit,
+            (float) $entry->credit,
+        ])->all();
+    }
+
+    /**
+     * @return array<int, array{0: string, 1: string, 2: float, 3: float, 4: float}>
+     */
+    private function trialBalanceRows(Request $request): array
+    {
+        $company = $this->currentCompany->get();
+
+        return AccountingEntry::query()
+            ->select('chart_accounts.code', 'chart_accounts.name', DB::raw('sum(accounting_entries.debit) as debit_total'), DB::raw('sum(accounting_entries.credit) as credit_total'))
+            ->join('chart_accounts', 'chart_accounts.id', '=', 'accounting_entries.chart_account_id')
+            ->join('vouchers', 'vouchers.id', '=', 'accounting_entries.voucher_id')
+            ->where('vouchers.company_id', $company->id)
+            ->when($request->filled('starts_on'), fn ($query) => $query->whereDate('vouchers.date', '>=', $request->date('starts_on')))
+            ->when($request->filled('ends_on'), fn ($query) => $query->whereDate('vouchers.date', '<=', $request->date('ends_on')))
+            ->groupBy('chart_accounts.id', 'chart_accounts.code', 'chart_accounts.name')
+            ->orderBy('chart_accounts.code')
+            ->get()
+            ->map(fn ($row): array => [
+                $row->code,
+                $row->name,
+                (float) $row->debit_total,
+                (float) $row->credit_total,
+                round((float) $row->debit_total - (float) $row->credit_total, 2),
+            ])
+            ->all();
+    }
+
+    /**
+     * @return array<int, array{0: string, 1: string, 2: float, 3: float, 4: float, 5: float}>
+     */
+    private function generalLedgerRows(Request $request): array
+    {
+        return app(FinancialStatement::class)
+            ->generalLedger($this->currentCompany->get(), $request->input('starts_on'), $request->input('ends_on'))
+            ->map(fn (array $row): array => [
+                $row['code'],
+                $row['name'],
+                $row['opening_balance'],
+                $row['debit'],
+                $row['credit'],
+                $row['closing_balance'],
+            ])
+            ->all();
+    }
+
+    /**
+     * @return array<int, array{0: string, 1: string, 2: ?string, 3: Carbon, 4: float, 5: float, 6: float, 7: int, 8: string}>
+     */
+    private function accountsReceivableRows(): array
+    {
+        return app(AccountsReceivable::class)->openItems($this->currentCompany->get())
+            ->map(fn (array $row): array => [
+                $row['third_party'],
+                $row['voucher_number'],
+                $row['support_number'],
+                $row['accrual_date'],
+                $row['amount'],
+                $row['paid'],
+                $row['pending'],
+                $row['days_overdue'],
+                $row['bucket'],
+            ])
+            ->all();
+    }
+
+    /**
+     * @return array<int, array{0: string, 1: string, 2: ?string, 3: Carbon, 4: float, 5: float, 6: float, 7: int, 8: string}>
+     */
+    private function accountsPayableRows(): array
+    {
+        return app(AccountsPayable::class)->openItems($this->currentCompany->get())
+            ->map(fn (array $row): array => [
+                $row['third_party'],
+                $row['number'],
+                $row['support_number'],
+                $row['accrual_date'],
+                $row['amount'],
+                $row['paid'],
+                $row['pending'],
+                $row['days_overdue'],
+                $row['bucket'],
+            ])
+            ->all();
     }
 
     private function ledgerQuery(Request $request)

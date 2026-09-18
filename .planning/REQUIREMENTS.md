@@ -41,8 +41,8 @@
 ### Exportación Excel (XLSEXPORT) — Fase D
 
 - [ ] **XLSEXPORT-01**: Usuario puede exportar cada uno de los 6 reportes contables existentes (Libro Mayor, Libro auxiliar, movimientos por tercero, balance de comprobación, cartera de clientes, cuentas por pagar) en `.xlsx`, además del CSV ya existente
-- [x] **XLSEXPORT-02**: Las columnas de moneda y fecha en el export de Excel son celdas numéricas/fecha nativas (ordenables/sumables), no texto
-- [ ] **XLSEXPORT-03**: El export de Excel reusa la misma fuente de datos que el export CSV de cada reporte (sin lógica de consulta duplicada)
+- [~] **XLSEXPORT-02**: Las columnas de moneda y fecha en el export de Excel son celdas numéricas/fecha nativas (ordenables/sumables), no texto
+- [~] **XLSEXPORT-03**: El export de Excel reusa la misma fuente de datos que el export CSV de cada reporte (sin lógica de consulta duplicada)
 
 ## v2 Requirements
 
@@ -107,8 +107,8 @@ Excluidos explícitamente de este milestone. Ver `docs/roadmap-apolo.md` y `.pla
 | INVHOOK-02 | Phase 4 (Fase E) | Complete |
 | INVHOOK-03 | Phase 4 (Fase E) | Complete |
 | XLSEXPORT-01 | Phase 5 (Fase D) | Pending |
-| XLSEXPORT-02 | Phase 5 (Fase D) | Complete |
-| XLSEXPORT-03 | Phase 5 (Fase D) | Pending |
+| XLSEXPORT-02 | Phase 5 (Fase D) | Partial |
+| XLSEXPORT-03 | Phase 5 (Fase D) | Partial |
 
 **Coverage:**
 - v1 requirements: 24 total
@@ -117,4 +117,4 @@ Excluidos explícitamente de este milestone. Ver `docs/roadmap-apolo.md` y `.pla
 
 ---
 *Requirements defined: 2026-09-16*
-*Last updated: 2026-09-18 after Phase 5 Plan 1 (ExcelReportExporter — celdas numéricas/fecha nativas) — XLSEXPORT-02 completo*
+*Last updated: 2026-09-18 after Phase 5 Plans 1-2 (ExcelReportExporter service + row-builder refactor) — XLSEXPORT-02/03 en progreso, cierran en Plan 3*

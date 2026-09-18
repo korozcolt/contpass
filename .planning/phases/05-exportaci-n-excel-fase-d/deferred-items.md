@@ -1,0 +1,5 @@
+# Deferred Items — Fase D (Exportación Excel)
+
+## Plan 05-01
+
+- **3 pre-existing test failures unrelated to this plan's changes** (`ExampleTest::guests_can_view_the_public_welcome_page`, `ExampleTest::authenticated_users_can_still_view_the_public_welcome_page`, `WelcomePageTest::the_welcome_page_presents_ContPass_and_links_to_the_admin_panel`), all `Illuminate\Foundation\ViteManifestNotFoundException: Vite manifest not found at .../public/build/manifest.json`. Cause: this worktree was bootstrapped fresh for this plan (`composer install`, `.env`+`key:generate`) but `npm install && npm run build` was intentionally **not** run, because Plan 05-01 only touches `app/Services/Reports/ExcelReportExporter.php` and its Pest test (no frontend surface). Per scope-boundary rules, out-of-scope failures are logged here, not fixed. Full test suite: 237 tests, 234 passed, 3 failed (all three of the above) — confirms no regression caused by this plan's changes. Run `npm install && npm run build` in this worktree before relying on the welcome page test group.

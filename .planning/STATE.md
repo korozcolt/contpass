@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to plan
-stopped_at: Phase 5 context gathered
-last_updated: "2026-09-18T15:02:57.891Z"
+status: Executing Phase 05
+stopped_at: Completed 05-01-PLAN.md
+last_updated: "2026-09-18T16:51:19Z"
 progress:
   total_phases: 5
   completed_phases: 4
-  total_plans: 12
-  completed_plans: 12
+  total_plans: 16
+  completed_plans: 13
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-09-16)
 
 **Core value:** Cada movimiento relevante produce un comprobante contable auditable e inmutable por partida doble — trazabilidad e inmutabilidad sobre conveniencia.
-**Current focus:** Phase 04 — hook-de-facturaci-n-externa-fase-e (COMPLETE, 1/1 plans) — ready for Phase 5 (Exportación Excel, Fase D)
+**Current focus:** Phase 05 — exportaci-n-excel-fase-d (1/4 plans complete: 05-01 ExcelReportExporter)
 
 ## Current Position
 
-Phase: 5
-Plan: Not started
+Phase: 05 (exportaci-n-excel-fase-d) — EXECUTING
+Plan: 1 of 4 complete (05-01-PLAN.md — ExcelReportExporter)
 
 ## Performance Metrics
 
@@ -58,6 +58,7 @@ Plan: Not started
 | Phase 03 P03 | ~35min | 2 tasks | 5 files |
 | Phase 03 P04 | ~55min | 2 tasks | 6 files |
 | Phase 04 P01 | ~35min | 2 tasks | 6 files |
+| Phase 05 P01 | ~25min | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -102,6 +103,8 @@ Recent decisions affecting current work:
 - [Phase 03 P04]: `FileUpload` de Filament v5 no tiene método `->extensions()` (API de versiones anteriores) — el filtro de tipo de archivo real es `->acceptedFileTypes([...])` (MIME types, ej. `'text/csv'`), verificado contra el código fuente instalado (`vendor/filament/forms/src/Components/BaseFileUpload.php`)
 - [Phase 04 P01]: `mountAction(TestAction::make('name')->table($record))->assertSchemaStateSet([...])` funciona igual que `callAction(...)` para pre-verificar el estado pre-rellenado (`fillForm`) de un modal de acción de tabla, sin necesidad de invocar la acción — confirmado contra el código fuente instalado (`vendor/filament/actions/src/Testing/TestsActions.php`), no solo contra el precedente de `EditEmployee`/`CompanySignatoryTest` (que son formularios de página completa, no acciones de tabla)
 - [Phase 04 P01]: cuando el `unique()` de un campo de un modal de Action necesita ignorar un modelo DISTINTO al `$record` de la fila (aquí: ignorar el `ExternalInvoiceReference` relacionado, no el `IncomeRecord` de la fila), `ignorable` debe pasarse como closure explícito — el default de `ignoreRecord: true` resuelve a `$component->getRecord()`, que es el `IncomeRecord`, no la relación
+- [Phase 05 P01]: `ExcelReportExporter::handle()` implementado exactamente como el código verificado en 05-RESEARCH.md contra el código fuente vendorizado de `openspout/openspout` v4.32 — `openToFile('php://output')` dentro de `response()->streamDownload()` (nunca `openToBrowser()`, que llama `header()` directamente y choca con el manejo de headers de `StreamedResponse`), tipado 100% por `Cell::fromValue()` + un solo check `instanceof DateTimeInterface` para decidir el `Style::setFormat('dd/mm/yyyy')` — sin mapas de estilo por columna, manteniendo el servicio agnóstico (D-05) para que 05-03 lo reuse en los 6 reportes sin lógica adicional
+- [Phase 05 P01]: patrón de test reusable `writeAndReopenXlsx()` (captura bytes de `StreamedResponse` vía `ob_start()`+`sendContent()`, escribe a archivo temporal, reabre con `OpenSpout\Reader\XLSX\Reader`) es la única forma verificada de comprobar tipos de celda nativos (float/int/DateTimeInterface) porque el callback de `StreamedResponse` solo corre en `sendContent()` y el `Reader` de openspout requiere una ruta de archivo real, no `php://output` — reusar este helper en 05-03 en vez de reinventarlo
 
 ### Pending Todos
 
@@ -124,9 +127,10 @@ Recent decisions affecting current work:
 - Phase 03 (Plan 3/4, worktree nuevo `agent-a945621aaa0ba851b` corriendo en paralelo con el ejecutor de Plan 2/4 en otro worktree): mismo patrón otra vez — worktree sin `.planning/`, `vendor/`, `.env`, `node_modules/` ni `public/build/`. Corregido con `git merge main --ff-only` (verificado ancestro estricto) + bootstrap completo. El rol/base de datos `contpass` en el Postgres compartido ya existía (persistente desde Plan 03-01) y todas las migraciones (incluidas las de 03-01) ya estaban `Ran` contra esa base compartida — no se requirió `migrate`. Dado el bug conocido de `gsd-tools.cjs` `findProjectRoot()`, esta ejecución tampoco invocó ningún comando de estado — `STATE.md`, `ROADMAP.md` y `REQUIREMENTS.md` se editaron a mano directamente en este worktree. Ambas ramas (Plan 03-02 y Plan 03-03) se reconciliaron por merge manual en el checkout principal — ver commits de merge en `main` para el detalle de la resolución de conflictos en `.planning/*.md`.
 - Phase 03 (Plan 4/4, esta ejecución, última del milestone Fase B): mismo patrón por séptima vez — este worktree (`agent-adb5ab89687770c09`) apuntaba a un commit no relacionado ("Libro Mayor / bank reconciliation"), 84 commits detrás de `main`, sin `.planning/`, `vendor/`, `.env`, `node_modules/` ni `public/build/`. Verificado `git merge-base --is-ancestor HEAD main` (true) y corregido con `git merge main --ff-only` + bootstrap completo. El rol/base de datos `contpass` y todas las migraciones (incluidas 03-01/02/03) ya existían persistentes en el Postgres compartido — solo se ajustó `DB_PASSWORD=contpass` en el `.env` local nuevo. Dado el bug conocido de `findProjectRoot()`, ningún comando de estado de `gsd-tools.cjs` fue invocado en esta ejecución — `STATE.md`, `ROADMAP.md` y `REQUIREMENTS.md` se editaron a mano directamente en este worktree, que es la fuente de verdad correcta. Con esto, Phase 03 (Fase B) queda completa (4/4 plans); el patrón de worktree-desincronizado se repitió en las 4 ejecuciones de esta fase sin excepción — se reitera al orquestador la recomendación de verificar `git merge-base HEAD main == HEAD` (o crear el worktree explícitamente desde `main`) antes de invocar al ejecutor, para las fases futuras (4 y 5).
 - Phase 04 (Plan 1/1, esta ejecución, única del milestone Fase E): mismo patrón por octava vez — este worktree (`agent-aabccc99a9e54ba3e`) apuntaba al mismo commit no relacionado ("Libro Mayor / bank reconciliation") de siempre, sin `.planning/`, `vendor/`, `.env`, `node_modules/` ni `public/build/`. Verificado `git merge-base --is-ancestor HEAD main` (true) y corregido con `git merge main --ff-only` + bootstrap completo (`composer install`, `.env`+`key:generate`, `npm install && npm run build`). Novedad esta vez: el Postgres compartido (antes un contenedor Docker `postgres:16` persistente) NO estaba disponible — `docker ps` falló con "Cannot connect to the Docker daemon" y `open -a Docker` dejó un proceso de instalación colgado (`com.docker.install/in_progress/...`) que nunca llegó a exponer el socket tras ~60s de espera. No fue necesario resolverlo: el plan solo tocaba backend (modelo/migración/acción de tabla) y toda su verificación corre contra sqlite in-memory vía `phpunit.xml` (`DB_CONNECTION=sqlite`, `LazilyRefreshDatabase`), que sí ejecuta la migración nueva en cada test. No se corrió `php artisan migrate` contra el Postgres real de desarrollo — queda como blocker abierto para cualquier fase futura que sí lo necesite. `npm install` volvió a mutar el `name` de `package-lock.json` (mismo bug ya documentado en Plan 03-02) — revertido con `git checkout -- package-lock.json` antes de cualquier commit. Dado el bug conocido de `findProjectRoot()`, ningún comando de estado de `gsd-tools.cjs` fue invocado — `STATE.md`, `ROADMAP.md` y `REQUIREMENTS.md` se editaron a mano directamente en este worktree, que es la fuente de verdad correcta. Con esto, Phase 04 (Fase E) queda completa (1/1 plan); el patrón de worktree-desincronizado se ha repetido sin excepción en las 8 ejecuciones registradas de este proyecto hasta ahora.
+- Phase 05 (Plan 1/4, esta ejecución, ejecutor paralelo junto a 05-02/05-03/05-04 en worktrees propios): mismo patrón por novena vez — este worktree (`agent-aebe3bf6f848a3844`) apuntaba a un commit no relacionado ("Libro Mayor / bank reconciliation"), 5 commits detrás de `main`, sin `.planning/`, `vendor/`, `.env`, `node_modules/` ni `public/build/`. Verificado `git merge-base --is-ancestor HEAD main` (true) y corregido con `git merge main --ff-only` + bootstrap parcial (`composer install`, `.env`+`key:generate`). Deliberadamente NO se corrió `npm install && npm run build` esta vez: el plan (`ExcelReportExporter`) es puramente backend (servicio + test Pest), y `phpunit.xml` usa sqlite in-memory (sin dependencia de Postgres). Consecuencia esperada: la suite completa (`php artisan test --compact`, sin filtro) reporta 3 fallos preexistentes por `ViteManifestNotFoundException` en `ExampleTest`/`WelcomePageTest` (páginas que renderizan Blade con `@vite`), documentados en `.planning/phases/05-exportaci-n-excel-fase-d/deferred-items.md` en vez de corregidos (fuera de alcance de este plan backend-only). Dado el bug conocido de `findProjectRoot()`, ningún comando de estado de `gsd-tools.cjs` fue invocado en esta ejecución — `STATE.md`, `ROADMAP.md` y `REQUIREMENTS.md` se editaron a mano directamente en este worktree, que es la fuente de verdad correcta para el plan 05-01. Reconciliación con las ramas paralelas (05-02/05-03/05-04) y con `main` queda pendiente para cuando el orquestador mergee las 4 ramas de esta fase.
 
 ## Session Continuity
 
-Last session: 2026-09-18T15:02:57.888Z
-Stopped at: Phase 5 context gathered
-Resume file: .planning/phases/05-exportaci-n-excel-fase-d/05-CONTEXT.md
+Last session: 2026-09-18T16:51:19Z
+Stopped at: Completed 05-01-PLAN.md (ExcelReportExporter)
+Resume file: .planning/phases/05-exportaci-n-excel-fase-d/05-02-PLAN.md

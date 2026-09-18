@@ -2,7 +2,7 @@
 
 ## Overview
 
-Cinco features aditivas al monolito Laravel 13 + Filament v5 existente, dirigidas a cerrar brecha comercial contra competidores de mercado privado (Siigo, Alegra, World Office) sin comprometer el Core Value de trazabilidad/inmutabilidad contable. Ninguna fase depende técnicamente de otra — el orden A→C→B→E→D es una priorización de valor/esfuerzo confirmada por research de arquitectura (2026-09-16), no una cadena de dependencias de código. Se ejecuta: Cotización electrónica → ReteICA por municipio → Conciliación bancaria CSV → Hook de facturación externa → Exportación Excel.
+Cinco features aditivas al monolito Laravel 13 + Filament v5 existente, dirigidas a cerrar brecha comercial contra competidores de mercado privado (Siigo, Alegra, World Office) sin comprometer el Core Value de trazabilidad/inmutabilidad contable. Ninguna fase depende técnicamente de otra — el orden A→C→B→E→D es una priorización de valor/esfuerzo confirmada por research de arquitectura (2026-09-16), no una cadena de dependencias de código. Se ejecuta: Cotización electrónica → ReteICA por municipio → Conciliación bancaria CSV → Hook de facturación externa → Exportación Excel. Las Phases 6 y 7 son cierre de gaps no-críticos identificados por `/gsd:audit-milestone` sobre la v1.0 (ver `.planning/v1.0-MILESTONE-AUDIT.md`), no fases del scope original.
 
 ## Phases
 
@@ -15,6 +15,8 @@ Cinco features aditivas al monolito Laravel 13 + Filament v5 existente, dirigida
 - [x] **Phase 3: Conciliación bancaria CSV (Fase B)** - Importar extracto bancario y proponer cruces contra pagos sin duplicar ni perder filas
 - [x] **Phase 4: Hook de facturación externa (Fase E)** - Capturar referencia de factura electrónica de terceros, sin integración activa
 - [x] **Phase 5: Exportación Excel (Fase D)** - Exportar los 6 reportes existentes a .xlsx con celdas nativas
+- [ ] **Phase 6: Limpieza de código huérfano ReteICA** - Eliminar `WithholdingRuleController`/request/vistas blade sin ruta, huérfanos desde antes del `WithholdingRuleResource` de Filament
+- [ ] **Phase 7: Cuentas por pagar — alcance mercado privado** - Extender el reporte "cuentas por pagar" para incluir `ExpenseRecord`s de mercado privado, no solo `BudgetObligation`
 
 ## Phase Details
 
@@ -100,10 +102,34 @@ Plans:
 - [x] 05-04-PLAN.md — Botón "Exportar Excel" en las 6 páginas Filament de reporte (D-09)
 **UI hint**: yes
 
+### Phase 6: Limpieza de código huérfano ReteICA
+**Goal**: El código muerto sin ruta que quedó de la implementación pre-Filament de reglas de retención ICA queda eliminado, sin dejar una trampa latente para quien intente re-conectarlo.
+**Depends on**: Nothing técnicamente (cierre de gap de auditoría de la milestone v1.0)
+**Gap Closure**: Cierra gap de integración `RETICA-02-legacy-route` del audit v1.0 (`.planning/v1.0-MILESTONE-AUDIT.md`)
+**Requirements**: TECHDEBT-01
+**Success Criteria** (what must be TRUE):
+  1. `WithholdingRuleController`, `StoreWithholdingRuleRequest` y `resources/views/withholding-rules/*.blade.php` ya no existen en el repositorio
+  2. `php artisan route:list` confirma que ninguna ruta activa referenciaba esos archivos antes de eliminarlos
+  3. La suite de tests completa (`php artisan test --compact`) sigue pasando sin regresiones
+**Plans**: 0/1 plans complete
+**UI hint**: no
+
+### Phase 7: Cuentas por pagar — alcance mercado privado
+**Goal**: El reporte y export "cuentas por pagar" refleja también los `ExpenseRecord` del flujo de mercado privado (con `budget_obligation_id` nulo), no solo obligaciones presupuestales públicas — incluyendo los ICA-retenidos (Fase 2) y conciliados (Fase 3).
+**Depends on**: Nothing técnicamente (cierre de gap de auditoría de la milestone v1.0)
+**Gap Closure**: Cierra gap de flujo `accounts-payable-private-market-scope` del audit v1.0 (`.planning/v1.0-MILESTONE-AUDIT.md`); afecta XLSEXPORT-01, XLSEXPORT-03
+**Requirements**: AP-01
+**Success Criteria** (what must be TRUE):
+  1. `AccountsPayable::openItems()` (o un origen de datos equivalente) incluye `ExpenseRecord`s sin `BudgetObligation` asociada, no solo `BudgetObligation`
+  2. El reporte "cuentas por pagar" en pantalla, su CSV y su export Excel muestran los mismos `ExpenseRecord`s de mercado privado sin lógica de consulta duplicada entre los tres
+  3. Un `ExpenseRecord` con retención ICA (Fase 2) o ya conciliado (Fase 3) aparece correctamente en el reporte mientras esté pendiente de pago
+**Plans**: 0/? plans complete
+**UI hint**: no
+
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 (A → C → B → E → D)
+Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 (A → C → B → E → D → gap closure)
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -112,3 +138,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 (A → C → B → E 
 | 3. Conciliación bancaria CSV (Fase B) | 4/4 | Complete   | 2026-09-17 |
 | 4. Hook de facturación externa (Fase E) | 1/1 | Complete   | 2026-09-18 |
 | 5. Exportación Excel (Fase D) | 4/4 | Complete   | 2026-09-18 |
+| 6. Limpieza de código huérfano ReteICA | 0/1 | Not started | - |
+| 7. Cuentas por pagar — alcance mercado privado | 0/? | Not started | - |

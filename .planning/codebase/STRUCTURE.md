@@ -115,7 +115,7 @@ contpass/
 
 **`resources/views/`:**
 - Purpose: Blade templates for legacy UI (mostly deprecated)
-- Contains: `accounting-reports/` (CSV report templates), `payments/`, `income-records/`, `expense-records/`, `third-parties/`, `chart-accounts/`, `cash-accounts/`, `withholding-rules/`, `auth/`, `dashboard/`, `components/`, `layouts/`, `filament/` (Filament custom views)
+- Contains: `accounting-reports/` (CSV report templates), `payments/`, `income-records/`, `expense-records/`, `third-parties/`, `chart-accounts/`, `cash-accounts/`, `auth/`, `dashboard/`, `components/`, `layouts/`, `filament/` (Filament custom views)
 
 **`routes/web.php`:**
 - Purpose: Public routes

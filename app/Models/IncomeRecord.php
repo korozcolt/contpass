@@ -6,6 +6,7 @@ use Database\Factories\IncomeRecordFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class IncomeRecord extends Model
 {
@@ -48,5 +49,10 @@ class IncomeRecord extends Model
     public function budgetRevenue(): BelongsTo
     {
         return $this->belongsTo(BudgetRevenue::class);
+    }
+
+    public function externalInvoiceReference(): HasOne
+    {
+        return $this->hasOne(ExternalInvoiceReference::class);
     }
 }

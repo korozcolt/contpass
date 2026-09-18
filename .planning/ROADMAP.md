@@ -112,6 +112,8 @@ Plans:
   2. `php artisan route:list` confirma que ninguna ruta activa referenciaba esos archivos antes de eliminarlos
   3. La suite de tests completa (`php artisan test --compact`) sigue pasando sin regresiones
 **Plans**: 0/1 plans complete
+Plans:
+- [ ] 06-01-PLAN.md — Auditoría grep + eliminación de WithholdingRuleController/StoreWithholdingRuleRequest/vistas blade huérfanas
 **UI hint**: no
 
 ### Phase 7: Cuentas por pagar — alcance mercado privado

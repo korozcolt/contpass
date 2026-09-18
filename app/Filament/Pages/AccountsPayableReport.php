@@ -109,6 +109,10 @@ class AccountsPayableReport extends Page implements HasTable
                     ->label('Exportar CSV')
                     ->icon(Heroicon::ArrowDownTray)
                     ->url(fn (): string => route('accounting-reports.accounts-payable')),
+                Action::make('exportExcel')
+                    ->label('Exportar Excel')
+                    ->icon(Heroicon::ArrowDownTray)
+                    ->url(fn (): string => route('accounting-reports.accounts-payable.xlsx')),
             ])
             ->paginated([25, 50, 100])
             ->emptyStateHeading('No hay obligaciones pendientes')

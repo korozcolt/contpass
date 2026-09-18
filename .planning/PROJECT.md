@@ -25,12 +25,11 @@ Cada movimiento relevante produce un comprobante contable auditable e inmutable 
 - ✓ Fase C — ReteICA por municipio: catálogo DIVIPOLA (`departments`/`municipalities`, 33/1122 registros) construido desde cero, `WithholdingRule` extendida con `type`/`municipality_id` reusando el versionado existente (`scopeEffectiveOn`), bloqueo de reglas ICA solapadas por municipio (`EnsureNoOverlappingIcaRule`) y filtro exacto por municipio en `ApplyWithholdingRules` que deja ReteFuente/ReteIVA intactos por construcción — validado en Phase 2 (2026-09-17), 191 tests Pest pasando, RETICA-01 a RETICA-05 completos
 - ✓ Fase B — Conciliación bancaria CSV: esquema `BankStatementImport`/`Line`/`Match` (D-01/D-02, perfiles Bancolombia/Davivienda hardcoded), `ImportBankStatement` reusando el patrón de `ArchiveMasterPreviewImporter` (encoding/delimitador vía `league/csv`, ya vendorizado — sin dependencia nueva), motor de cruce `ProposeBankStatementMatches` (1:1 + lote acotado a `match_pool_limit=10`) y `ConfirmBankStatementMatch` reusando `Payment.is_reconciled` sin duplicar estado, páginas Filament `UploadBankStatement`/`BankStatementReview` — validado en Phase 3 (2026-09-17), 226 tests Pest pasando, BANKREC-01 a BANKREC-06 completos
 - ✓ Fase E — Hook de facturación externa: modelo `ExternalInvoiceReference` relacionado 1:1 (`hasOne`, siguiendo el precedente `BudgetObligation::hasOne(PaymentOrder::class)`) a `IncomeRecord`, captura manual vía acción de tabla "Registrar/Ver factura externa" en `IncomeRecordsTable` (número, CUFE sin validar formato, proveedor texto libre, URL documento), editable libremente sin nota de ajuste (metadata de referencia, no toca `Voucher`/`IncomeRecord`), sin ninguna llamada `Http::` — validado en Phase 4 (2026-09-18), 233 tests Pest pasando, INVHOOK-01 a INVHOOK-03 completos
+- ✓ Fase D — Exportación Excel: servicio compartido `ExcelReportExporter` (celdas numéricas/fecha nativas vía `openspout/openspout`, ya vendorizado transitivamente — **cero dependencia nueva**, descartado `maatwebsite/excel`), 6 métodos privados `*Rows()` extraídos en `AccountingReportController` reusados por CSV y por los 6 nuevos endpoints `.xlsx` (mismo gate de autenticación que CSV), botón "Exportar Excel" junto al de CSV en las 6 páginas Filament de reporte — validado en Phase 5 (2026-09-18), 260 tests Pest pasando, XLSEXPORT-01 a XLSEXPORT-03 completos
 
 ### Active
 
-**Milestone: Mejoras Comerciales para Mercado Privado** (roadmap detallado y research de mercado en `docs/roadmap-apolo.md`):
-
-- [ ] Fase D — Exportación Excel dedicada de los reportes existentes (requiere elegir y aprobar librería nueva)
+**Milestone: Mejoras Comerciales para Mercado Privado** — completo (5/5 fases). Pendiente ejecutar `/gsd:complete-milestone` para archivar y decidir el siguiente ciclo.
 
 ### Out of Scope
 
@@ -68,8 +67,8 @@ Cada movimiento relevante produce un comprobante contable auditable e inmutable 
 | No motor de nómina electrónica ni POS en este milestone | Mercado privado ya bien servido por competidores ahí; ContPass compite en trazabilidad/auditoría | — Pending |
 | ReteICA (Fase C): municipio se toma del domicilio de la `Company`, con opción de edición manual | Simplicidad sobre exactitud por-tercero; decisión de negocio del usuario. Research de mercado (2026-09-16) encontró que el estándar real (Siigo/Siesa/SysCafé) es tarifa por actividad económica CIIU × municipio del `ThirdParty`, no domicilio de `Company` — el usuario confirmó explícitamente mantener el modelo simple después de conocer ese tradeoff | ✓ Aplicado, Phase 2 (2026-09-17) |
 | Out of scope explícito: ReteICA por actividad económica (CIIU) del `ThirdParty` | Más preciso y esperado por contadores acostumbrados a Siigo/Alegra, pero requiere nueva dimensión de datos en `ThirdParty` — descartado deliberadamente por simplicidad, no por desconocimiento | ✓ Confirmado fuera de alcance, Phase 2 (2026-09-17) |
-| Excel (Fase D): elegir librería por eficiencia y calidad, no por familiaridad previa | Usuario delegó el criterio técnico explícitamente; requiere aprobación de dependencia antes de instalar | — Pending |
-| Orden de ejecución de fases: A → C → B → E → D | Priorizado por esfuerzo vs. valor comercial percibido (ver `docs/roadmap-apolo.md`) | — Pending |
+| Excel (Fase D): usar `openspout/openspout` directo en un servicio propio, no instalar `maatwebsite/excel` | El research de Phase 5 confirmó que openspout ya está vendorizado transitivamente vía `filament/actions` — resuelve la exigencia de aprobación de dependencia sin instalar nada nuevo; el `Exporter` nativo de Filament se descartó por ser incompatible con 4 de los 6 reportes (no usan `->query()` Eloquent) | ✓ Aplicado, Phase 5 (2026-09-18) |
+| Orden de ejecución de fases: A → C → B → E → D | Priorizado por esfuerzo vs. valor comercial percibido (ver `docs/roadmap-apolo.md`) | ✓ Completado, Phase 5 (2026-09-18) |
 | Estrategia de precios: ContPass privado post-mejoras ~$1.5M–$2.2M COP/año | Basado en research de mercado real (SECOP + SaaS privado); posiciona justo debajo de Alegra/Siigo/World Office compensado por rigor de auditoría | — Pending |
 | Fase A (QUOT-04): aprobada dependencia nueva `barryvdh/laravel-dompdf` (~^3.1) | Genera el PDF de cotización desde vista Blade; confirmada no instalada por research (2026-09-16); usuario aprobó explícitamente durante `/gsd:plan-phase 1` (2026-09-16) | ✓ Instalada y validada, Phase 1 (2026-09-17), v3.1.2 |
 | Fase A: índice único de `quotations.number` debe ser compuesto (`company_id`, `number`), no global | El plan-checker detectó que un índice global rompería la numeración "consecutiva por empresa" (QUOT-02) en cuanto dos compañías compartieran número en el mismo año; corregido antes de ejecutar | ✓ Aplicado, Phase 1 (2026-09-17) |
@@ -94,4 +93,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-09-18 after Phase 4 (Hook de facturación externa — Fase E) completion*
+*Last updated: 2026-09-18 after Phase 5 (Exportación Excel — Fase D) completion — milestone "Mejoras Comerciales para Mercado Privado" completo (5/5 fases)*

@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to plan
-stopped_at: Phase 07 context gathered
-last_updated: "2026-09-18T18:28:51.708Z"
+status: Phase 07 complete — gap closure post v1.0 audit complete, pending /gsd:complete-milestone
+stopped_at: Completed 07-01-PLAN.md
+last_updated: "2026-09-19T00:00:00.000Z"
 progress:
   total_phases: 7
-  completed_phases: 6
-  total_plans: 17
-  completed_plans: 17
+  completed_phases: 7
+  total_plans: 18
+  completed_plans: 18
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-09-16)
 
 **Core value:** Cada movimiento relevante produce un comprobante contable auditable e inmutable por partida doble — trazabilidad e inmutabilidad sobre conveniencia.
-**Current focus:** Phase 06 — limpieza-c-digo-hu-rfano-reteica COMPLETA (1/1 plan: 06-01 eliminación de WithholdingRuleController/StoreWithholdingRuleRequest/vistas blade huérfanas tras auditoría grep). TECHDEBT-01 cerrado. Próximo: Phase 07 (cuentas por pagar — alcance mercado privado, AP-01), último gap-closure post v1.0 audit.
+**Current focus:** Phase 07 — cuentas-por-pagar-mercado-privado COMPLETA (1/1 plan: 07-01 combina ExpenseRecords de mercado privado en AccountsPayable::openItems() vía patrón source_voucher_id de AccountsReceivable). AP-01 cerrado. Gap closure post v1.0 audit completo (Phases 6-7, TECHDEBT-01 + AP-01). Próximo: `/gsd:complete-milestone`.
 
 ## Current Position
 
-Phase: 07
-Next: Phase 07 (cuentas-por-pagar-alcance-mercado-privado) — not started
+Phase: 07 (cuentas-por-pagar-mercado-privado) — COMPLETE
+Plan: 1 of 1 — done
 
 ## Performance Metrics
 
@@ -63,6 +63,7 @@ Next: Phase 07 (cuentas-por-pagar-alcance-mercado-privado) — not started
 | Phase 05 P03 | ~20min | 2 tasks | 3 files |
 | Phase 05 P04 | ~20min | 3 tasks | 7 files |
 | Phase 06 P01 | ~20min | 2 tasks | 6 files |
+| Phase 07 P01 | ~25min | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -144,9 +145,10 @@ Recent decisions affecting current work:
 - Phase 05 (Plan 05-03, worktree `agent-ae07458879e47f602`, tras merge de 05-01/05-02 a `main`): mismo patrón otra vez — el worktree apuntaba a un commit no relacionado ("Libro Mayor / bank reconciliation"), sin `.planning/`, `vendor/`, `.env`, `node_modules/` ni `public/build/`. Verificado `git merge-base --is-ancestor HEAD main` (true) y corregido con `git merge main --ff-only` (trajo consigo `.planning/` completo, incluyendo las 4 fases previas ya mergeadas). Bootstrap parcial: `composer install`, `.env`+`key:generate`. Deliberadamente NO se corrió `npm install && npm run build` — el plan es backend-only (controller + routes + test Pest), sin dependencia de Postgres (sqlite in-memory vía `phpunit.xml`). Full suite: 254 tests, 251 passed, 3 failed (mismos 3 fallos pre-existentes `ViteManifestNotFoundException` documentados desde 05-01, ver `deferred-items.md`) — sin regresión causada por este plan. Dado el bug conocido de `findProjectRoot()`, ningún comando de estado de `gsd-tools.cjs` fue invocado — `STATE.md`, `ROADMAP.md` y `REQUIREMENTS.md` se editaron a mano directamente en este worktree, que es la fuente de verdad correcta. Con esto, XLSEXPORT-01/02/03 quedan "Complete" en REQUIREMENTS.md (cierre end-to-end confirmado por la prueba que abre el archivo `.xlsx` real descargado vía HTTP).
 - Phase 05 (Plan 05-04, worktree `agent-a694d92db3bae70a1`, última del milestone): mismo patrón por décima vez — el worktree apuntaba al mismo commit no relacionado ("Libro Mayor / bank reconciliation"), sin `.planning/`, `vendor/`, `.env`, `node_modules/` ni `public/build/`. Verificado `git merge-base --is-ancestor HEAD main` (true) y corregido con `git merge main --ff-only` (trajo `.planning/` completo con las 5 fases previas). Esta vez SÍ se corrió el bootstrap completo (`composer install`, `.env`+`key:generate`, `npm install && npm run build`) porque el plan tocaba páginas Filament (superficie de build frontend), a diferencia de 05-01/05-03 que lo omitieron deliberadamente por ser backend-only. `npm install` volvió a mutar `package-lock.json` — revertido con `git checkout -- package-lock.json` antes de cualquier commit. Efecto colateral positivo: con `public/build/manifest.json` presente, los 3 fallos `ViteManifestNotFoundException` documentados desde 05-01 ya no se reproducen — full suite 260/260 passed, 0 failed. Dado el bug conocido de `findProjectRoot()`, ningún comando de estado de `gsd-tools.cjs` fue invocado — `STATE.md`, `ROADMAP.md` y `REQUIREMENTS.md` se editaron a mano directamente en este worktree, que es la fuente de verdad correcta. Con esto, Phase 05 (Fase D) queda completa (4/4 plans) y el milestone completo (5/5 fases, 24 requirements v1) — el patrón de worktree-desincronizado se repitió sin excepción en las 10 ejecuciones registradas de este proyecto hasta ahora.
 - Phase 06 (Plan 1/1, worktree `agent-a54bcb4ee9ca369cd`, único plan de la fase de gap-closure): mismo patrón por undécima vez — el worktree apuntaba al mismo commit no relacionado ("Libro Mayor / bank reconciliation"), sin `.planning/`, `vendor/`, `.env`, `node_modules/` ni `public/build/`. Antes del fast-forward, el `Read` inicial de `.planning/*` con el path del propio worktree falló ("File does not exist"), así que se cayó al path del checkout principal compartido (mismo patrón ya documentado en Phase 05 P02) — ese contenido mostraba `status: Executing Phase 06` / `Plan: 1 of 1`, tratado correctamente como snapshot de OTRO proceso (el orquestador editando en vivo el checkout principal), no como línea base propia. Verificado `git merge-base --is-ancestor HEAD main` (true) y corregido con `git merge main --ff-only`, que trajo `.planning/` completo (incluyendo `06-01-PLAN.md`, ya committeado en `main`) pero con un `STATE.md` committeado desactualizado (`status: Milestone complete`, `total_phases: 5`, `Phase 05 Not started` — anterior a la creación de `06-01-PLAN.md`). Bootstrap parcial: `composer install`, `.env`+`key:generate`; deliberadamente NO se corrió `npm install && npm run build` — este plan es backend-only (solo eliminación de archivos PHP/Blade sin ruta), sin dependencia de Postgres (sqlite in-memory vía `phpunit.xml`). Full suite: 260 tests, 257 passed, 3 failed (mismos 3 fallos pre-existentes `ViteManifestNotFoundException` documentados desde 05-01 — confirmado comparando nombres exactos de test fallido, sin regresión). Dado el bug conocido de `findProjectRoot()`, ningún comando de estado de `gsd-tools.cjs` fue invocado — `STATE.md`, `ROADMAP.md` y `REQUIREMENTS.md` se editaron a mano directamente en este worktree, que es la fuente de verdad correcta. Con esto, Phase 06 (Limpieza de código huérfano ReteICA) queda completa (1/1 plan) y TECHDEBT-01 cerrado — el patrón de worktree-desincronizado se ha repetido sin excepción en las 11 ejecuciones registradas de este proyecto hasta ahora. Queda pendiente Phase 07 (última fase del gap-closure post v1.0 audit, AP-01).
+- Phase 07 (Plan 1/1, worktree `agent-a7e1e317c17aec75d`, última fase del gap-closure post v1.0 audit): mismo patrón por duodécima vez sin excepción — el worktree (rama `worktree-agent-a7e1e317c17aec75d`) apuntaba a un commit no relacionado ("Libro Mayor / bank reconciliation"), 5 commits detrás de `main`, sin `.planning/`, `vendor/`, `.env`, `node_modules/` ni `public/build/`. Los primeros `Read` a rutas `.planning/*` con el path del propio worktree fallaron ("File does not exist"), así que se leyó primero el checkout principal compartido (mismo patrón documentado en Phase 05 P02/Phase 06) — tratado correctamente como snapshot de OTRO proceso, no como línea base propia. Verificado `git merge-base --is-ancestor HEAD main` (true, ancestro estricto) y corregido con `git merge main --ff-only` (trajo `.planning/` completo con las 6 fases previas + `07-01-PLAN.md`/`07-CONTEXT.md` ya committeados en `main`). Bootstrap completo esta vez (`composer install`, `.env`+`key:generate`, `npm install && npm run build`) porque el plan exigía confirmar `php artisan test --compact` (suite completa) sin ningún test fallido (criterio de aceptación literal del plan), lo que requería eliminar los 3 fallos preexistentes `ViteManifestNotFoundException`. `npm install` volvió a mutar `package-lock.json` — revertido con `git checkout -- package-lock.json` antes de `npm run build`. Tests corren 100% contra sqlite in-memory (`phpunit.xml`), sin dependencia de Postgres. Full suite: 263/263 passed (260 baseline + 3 nuevos), 0 failed. Dado el bug conocido de `findProjectRoot()`, ningún comando de estado de `gsd-tools.cjs` fue invocado — `STATE.md`, `ROADMAP.md` y `REQUIREMENTS.md` se editaron a mano directamente en este worktree, que es la fuente de verdad correcta. Con esto, Phase 07 (cuentas por pagar — alcance mercado privado) queda completa (1/1 plan), AP-01 cerrado, y el gap-closure post v1.0 audit (Phases 6-7) queda 100% completo — pendiente `/gsd:complete-milestone`. El patrón de worktree-desincronizado se ha repetido sin excepción en las 12 ejecuciones registradas de este proyecto hasta ahora.
 
 ## Session Continuity
 
-Last session: 2026-09-18T18:28:51.705Z
-Stopped at: Phase 07 context gathered
-Resume file: .planning/phases/07-cuentas-por-pagar-mercado-privado/07-CONTEXT.md
+Last session: 2026-09-19T00:00:00.000Z
+Stopped at: Completed 07-01-PLAN.md — Phase 07 y gap-closure post v1.0 audit (Phases 6-7) completos
+Resume file: .planning/phases/07-cuentas-por-pagar-mercado-privado/07-01-SUMMARY.md

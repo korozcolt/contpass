@@ -16,7 +16,7 @@ Cinco features aditivas al monolito Laravel 13 + Filament v5 existente, dirigida
 - [x] **Phase 4: Hook de facturación externa (Fase E)** - Capturar referencia de factura electrónica de terceros, sin integración activa
 - [x] **Phase 5: Exportación Excel (Fase D)** - Exportar los 6 reportes existentes a .xlsx con celdas nativas
 - [x] **Phase 6: Limpieza de código huérfano ReteICA** - Eliminar `WithholdingRuleController`/request/vistas blade sin ruta, huérfanos desde antes del `WithholdingRuleResource` de Filament
-- [ ] **Phase 7: Cuentas por pagar — alcance mercado privado** - Extender el reporte "cuentas por pagar" para incluir `ExpenseRecord`s de mercado privado, no solo `BudgetObligation`
+- [x] **Phase 7: Cuentas por pagar — alcance mercado privado** - Extender el reporte "cuentas por pagar" para incluir `ExpenseRecord`s de mercado privado, no solo `BudgetObligation`
 
 ## Phase Details
 
@@ -125,9 +125,9 @@ Plans:
   1. `AccountsPayable::openItems()` (o un origen de datos equivalente) incluye `ExpenseRecord`s sin `BudgetObligation` asociada, no solo `BudgetObligation`
   2. El reporte "cuentas por pagar" en pantalla, su CSV y su export Excel muestran los mismos `ExpenseRecord`s de mercado privado sin lógica de consulta duplicada entre los tres
   3. Un `ExpenseRecord` con retención ICA (Fase 2) o ya conciliado (Fase 3) aparece correctamente en el reporte mientras esté pendiente de pago
-**Plans**: 0/1 plans complete
+**Plans**: 1/1 plans complete
 Plans:
-- [ ] 07-01-PLAN.md — Combinar ExpenseRecords de mercado privado en AccountsPayable::openItems() (D-01/D-02/D-03) + cobertura Pest
+- [x] 07-01-PLAN.md — Combinar ExpenseRecords de mercado privado en AccountsPayable::openItems() (D-01/D-02/D-03) + cobertura Pest
 **UI hint**: no
 
 ## Progress
@@ -143,4 +143,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 (A → C 
 | 4. Hook de facturación externa (Fase E) | 1/1 | Complete   | 2026-09-18 |
 | 5. Exportación Excel (Fase D) | 4/4 | Complete   | 2026-09-18 |
 | 6. Limpieza de código huérfano ReteICA | 1/1 | Complete   | 2026-09-18 |
-| 7. Cuentas por pagar — alcance mercado privado | 0/? | Not started | - |
+| 7. Cuentas por pagar — alcance mercado privado | 1/1 | Complete   | 2026-09-19 |

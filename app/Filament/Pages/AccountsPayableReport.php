@@ -29,22 +29,17 @@ class AccountsPayableReport extends Page implements HasTable
 
     protected static ?string $navigationLabel = 'Cuentas por pagar';
 
-    protected static ?string $title = 'Cuentas por Pagar (Obligaciones)';
+    protected static ?string $title = 'Cuentas por Pagar';
 
     protected static string|\UnitEnum|null $navigationGroup = 'Reportes';
 
     protected string $view = 'filament.pages.accounts-payable-report';
 
-    public static function canAccess(): bool
-    {
-        return app(CurrentCompany::class)->get()->has_budgetary_control;
-    }
-
     public function table(Table $table): Table
     {
         return $table
             ->records(fn (?array $filters, int $page, int|string $recordsPerPage): LengthAwarePaginator => $this->paginatedRows($filters, $page, $recordsPerPage))
-            ->heading('Obligaciones presupuestales pendientes de pago')
+            ->heading('Cuentas por pagar pendientes')
             ->description(fn (): string => $this->summaryDescription())
             ->columns([
                 TextColumn::make('third_party')
@@ -115,8 +110,8 @@ class AccountsPayableReport extends Page implements HasTable
                     ->url(fn (): string => route('accounting-reports.accounts-payable.xlsx')),
             ])
             ->paginated([25, 50, 100])
-            ->emptyStateHeading('No hay obligaciones pendientes')
-            ->emptyStateDescription('Todas las obligaciones presupuestales registradas ya fueron pagadas.');
+            ->emptyStateHeading('No hay cuentas por pagar pendientes')
+            ->emptyStateDescription('Todas las cuentas por pagar registradas ya fueron pagadas.');
     }
 
     public function content(Schema $schema): Schema

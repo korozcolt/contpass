@@ -140,7 +140,9 @@ Plans:
   1. `AccountsPayableReport::canAccess()` ya no bloquea con 403 a una empresa con `has_budgetary_control = false` — ambos tipos de empresa pueden abrir la pantalla
   2. El texto de la pantalla (título, heading, empty state) tiene sentido para ambos tipos de empresa, no asume exclusivamente "obligaciones presupuestales"
   3. Un test Pest exercita la pantalla como empresa de mercado privado (`has_budgetary_control: false`) y confirma que NO devuelve 403 y que sus `ExpenseRecord`s pendientes aparecen en la tabla
-**Plans**: 0/? plans complete
+**Plans**: 0/1 plans complete
+Plans:
+- [ ] 08-01-PLAN.md — Quitar gate has_budgetary_control de AccountsPayableReport::canAccess() + copy neutral + cobertura Pest mercado privado
 **UI hint**: yes
 
 ## Progress

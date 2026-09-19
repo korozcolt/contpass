@@ -218,6 +218,48 @@ it('renders the accounts payable report', function () {
     Livewire::test(AccountsPayableReport::class)->assertSuccessful();
 });
 
+it('allows a private-market company (has_budgetary_control=false) to open the accounts payable report without a 403', function () {
+    $this->actingAs(User::factory()->create());
+    $data = privateExpenseFixture();
+
+    expect($data['company']->has_budgetary_control)->toBeFalse();
+
+    app(PostExpenseVoucher::class)->handle($data['company'], $data['thirdParty'], [
+        'third_party_id' => $data['thirdParty']->id,
+        'expense_account_id' => $data['expenseAccount']->id,
+        'payable_account_id' => $data['payableAccount']->id,
+        'support_type' => 'Cuenta de cobro',
+        'support_number' => 'CC-700',
+        'accrual_date' => now()->toDateString(),
+        'amount' => 150000,
+        'has_valid_support' => true,
+        'is_deductible' => true,
+    ]);
+
+    Livewire::test(AccountsPayableReport::class)->assertSuccessful();
+});
+
+it('shows the private-market pending expense record as a row in the accounts payable table', function () {
+    $this->actingAs(User::factory()->create());
+    $data = privateExpenseFixture();
+
+    $voucher = app(PostExpenseVoucher::class)->handle($data['company'], $data['thirdParty'], [
+        'third_party_id' => $data['thirdParty']->id,
+        'expense_account_id' => $data['expenseAccount']->id,
+        'payable_account_id' => $data['payableAccount']->id,
+        'support_type' => 'Cuenta de cobro',
+        'support_number' => 'CC-701',
+        'accrual_date' => now()->toDateString(),
+        'amount' => 150000,
+        'has_valid_support' => true,
+        'is_deductible' => true,
+    ]);
+
+    Livewire::test(AccountsPayableReport::class)
+        ->assertSuccessful()
+        ->assertSee($voucher->number);
+});
+
 it('blocks the accounts payable csv export for guests', function () {
     $this->get(route('accounting-reports.accounts-payable'))->assertForbidden();
 });

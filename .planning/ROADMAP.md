@@ -17,7 +17,7 @@ Cinco features aditivas al monolito Laravel 13 + Filament v5 existente, dirigida
 - [x] **Phase 5: Exportación Excel (Fase D)** - Exportar los 6 reportes existentes a .xlsx con celdas nativas
 - [x] **Phase 6: Limpieza de código huérfano ReteICA** - Eliminar `WithholdingRuleController`/request/vistas blade sin ruta, huérfanos desde antes del `WithholdingRuleResource` de Filament
 - [x] **Phase 7: Cuentas por pagar — alcance mercado privado** - Extender el reporte "cuentas por pagar" para incluir `ExpenseRecord`s de mercado privado, no solo `BudgetObligation`
-- [ ] **Phase 8: Acceso a Cuentas por Pagar para mercado privado** - Corregir `AccountsPayableReport::canAccess()` para que el mercado privado pueda ver la pantalla que Phase 7 les llenó de datos
+- [x] **Phase 8: Acceso a Cuentas por Pagar para mercado privado** - Corregir `AccountsPayableReport::canAccess()` para que el mercado privado pueda ver la pantalla que Phase 7 les llenó de datos
 
 ## Phase Details
 
@@ -140,9 +140,9 @@ Plans:
   1. `AccountsPayableReport::canAccess()` ya no bloquea con 403 a una empresa con `has_budgetary_control = false` — ambos tipos de empresa pueden abrir la pantalla
   2. El texto de la pantalla (título, heading, empty state) tiene sentido para ambos tipos de empresa, no asume exclusivamente "obligaciones presupuestales"
   3. Un test Pest exercita la pantalla como empresa de mercado privado (`has_budgetary_control: false`) y confirma que NO devuelve 403 y que sus `ExpenseRecord`s pendientes aparecen en la tabla
-**Plans**: 0/1 plans complete
+**Plans**: 1/1 plans complete
 Plans:
-- [ ] 08-01-PLAN.md — Quitar gate has_budgetary_control de AccountsPayableReport::canAccess() + copy neutral + cobertura Pest mercado privado
+- [x] 08-01-PLAN.md — Quitar gate has_budgetary_control de AccountsPayableReport::canAccess() + copy neutral + cobertura Pest mercado privado
 **UI hint**: yes
 
 ## Progress
@@ -159,4 +159,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 (A 
 | 5. Exportación Excel (Fase D) | 4/4 | Complete   | 2026-09-18 |
 | 6. Limpieza de código huérfano ReteICA | 1/1 | Complete   | 2026-09-18 |
 | 7. Cuentas por pagar — alcance mercado privado | 1/1 | Complete   | 2026-09-19 |
-| 8. Acceso a Cuentas por Pagar para mercado privado | 0/? | Not started | - |
+| 8. Acceso a Cuentas por Pagar para mercado privado | 1/1 | Complete   | 2026-09-19 |

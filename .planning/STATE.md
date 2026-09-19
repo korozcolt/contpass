@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Milestone complete
-stopped_at: Completed 07-01-PLAN.md — Phase 07 y gap-closure post v1.0 audit (Phases 6-7) completos
-last_updated: "2026-09-19T13:37:02.810Z"
+status: Phase complete — ready for verification
+stopped_at: Completed 08-01-PLAN.md — AP-01 cerrado end-to-end (Filament UI access), gap-closure post v1.0 audit (Phases 6-7-8) completo
+last_updated: "2026-09-19T14:06:37.755Z"
 progress:
-  total_phases: 7
-  completed_phases: 7
-  total_plans: 18
-  completed_plans: 18
+  total_phases: 8
+  completed_phases: 8
+  total_plans: 19
+  completed_plans: 19
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-09-16)
 
 **Core value:** Cada movimiento relevante produce un comprobante contable auditable e inmutable por partida doble — trazabilidad e inmutabilidad sobre conveniencia.
-**Current focus:** Phase 07 — cuentas-por-pagar-mercado-privado COMPLETA (1/1 plan: 07-01 combina ExpenseRecords de mercado privado en AccountsPayable::openItems() vía patrón source_voucher_id de AccountsReceivable). AP-01 cerrado. Gap closure post v1.0 audit completo (Phases 6-7, TECHDEBT-01 + AP-01). Próximo: `/gsd:complete-milestone`.
+**Current focus:** Phase 08 — acceso-cuentas-por-pagar-mercado-privado COMPLETA (1/1 plan: 08-01 elimina el gate `canAccess()` de `AccountsPayableReport` y neutraliza el copy). AP-01 cerrado end-to-end. Gap closure post v1.0 audit completo (Phases 6-7-8, TECHDEBT-01 + AP-01). Próximo: `/gsd:complete-milestone`.
 
 ## Current Position
 
-Phase: 07
-Plan: Not started
+Phase: 08 (acceso-cuentas-por-pagar-mercado-privado) — COMPLETE
+Plan: 1 of 1 (done)
 
 ## Performance Metrics
 
@@ -64,6 +64,7 @@ Plan: Not started
 | Phase 05 P04 | ~20min | 3 tasks | 7 files |
 | Phase 06 P01 | ~20min | 2 tasks | 6 files |
 | Phase 07 P01 | ~25min | 2 tasks | 2 files |
+| Phase 08 P01 | 15min | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -117,6 +118,7 @@ Recent decisions affecting current work:
 - [Phase 05 P04, última del milestone]: las 6 páginas Filament coincidían exactamente con la forma documentada en `interfaces`/`read_first` del plan — sin desviaciones, solo se agregó una segunda `Action::make('exportExcel')` hermana de la `Action::make('export')` (CSV) existente en cada `headerActions([...])`, propagando `$this->reportQueryParameters()` igual que su acción CSV (o sin parámetros en las 2 páginas "no filtradas", por Pitfall 4). Test Pest nuevo (`AccountingReportExcelActionsTest`, 6 casos) usa `assertTableActionExists()`/`assertTableActionHasUrl()` confirmados contra `vendor/filament/tables/src/Testing/TestsActions.php`. Con esto, Fase D (Exportación Excel) queda completa 4/4 y el milestone "Mejoras Comerciales para Mercado Privado" cierra sus 5 fases y 24 requirements v1
 - [Phase 05 P04]: a diferencia de 05-01/05-03 (backend-only, `npm install && npm run build` omitido deliberadamente), este plan sí tocaba páginas Filament y corrió el bootstrap frontend completo — efecto colateral: los 3 fallos `ViteManifestNotFoundException` documentados desde 05-01 en `deferred-items.md` ya no se reproducen (full suite 260/260 passed, 0 failed)
 - [Phase 06 P01, única del gap-closure de esta fase]: TECHDEBT-01 cerrado — `WithholdingRuleController`, `StoreWithholdingRuleRequest` y las 2 vistas blade `withholding-rules/*` eliminados tras auditoría grep (Task 1) que confirmó cero referencias vivas en `routes/`, `bootstrap/`, `config/`, `database/`, `tests/`. El `WithholdingRuleResource` de Filament (3 rutas `filament.admin.resources.withholding-rules.*`) permanece intacto, verificado antes/después. Sin desviaciones del plan.
+- [Phase 08]: Deleted canAccess() override entirely rather than widening its condition on AccountsPayableReport — restores the exact Filament default already used by the sibling AccountsReceivableReport, avoiding a second bespoke access pattern
 
 ### Pending Todos
 
@@ -149,6 +151,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-09-19T00:00:00.000Z
-Stopped at: Completed 07-01-PLAN.md — Phase 07 y gap-closure post v1.0 audit (Phases 6-7) completos
-Resume file: .planning/phases/07-cuentas-por-pagar-mercado-privado/07-01-SUMMARY.md
+Last session: 2026-09-19T14:06:37.751Z
+Stopped at: Completed 08-01-PLAN.md — AP-01 cerrado end-to-end (Filament UI access), gap-closure post v1.0 audit (Phases 6-7-8) completo
+Resume file: .planning/phases/08-acceso-cuentas-por-pagar-mercado-privado/08-01-SUMMARY.md

@@ -49,7 +49,7 @@
 Añadidos por `/gsd:plan-milestone-gaps` para cerrar 2 gaps no-críticos del audit v1.0 (`.planning/v1.0-MILESTONE-AUDIT.md`). No forman parte del scope original v1; no bloquean el milestone.
 
 - [x] **TECHDEBT-01**: `WithholdingRuleController`, `StoreWithholdingRuleRequest` y `resources/views/withholding-rules/*.blade.php` (código huérfano sin ruta, predecesor del `WithholdingRuleResource` de Filament, referencia una columna `concept` ya eliminada) quedan eliminados del repositorio
-- [ ] **AP-01**: El reporte/export "cuentas por pagar" incluye `ExpenseRecord`s de mercado privado sin `BudgetObligation` asociada (`budget_obligation_id` nulo), no solo obligaciones presupuestales públicas. Servicio/CSV/Excel completos (Phase 7); pantalla Filament pendiente — ver Phase 8 (`AccountsPayableReport::canAccess()` bloquea con 403 a las empresas de mercado privado).
+- [x] **AP-01**: El reporte/export "cuentas por pagar" incluye `ExpenseRecord`s de mercado privado sin `BudgetObligation` asociada (`budget_obligation_id` nulo), no solo obligaciones presupuestales públicas. Servicio/CSV/Excel completos (Phase 7); pantalla Filament pendiente — ver Phase 8 (`AccountsPayableReport::canAccess()` bloquea con 403 a las empresas de mercado privado).
 
 ## v2 Requirements
 
@@ -117,7 +117,7 @@ Excluidos explícitamente de este milestone. Ver `docs/roadmap-apolo.md` y `.pla
 | XLSEXPORT-02 | Phase 5 (Fase D) | Complete |
 | XLSEXPORT-03 | Phase 5 (Fase D) | Complete |
 | TECHDEBT-01 | Phase 6 (gap closure) | Complete |
-| AP-01 | Phase 8 (gap closure) | Pending |
+| AP-01 | Phase 8 (gap closure) | Complete |
 
 **Coverage:**
 - v1 requirements: 24 total

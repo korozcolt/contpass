@@ -17,6 +17,7 @@ Cinco features aditivas al monolito Laravel 13 + Filament v5 existente, dirigida
 - [x] **Phase 5: Exportación Excel (Fase D)** - Exportar los 6 reportes existentes a .xlsx con celdas nativas
 - [x] **Phase 6: Limpieza de código huérfano ReteICA** - Eliminar `WithholdingRuleController`/request/vistas blade sin ruta, huérfanos desde antes del `WithholdingRuleResource` de Filament
 - [x] **Phase 7: Cuentas por pagar — alcance mercado privado** - Extender el reporte "cuentas por pagar" para incluir `ExpenseRecord`s de mercado privado, no solo `BudgetObligation`
+- [ ] **Phase 8: Acceso a Cuentas por Pagar para mercado privado** - Corregir `AccountsPayableReport::canAccess()` para que el mercado privado pueda ver la pantalla que Phase 7 les llenó de datos
 
 ## Phase Details
 
@@ -130,10 +131,22 @@ Plans:
 - [x] 07-01-PLAN.md — Combinar ExpenseRecords de mercado privado en AccountsPayable::openItems() (D-01/D-02/D-03) + cobertura Pest
 **UI hint**: no
 
+### Phase 8: Acceso a Cuentas por Pagar para mercado privado
+**Goal**: Una empresa de mercado privado (`has_budgetary_control = false`) puede abrir la pantalla Filament "Cuentas por Pagar" y ver/exportar sus propios `ExpenseRecord`s pendientes — los mismos que Phase 7 ya incluye correctamente en el servicio, CSV y Excel — sin recibir un 403.
+**Depends on**: Nothing técnicamente (cierre de gap del re-audit de la milestone v1.0)
+**Gap Closure**: Cierra gap de requirement `AP-01` (parcial), gap de integración `accounts-payable-filament-page-access`, y gap de flujo `ica-withheld-expense-reconciliation-excel-export` (leg de UI) del re-audit v1.0 (`.planning/v1.0-MILESTONE-AUDIT.md`, 2026-09-19)
+**Requirements**: AP-01
+**Success Criteria** (what must be TRUE):
+  1. `AccountsPayableReport::canAccess()` ya no bloquea con 403 a una empresa con `has_budgetary_control = false` — ambos tipos de empresa pueden abrir la pantalla
+  2. El texto de la pantalla (título, heading, empty state) tiene sentido para ambos tipos de empresa, no asume exclusivamente "obligaciones presupuestales"
+  3. Un test Pest exercita la pantalla como empresa de mercado privado (`has_budgetary_control: false`) y confirma que NO devuelve 403 y que sus `ExpenseRecord`s pendientes aparecen en la tabla
+**Plans**: 0/? plans complete
+**UI hint**: yes
+
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 (A → C → B → E → D → gap closure)
+Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 (A → C → B → E → D → gap closure → gap closure)
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -144,3 +157,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 (A → C 
 | 5. Exportación Excel (Fase D) | 4/4 | Complete   | 2026-09-18 |
 | 6. Limpieza de código huérfano ReteICA | 1/1 | Complete   | 2026-09-18 |
 | 7. Cuentas por pagar — alcance mercado privado | 1/1 | Complete   | 2026-09-19 |
+| 8. Acceso a Cuentas por Pagar para mercado privado | 0/? | Not started | - |

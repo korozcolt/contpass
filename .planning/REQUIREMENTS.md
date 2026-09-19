@@ -49,7 +49,7 @@
 Añadidos por `/gsd:plan-milestone-gaps` para cerrar 2 gaps no-críticos del audit v1.0 (`.planning/v1.0-MILESTONE-AUDIT.md`). No forman parte del scope original v1; no bloquean el milestone.
 
 - [x] **TECHDEBT-01**: `WithholdingRuleController`, `StoreWithholdingRuleRequest` y `resources/views/withholding-rules/*.blade.php` (código huérfano sin ruta, predecesor del `WithholdingRuleResource` de Filament, referencia una columna `concept` ya eliminada) quedan eliminados del repositorio
-- [x] **AP-01**: El reporte/export "cuentas por pagar" incluye `ExpenseRecord`s de mercado privado sin `BudgetObligation` asociada (`budget_obligation_id` nulo), no solo obligaciones presupuestales públicas
+- [ ] **AP-01**: El reporte/export "cuentas por pagar" incluye `ExpenseRecord`s de mercado privado sin `BudgetObligation` asociada (`budget_obligation_id` nulo), no solo obligaciones presupuestales públicas. Servicio/CSV/Excel completos (Phase 7); pantalla Filament pendiente — ver Phase 8 (`AccountsPayableReport::canAccess()` bloquea con 403 a las empresas de mercado privado).
 
 ## v2 Requirements
 
@@ -117,15 +117,16 @@ Excluidos explícitamente de este milestone. Ver `docs/roadmap-apolo.md` y `.pla
 | XLSEXPORT-02 | Phase 5 (Fase D) | Complete |
 | XLSEXPORT-03 | Phase 5 (Fase D) | Complete |
 | TECHDEBT-01 | Phase 6 (gap closure) | Complete |
-| AP-01 | Phase 7 (gap closure) | Complete |
+| AP-01 | Phase 8 (gap closure) | Pending |
 
 **Coverage:**
 - v1 requirements: 24 total
 - Mapped to phases: 24
 - Unmapped: 0 ✓
-- Gap closure requirements (post-audit, not part of v1 scope): 2 total, 2 complete
+- Gap closure requirements (post-audit, not part of v1 scope): 2 total, 1 complete, 1 pending (AP-01 — service/CSV/Excel done in Phase 7, pantalla Filament pendiente en Phase 8)
 
 ---
 *Requirements defined: 2026-09-16*
-*Last updated: 2026-09-19 after Phase 7 Plan 1 (AccountsPayable::openItems() combina BudgetObligation público + ExpenseRecord de mercado privado) — AP-01 cerrado, gap closure post v1.0 audit completo*
+*Last updated: 2026-09-19 after re-audit v1.0 found AP-01 partial — Filament `AccountsPayableReport::canAccess()` 403s the mercado privado audience Phase 7 was built for. Phase 8 created to close it.*
+*2026-09-19: Phase 7 Plan 1 (AccountsPayable::openItems() combina BudgetObligation público + ExpenseRecord de mercado privado) — service/CSV/Excel layer complete*
 *2026-09-18: `/gsd:plan-milestone-gaps` añadió TECHDEBT-01 y AP-01 (Phases 6-7) para cerrar 2 gaps no-críticos del audit v1.0*

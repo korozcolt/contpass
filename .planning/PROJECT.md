@@ -28,10 +28,11 @@ Cada movimiento relevante produce un comprobante contable auditable e inmutable 
 - ✓ Fase D — Exportación Excel: servicio compartido `ExcelReportExporter` (celdas numéricas/fecha nativas vía `openspout/openspout`, ya vendorizado transitivamente — **cero dependencia nueva**, descartado `maatwebsite/excel`), 6 métodos privados `*Rows()` extraídos en `AccountingReportController` reusados por CSV y por los 6 nuevos endpoints `.xlsx` (mismo gate de autenticación que CSV), botón "Exportar Excel" junto al de CSV en las 6 páginas Filament de reporte — validado en Phase 5 (2026-09-18), 260 tests Pest pasando, XLSEXPORT-01 a XLSEXPORT-03 completos
 - ✓ Fase 6 (gap closure, audit v1.0) — Limpieza de código huérfano ReteICA: eliminados `WithholdingRuleController`, `StoreWithholdingRuleRequest` y `resources/views/withholding-rules/*.blade.php` (código muerto pre-Filament sin ruta activa, referenciaba una columna `concept` ya eliminada); confirmado por grep que el `WithholdingRuleResource` de Filament es la única implementación real y quedó intacto — validado en Phase 6 (2026-09-18), 260 tests Pest pasando sin regresión, TECHDEBT-01 completo
 - ✓ Fase 7 (gap closure, audit v1.0) — Cuentas por pagar mercado privado: `AccountsPayable::openItems()` ahora combina las obligaciones presupuestales públicas existentes (`budgetObligationItems()`, sin cambios) con `ExpenseRecord`s de mercado privado (`privateMarketItems()`, nuevo) usando el patrón `source_voucher_id` ya validado por el servicio hermano `AccountsReceivable`, monto neto de retención, columna "Obligación" con número de voucher; la lógica pública `payment_order_id` (bug pre-existente, nunca seteado — GitHub Issue #3) se dejó deliberadamente intacta y fuera de alcance — validado en Phase 7 (2026-09-19), 263 tests Pest pasando sin regresión, AP-01 completo
+- ✓ Fase 8 (gap closure, audit v1.0) — Acceso a Cuentas por Pagar mercado privado: eliminado el override `canAccess()` de `AccountsPayableReport` que bloqueaba con 403 a empresas `has_budgetary_control = false` (ahora hereda el default de Filament, igual que la página hermana `AccountsReceivableReport`); copy de título/heading/empty-state neutralizado para no asumir exclusivamente "obligaciones presupuestales" — validado en Phase 8 (2026-09-19), 265 tests Pest pasando sin regresión, AP-01 cerrado end-to-end (servicio + CSV + Excel de Phase 7, acceso UI de Phase 8)
 
 ### Active
 
-**Milestone: Mejoras Comerciales para Mercado Privado** — 5/5 fases originales + Phase 6 + Phase 7 (ambas gap closure del audit v1.0) completas. Pendiente re-auditar (`/gsd:audit-milestone`) y ejecutar `/gsd:complete-milestone` para archivar.
+**Milestone: Mejoras Comerciales para Mercado Privado** — 5/5 fases originales + Phase 6, 7 y 8 (gap closure del audit v1.0) completas. Pendiente re-auditar (`/gsd:audit-milestone`) y ejecutar `/gsd:complete-milestone` para archivar.
 
 ### Out of Scope
 
@@ -95,4 +96,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-09-19 after Phase 7 (Cuentas por pagar mercado privado — gap closure, audit v1.0) completion — milestone "Mejoras Comerciales para Mercado Privado" con 5/5 fases originales + Phases 6-7 (gap closure) completas; todo el gap closure del audit v1.0 cerrado, pendiente re-auditar y `/gsd:complete-milestone`*
+*Last updated: 2026-09-19 after Phase 8 (Acceso a Cuentas por Pagar mercado privado — gap closure, audit v1.0) completion — milestone "Mejoras Comerciales para Mercado Privado" con 5/5 fases originales + Phases 6-7-8 (gap closure) completas; todo el gap closure del audit v1.0 cerrado, pendiente re-auditar y `/gsd:complete-milestone`*

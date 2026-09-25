@@ -116,7 +116,7 @@ class AguasDeSucreSeeder extends Seeder
             'city' => 'Sincelejo',
             'legal_representative' => 'Eduardo José Pérez Hernández',
             'dane_department_code' => '70',
-            'dane_municipality_code' => '70001',
+            'dane_municipality_code' => '001',
         ]);
         $company->save();
 

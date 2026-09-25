@@ -3,15 +3,31 @@
 namespace App\Services\Accounting;
 
 use App\Enums\VoucherType;
+use App\Models\Company;
 use App\Models\Voucher;
 
 class BuildVoucherNumber
 {
-    public function next(VoucherType $type): string
+    public function next(VoucherType $type, ?Company $company = null, ?int $year = null): string
     {
-        $prefix = strtoupper(substr($type->value, 0, 3));
-        $next = Voucher::query()->where('type', $type->value)->count() + 1;
+        $year ??= (int) now()->format('Y');
+        $prefix = $type->prefix();
 
-        return sprintf('%s-%s-%06d', $prefix, now()->format('Y'), $next);
+        $query = Voucher::query()
+            ->where('type', $type->value);
+
+        $pattern = "{$prefix}-{$year}-%";
+        $last = (clone $query)
+            ->where('number', 'like', $pattern)
+            ->orderByDesc('id')
+            ->value('number');
+
+        if ($last && preg_match('/-(\d+)$/', $last, $matches)) {
+            $sequence = ((int) $matches[1]) + 1;
+        } else {
+            $sequence = $query->count() + 1;
+        }
+
+        return sprintf('%s-%d-%06d', $prefix, $year, $sequence);
     }
 }

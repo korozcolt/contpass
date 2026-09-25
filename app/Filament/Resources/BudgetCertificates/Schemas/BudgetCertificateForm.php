@@ -8,6 +8,7 @@ use App\Services\Accounting\CurrentCompany;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
 class BudgetCertificateForm
@@ -20,6 +21,12 @@ class BudgetCertificateForm
                 Hidden::make('company_id')
                     ->default(fn (): int => app(CurrentCompany::class)->get()->id)
                     ->required(),
+                TextInput::make('number')
+                    ->label('Número de CDP')
+                    ->placeholder('Asignado automáticamente al guardar (Ej: CDP-2026-000001)')
+                    ->disabled()
+                    ->dehydrated(false)
+                    ->helperText('Consecutivo oficial del Certificado de Disponibilidad Presupuestal.'),
                 Select::make('budget_appropriation_id')
                     ->label('Rubro presupuestal')
                     ->options(fn (): array => BudgetAppropriation::query()

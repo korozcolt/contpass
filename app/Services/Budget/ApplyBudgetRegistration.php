@@ -48,7 +48,7 @@ class ApplyBudgetRegistration
                 'company_id' => $company->id,
                 'budget_availability_certificate_id' => $certificate->id,
                 'third_party_id' => $thirdParty->id,
-                'number' => $this->nextNumber($certificate->fiscal_year),
+                'number' => $this->nextNumber($company->id, $certificate->fiscal_year),
                 'status' => BudgetRegistrationStatus::Active,
                 'fiscal_year' => $certificate->fiscal_year,
                 'amount' => $amount,
@@ -66,9 +66,10 @@ class ApplyBudgetRegistration
         });
     }
 
-    private function nextNumber(int $fiscalYear): string
+    private function nextNumber(int $companyId, int $fiscalYear): string
     {
         $count = BudgetRegistration::query()
+            ->where('company_id', $companyId)
             ->where('fiscal_year', $fiscalYear)
             ->count() + 1;
 

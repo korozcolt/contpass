@@ -20,6 +20,12 @@ class BudgetObligationForm
                 Hidden::make('company_id')
                     ->default(fn (): int => app(CurrentCompany::class)->get()->id)
                     ->required(),
+                TextInput::make('number')
+                    ->label('Número de Obligación')
+                    ->placeholder('Asignado automáticamente al guardar (Ej: OBL-2026-000001)')
+                    ->disabled()
+                    ->dehydrated(false)
+                    ->helperText('Consecutivo presupuestal interno.'),
                 Select::make('budget_registration_id')
                     ->label('Registro Presupuestal')
                     ->options(fn (): array => BudgetRegistration::query()

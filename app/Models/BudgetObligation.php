@@ -15,6 +15,21 @@ class BudgetObligation extends Model
     /** @use HasFactory<BudgetObligationFactory> */
     use Auditable, HasFactory;
 
+    protected static function booted(): void
+    {
+        static::creating(function (BudgetObligation $obl): void {
+            if (blank($obl->number)) {
+                $fiscalYear = $obl->fiscal_year ?? (int) now()->format('Y');
+                $count = BudgetObligation::query()
+                    ->where('company_id', $obl->company_id)
+                    ->where('fiscal_year', $fiscalYear)
+                    ->count() + 1;
+
+                $obl->number = sprintf('OBL-%d-%06d', $fiscalYear, $count);
+            }
+        });
+    }
+
     protected $fillable = [
         'company_id',
         'budget_registration_id',

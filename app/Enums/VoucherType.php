@@ -52,4 +52,15 @@ enum VoucherType: string implements HasColor, HasIcon, HasLabel
             self::Budget => Heroicon::ChartBar,
         };
     }
+
+    public function prefix(): string
+    {
+        return match ($this) {
+            self::Income => 'ING',
+            self::Expense => 'EGR',
+            self::Payment => 'PAG',
+            self::Adjustment => 'AJU',
+            self::Budget => 'PRE',
+        };
+    }
 }

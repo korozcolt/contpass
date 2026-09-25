@@ -17,6 +17,21 @@ class BudgetAvailabilityCertificate extends Model
     /** @use HasFactory<BudgetAvailabilityCertificateFactory> */
     use Auditable, HasFactory;
 
+    protected static function booted(): void
+    {
+        static::creating(function (BudgetAvailabilityCertificate $cdp): void {
+            if (blank($cdp->number)) {
+                $fiscalYear = $cdp->fiscal_year ?? (int) now()->format('Y');
+                $count = BudgetAvailabilityCertificate::query()
+                    ->where('company_id', $cdp->company_id)
+                    ->where('fiscal_year', $fiscalYear)
+                    ->count() + 1;
+
+                $cdp->number = sprintf('CDP-%d-%06d', $fiscalYear, $count);
+            }
+        });
+    }
+
     protected $fillable = [
         'company_id',
         'budget_appropriation_id',

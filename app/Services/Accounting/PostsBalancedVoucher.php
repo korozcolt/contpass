@@ -37,7 +37,7 @@ class PostsBalancedVoucher
                 'adjusts_voucher_id' => $adjustsVoucher?->id,
                 'type' => $type,
                 'status' => VoucherStatus::Approved,
-                'number' => $this->buildVoucherNumber->next($type),
+                'number' => $this->buildVoucherNumber->next($type, $company),
                 'date' => $date,
                 'description' => $description,
                 'approved_at' => now(),

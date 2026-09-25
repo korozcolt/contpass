@@ -42,7 +42,7 @@ class IssuePaymentOrder
                 'company_id' => $company->id,
                 'budget_obligation_id' => $obligation->id,
                 'cash_account_id' => $cashAccount->id,
-                'number' => $this->nextNumber(now()->year),
+                'number' => $this->nextNumber($company->id, now()->year),
                 'status' => PaymentOrderStatus::Pending,
                 'amount' => $amount,
                 'method' => $method,
@@ -52,9 +52,10 @@ class IssuePaymentOrder
         });
     }
 
-    private function nextNumber(int $fiscalYear): string
+    private function nextNumber(int $companyId, int $fiscalYear): string
     {
         $count = PaymentOrder::query()
+            ->where('company_id', $companyId)
             ->whereYear('issued_on', $fiscalYear)
             ->count() + 1;
 

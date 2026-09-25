@@ -22,6 +22,12 @@ class PaymentOrderForm
                 Hidden::make('company_id')
                     ->default(fn (): int => app(CurrentCompany::class)->get()->id)
                     ->required(),
+                TextInput::make('number')
+                    ->label('Número de Orden de Pago')
+                    ->placeholder('Asignado automáticamente al guardar (Ej: OP-2026-000001)')
+                    ->disabled()
+                    ->dehydrated(false)
+                    ->helperText('Consecutivo de tesorería y ordenación del gasto.'),
                 Select::make('budget_obligation_id')
                     ->label('Obligación')
                     ->options(fn (): array => BudgetObligation::query()

@@ -15,6 +15,21 @@ class PaymentOrder extends Model
     /** @use HasFactory<PaymentOrderFactory> */
     use Auditable, HasFactory;
 
+    protected static function booted(): void
+    {
+        static::creating(function (PaymentOrder $order): void {
+            if (blank($order->number)) {
+                $fiscalYear = $order->issued_on ? (int) $order->issued_on->format('Y') : (int) now()->format('Y');
+                $count = PaymentOrder::query()
+                    ->where('company_id', $order->company_id)
+                    ->whereYear('issued_on', $fiscalYear)
+                    ->count() + 1;
+
+                $order->number = sprintf('OP-%d-%06d', $fiscalYear, $count);
+            }
+        });
+    }
+
     protected $fillable = [
         'company_id',
         'budget_obligation_id',

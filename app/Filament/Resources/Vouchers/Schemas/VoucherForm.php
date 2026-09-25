@@ -24,8 +24,10 @@ class VoucherForm
 
                 TextInput::make('number')
                     ->label('Número de comprobante')
-                    ->placeholder('Ej: COMP-001')
-                    ->required()
+                    ->placeholder('Asignado automáticamente al guardar (Ej: ING-2026-000001)')
+                    ->disabled()
+                    ->dehydrated(false)
+                    ->helperText('Consecutivo oficial correlativo por tipo de comprobante.')
                     ->maxLength(50),
 
                 Select::make('type')

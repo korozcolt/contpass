@@ -48,7 +48,7 @@ class CreateBudgetObligation
             $obligation = BudgetObligation::query()->create([
                 'company_id' => $company->id,
                 'budget_registration_id' => $registration->id,
-                'number' => $this->nextNumber($registration->fiscal_year),
+                'number' => $this->nextNumber($company->id, $registration->fiscal_year),
                 'status' => BudgetObligationStatus::Draft,
                 'fiscal_year' => $registration->fiscal_year,
                 'amount' => $amount,
@@ -68,9 +68,10 @@ class CreateBudgetObligation
         });
     }
 
-    private function nextNumber(int $fiscalYear): string
+    private function nextNumber(int $companyId, int $fiscalYear): string
     {
         $count = BudgetObligation::query()
+            ->where('company_id', $companyId)
             ->where('fiscal_year', $fiscalYear)
             ->count() + 1;
 

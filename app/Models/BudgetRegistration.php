@@ -17,6 +17,21 @@ class BudgetRegistration extends Model
     /** @use HasFactory<BudgetRegistrationFactory> */
     use Auditable, HasFactory;
 
+    protected static function booted(): void
+    {
+        static::creating(function (BudgetRegistration $rp): void {
+            if (blank($rp->number)) {
+                $fiscalYear = $rp->fiscal_year ?? (int) now()->format('Y');
+                $count = BudgetRegistration::query()
+                    ->where('company_id', $rp->company_id)
+                    ->where('fiscal_year', $fiscalYear)
+                    ->count() + 1;
+
+                $rp->number = sprintf('RP-%d-%06d', $fiscalYear, $count);
+            }
+        });
+    }
+
     protected $fillable = [
         'company_id',
         'budget_availability_certificate_id',

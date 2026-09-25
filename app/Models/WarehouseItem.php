@@ -15,6 +15,19 @@ class WarehouseItem extends Model
     /** @use HasFactory<WarehouseItemFactory> */
     use HasFactory;
 
+    protected static function booted(): void
+    {
+        static::creating(function (WarehouseItem $item): void {
+            if (blank($item->code)) {
+                $count = WarehouseItem::query()
+                    ->where('company_id', $item->company_id)
+                    ->count() + 1;
+
+                $item->code = sprintf('ART-%05d', $count);
+            }
+        });
+    }
+
     protected $fillable = [
         'company_id',
         'code',

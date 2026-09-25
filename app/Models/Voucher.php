@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\VoucherStatus;
 use App\Enums\VoucherType;
+use App\Services\Accounting\BuildVoucherNumber;
 use App\Traits\Auditable;
 use Database\Factories\VoucherFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -18,6 +19,20 @@ class Voucher extends Model
 {
     /** @use HasFactory<VoucherFactory> */
     use Auditable, HasFactory;
+
+    protected static function booted(): void
+    {
+        static::creating(function (Voucher $voucher): void {
+            if (blank($voucher->number)) {
+                $company = $voucher->company_id ? Company::find($voucher->company_id) : null;
+                $voucher->number = app(BuildVoucherNumber::class)->next(
+                    $voucher->type ?? VoucherType::Income,
+                    $company,
+                    $voucher->date ? (int) $voucher->date->format('Y') : null
+                );
+            }
+        });
+    }
 
     protected $fillable = [
         'company_id',

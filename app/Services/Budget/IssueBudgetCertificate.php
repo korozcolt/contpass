@@ -36,7 +36,7 @@ class IssueBudgetCertificate
         }
 
         return DB::transaction(function () use ($company, $appropriation, $amount, $justification, $issuedOn, $expiresOn): BudgetAvailabilityCertificate {
-            $number = $this->nextNumber($appropriation->fiscal_year);
+            $number = $this->nextNumber($company->id, $appropriation->fiscal_year);
 
             return BudgetAvailabilityCertificate::query()->create([
                 'company_id' => $company->id,
@@ -52,9 +52,10 @@ class IssueBudgetCertificate
         });
     }
 
-    private function nextNumber(int $fiscalYear): string
+    private function nextNumber(int $companyId, int $fiscalYear): string
     {
         $count = BudgetAvailabilityCertificate::query()
+            ->where('company_id', $companyId)
             ->where('fiscal_year', $fiscalYear)
             ->count() + 1;
 

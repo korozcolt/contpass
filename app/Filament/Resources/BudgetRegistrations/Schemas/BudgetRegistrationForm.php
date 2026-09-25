@@ -9,6 +9,7 @@ use App\Services\Accounting\CurrentCompany;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
 class BudgetRegistrationForm
@@ -21,6 +22,12 @@ class BudgetRegistrationForm
                 Hidden::make('company_id')
                     ->default(fn (): int => app(CurrentCompany::class)->get()->id)
                     ->required(),
+                TextInput::make('number')
+                    ->label('Número de RP')
+                    ->placeholder('Asignado automáticamente al guardar (Ej: RP-2026-000001)')
+                    ->disabled()
+                    ->dehydrated(false)
+                    ->helperText('Consecutivo oficial del Registro Presupuestal.'),
                 Select::make('budget_availability_certificate_id')
                     ->label('CDP')
                     ->options(fn (): array => BudgetAvailabilityCertificate::query()

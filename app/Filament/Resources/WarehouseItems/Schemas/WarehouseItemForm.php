@@ -17,7 +17,11 @@ class WarehouseItemForm
         return $schema->components([
             AccountingFormFields::companyId(),
             Grid::make(2)->schema([
-                TextInput::make('code')->label('Código')->required()->maxLength(50),
+                TextInput::make('code')
+                    ->label('Código')
+                    ->placeholder('Opcional. Autogenerado si se deja vacío (Ej: ART-00001)')
+                    ->helperText('Identificador de inventario único.')
+                    ->maxLength(50),
                 TextInput::make('name')->label('Nombre')->required()->maxLength(255),
                 Select::make('type')
                     ->label('Tipo')
